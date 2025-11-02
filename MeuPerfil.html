@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu perfil</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <span>Voluntariado<br><strong>Liferay</strong></span>
+            </div>
+
+            <nav class="navigation">
+    <p>Navegação</p>
+    <ul>
+        <li><a href="inicio.html"><i class="fa-solid fa-house"></i> Início</a></li>
+        <li><a href="explorar.html"><i class="fa-solid fa-magnifying-glass"></i> Explorar</a></li>
+        <li><a href="criar-oportunidade.html"><i class="fa-solid fa-circle-plus"></i> Criar Oportunidade</a></li>
+        <li><a href="impacto.html"><i class="fa-solid fa-chart-line"></i> Impacto</a></li>
+        <li><a href="testemunhos.html"><i class="fa-solid fa-comments"></i> Testemunhos</a></li>
+        <li><a href="MeuPerfil.html" class="active"><i class="fa-solid fa-user"></i> Meu perfil</a></li>
+    </ul>
+</nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar-small">R</div>
+                    <div class="user-details">
+                        <strong>Rafael</strong>
+                        <span>Voluntariado</span>
+                    </div>
+                </div>
+                <button class="logout-button">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <h1>Meu perfil</h1>
+
+            <header class="profile-banner">
+                <div class="avatar-large">R</div>
+                <div class="profile-info">
+                    <h2>Rafael</h2>
+                    <p>Rafael126@gmail.com</p>
+                </div>
+            </header>
+
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="card-header">
+                        <span>Total de horas</span>
+                        <i class="fa-solid fa-clock icon-blue"></i>
+                    </div>
+                    <span class="stat-value">0h</span>
+                </div>
+                <div class="stat-card">
+                    <div class="card-header">
+                        <span>Atividades Concluídas</span>
+                        <i class="fa-solid fa-check-circle icon-green"></i>
+                    </div>
+                    <span class="stat-value">0</span>
+                </div>
+                <div class="stat-card">
+                    <div class="card-header">
+                        <span>Próximas atividades</span>
+                        <i class="fa-solid fa-calendar-alt icon-teal"></i>
+                    </div>
+                    <span class="stat-value">0</span>
+                </div>
+                <div class="stat-card">
+                    <div class="card-header">
+                        <span>Total de participações</span>
+                        <i class="fa-solid fa-chart-bar icon-purple"></i>
+                    </div>
+                    <span class="stat-value">0</span>
+                </div>
+            </section>
+
+            <section class="history-section">
+
+    <div class="tabs">
+        <button class="tab-button active" id="tab-historico">
+            <i class="fa-regular fa-calendar-days"></i> Histórico
+        </button>
+        <button class="tab-button" id="tab-retrospectiva">
+            <i class="fa-solid fa-chart-simple"></i> Retrospectiva 2025
+        </button>
+    </div>
+
+    <div class="history-content" id="content-historico">
+        <h2>Histórico de atividades</h2>
+        <div class="empty-state">
+            <i class="fa-regular fa-calendar-days"></i>
+            <p>Você ainda não participou de nenhuma atividade.</p>
+            <span>Explore as oportunidades disponíveis e comece sua jornada voluntária.</span>
+        </div>
+    </div>
+
+    <div class="retrospectiva-content hidden" id="content-retrospectiva">
+
+        <div class="retrospectiva-banner">
+            <i class="fa-solid fa-award"></i>
+            <h2>Retrospectiva 2025</h2>
+            <p>Seu ano de impacto</p>
+        </div>
+
+        <div class="retrospectiva-stats-grid">
+            <div class="retrospectiva-stat-card">
+                <i class="fa-solid fa-check-circle"></i>
+                <span>Atividades Concluídas</span>
+                <strong>0</strong>
+            </div>
+            <div class="retrospectiva-stat-card">
+                <i class="fa-solid fa-clock"></i>
+                <span>Horas Dedicadas</span>
+                <strong>0</strong>
+            </div>
+            <div class="retrospectiva-stat-card">
+                <i class="fa-solid fa-star"></i>
+                <span>Causa Favorita</span>
+                <strong>---</strong>
+            </div>
+        </div>
+
+        <div class="retrospectiva-summary">
+            <strong>Rafael, você fez a diferença em 2025!</strong>
+            <span>Continue inspirando e transformando vidas através do voluntariado.</span>
+        </div>
+
+    </div> </section>
+
+        </main>
+    </div>
+<script src="app.js"></script>
+
+<script>
+    // Espera a página carregar
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // 1. Pega os botões
+        const tabHistorico = document.getElementById('tab-historico');
+        const tabRetrospectiva = document.getElementById('tab-retrospectiva');
+
+        // 2. Pega os conteúdos
+        const contentHistorico = document.getElementById('content-historico');
+        const contentRetrospectiva = document.getElementById('content-retrospectiva');
+
+        // 3. Define o que acontece ao clicar em "Histórico"
+        tabHistorico.addEventListener('click', () => {
+            // Ajusta os botões
+            tabHistorico.classList.add('active');
+            tabRetrospectiva.classList.remove('active');
+
+            // Ajusta os conteúdos
+            contentHistorico.classList.remove('hidden');
+            contentRetrospectiva.classList.add('hidden');
+        });
+
+        // 4. Define o que acontece ao clicar em "Retrospectiva"
+        tabRetrospectiva.addEventListener('click', () => {
+            // Ajusta os botões
+            tabHistorico.classList.remove('active');
+            tabRetrospectiva.classList.add('active');
+
+            // Ajusta os conteúdos
+            contentHistorico.classList.add('hidden');
+            contentRetrospectiva.classList.remove('hidden');
+        });
+
+    });
+</script>
+
+</body>
+</html>

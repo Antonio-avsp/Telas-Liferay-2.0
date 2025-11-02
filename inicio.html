@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Inicial</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <span>Voluntariado<br><strong>Liferay</strong></span>
+            </div>
+
+            <nav class="navigation">
+                <p>Navegação</p>
+                <ul>
+                    <li><a href="inicio.html" class="active"><i class="fa-solid fa-house"></i> Início</a></li>
+                    <li><a href="explorar.html"><i class="fa-solid fa-magnifying-glass"></i> Explorar</a></li>
+                   <li><a href="criar-oportunidade.html"><i class="fa-solid fa-circle-plus"></i> Criar Oportunidade</a></li>
+                    <li><a href="impacto.html"><i class="fa-solid fa-chart-line"></i> Impacto</a></li>
+                    <li><a href="testemunhos.html"><i class="fa-solid fa-comments"></i> Testemunhos</a></li>
+                    <li><a href="MeuPerfil.html"><i class="fa-solid fa-user"></i> Meu perfil</a></li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar-small">R</div>
+                    <div class="user-details">
+                        <strong>Rafael</strong>
+                        <span>Voluntariado</span>
+                    </div>
+                </div>
+                <button class="logout-button">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            
+            <div class="page-header">
+                <div>
+                    <h1>Olá, Rafael!</h1>
+                    <p>Pronto para fazer a diferença hoje?</p>
+                </div>
+                <button class="create-opportunity-btn">
+                    <i class="fa-solid fa-plus"></i> Criar Oportunidade
+                </button>
+            </div>
+
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="card-header">
+                        <span>Oportunidades abertas</span>
+                        <i class="fa-solid fa-briefcase icon-blue"></i>
+                    </div>
+                    <span class="stat-value">5</span>
+                </div>
+                <div class="stat-card">
+                    <div class="card-header">
+                        <span>Minhas horas</span>
+                        <i class="fa-solid fa-clock icon-green"></i>
+                    </div>
+                    <span class="stat-value">0h</span>
+                </div>
+                <div class="stat-card">
+                    <div class="card-header">
+                        <span>Próximas atividades</span>
+                        <i class="fa-solid fa-calendar-alt icon-teal"></i>
+                    </div>
+                    <span class="stat-value">0</span>
+                </div>
+                <div class="stat-card">
+                    <div class="card-header">
+                        <span>Voluntariados totais</span>
+                        <i class="fa-solid fa-users icon-purple"></i>
+                    </div>
+                    <span class="stat-value">5</span>
+                </div>
+            </section>
+
+            <div class="home-layout">
+                
+                <div class="main-column">
+                    <div class="widget-card">
+                        <h2>Recomendados para Você</h2>
+                        <ul class="recommendation-list">
+                            <li class="recommendation-item">
+                                <div class="item-details">
+                                    <h3>Mutirão de pintura - Escola Municipal</h3>
+                                    <span class="tag tag-purple">Educação</span>
+                                    <p>Vamos renovar a pintura de uma escola pública que atende 300 crianças...</p>
+                                    <div class="item-info">
+                                        <span><i class="fa-regular fa-calendar-days"></i> 14 de Fevereiro</span>
+                                        <span><i class="fa-solid fa-location-dot"></i> Recife</span>
+                                    </div>
+                                </div>
+                                <a href="#" class="inscricao-btn">Inscreva-se</a>
+                            </li>
+                            <li class="recommendation-item">
+                                <div class="item-details">
+                                    <h3>Plantio de Árvores - Parque Ecológico</h3>
+                                    <span class="tag tag-green">Meio ambiente</span>
+                                    <p>Participe de um dia especial de reflorestamento em um parque ecológico da cidade...</p>
+                                    <div class="item-info">
+                                        <span><i class="fa-regular fa-calendar-days"></i> 20 de Fevereiro</span>
+                                        <span><i class="fa-solid fa-location-dot"></i> São Paulo</span>
+                                    </div>
+                                </div>
+                                <a href="#" class="inscricao-btn">Inscreva-se</a>
+                            </li>
+                            <li class="recommendation-item">
+                                <div class="item-details">
+                                    <h3>Aulas de Programação para Jovens</h3>
+                                    <span class="tag tag-purple">Educação</span>
+                                    <p>Ensine conceitos básicos de programação para jovens de comunidades carentes...</p>
+                                    <div class="item-info">
+                                        <span><i class="fa-regular fa-calendar-days"></i> 28 de Fevereiro</span>
+                                        <span><i class="fa-solid fa-location-dot"></i> Online</span>
+                                    </div>
+                                </div>
+                                <a href="#" class="inscricao-btn">Inscreva-se</a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="widget-card">
+                        <h2>Minhas próximas atividades</h2>
+                        <div class="empty-state" style="padding: 30px 0;">
+                            <i class="fa-regular fa-calendar-xmark"></i>
+                            <p>Você ainda não está inscrito em nenhuma atividade.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-column">
+                    <div class="widget-card">
+                        <h2>Seu Impacto</h2>
+                        <div class="impact-circle">
+                            <span>0</span>
+                            Horas de voluntariado
+                        </div>
+                        <div class="impact-bar">
+                            <span>Atividades concluídas</span>
+                            <span>0</span>
+                        </div>
+                        <div class="impact-bar">
+                            <span>Próximas atividades</span>
+                            <span>0</span>
+                        </div>
+                        <a href="index.html" class="ver-perfil-link">Ver meu perfil</a>
+                    </div>
+                    
+                    <div class="widget-card">
+                        <h2>Testemunhos Recentes</h2>
+                        <div class="empty-state" style="padding: 30px 0;">
+                            <i class="fa-regular fa-comment-dots"></i>
+                            <p>Nenhum testemunho ainda.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+<script src="app.js"></script>
+</body>
+</html>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impacto Coletivo</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.3/chart.umd.min.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <span>Voluntariado<br><strong>Liferay</strong></span>
+            </div>
+
+            <nav class="navigation">
+                <p>Navegação</p>
+                <ul>
+                    <li><a href="inicio.html"><i class="fa-solid fa-house"></i> Início</a></li>
+                    <li><a href="explorar.html"><i class="fa-solid fa-magnifying-glass"></i> Explorar</a></li>
+                    <li><a href="criar-oportunidade.html"><i class="fa-solid fa-circle-plus"></i> Criar Oportunidade</a></li>
+                    <li><a href="impacto.html" class="active"><i class="fa-solid fa-chart-line"></i> Impacto</a></li>
+                    <li><a href="testemunhos.html"><i class="fa-solid fa-comments"></i> Testemunhos</a></li>
+                    <li><a href="MeuPerfil.html"><i class="fa-solid fa-user"></i> Meu perfil</a></li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar-small">R</div>
+                    <div class="user-details">
+                        <strong>Rafael</strong>
+                        <span>Voluntariado</span>
+                    </div>
+                </div>
+                <button class="logout-button">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            
+            <div class="page-header">
+                <h1>Impacto coletivo</h1>
+                <p>O poder da colaboração Liferay criando mundos e comunidades</p>
+            </div>
+
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="card-header">
+                        <span>Horas Totais de Voluntariado</span>
+                        <i class="fa-solid fa-clock icon-blue"></i>
+                    </div>
+                    <span class="stat-value">0h</span>
+                    <span class="card-subtitle">Total de 1000 horas</span>
+                </div>
+                <div class="stat-card">
+                    <div class="card-header">
+                        <span>Voluntários Ativos</span>
+                        <i class="fa-solid fa-users icon-green"></i>
+                    </div>
+                    <span class="stat-value">0</span>
+                    <span class="card-subtitle">Total de 320 inscritos</span>
+                </div>
+                <div class="stat-card">
+                    <div class="card-header">
+                        <span>Atividades Concluídas</span>
+                        <i class="fa-solid fa-check-circle icon-teal"></i>
+                    </div>
+                    <span class="stat-value">0</span>
+                    <span class="card-subtitle">Projetos finalizados</span>
+                </div>
+                <div class="stat-card">
+                    <div class="card-header">
+                        <span>Oportunidades Criadas</span>
+                        <i class="fa-solid fa-chart-bar icon-purple"></i>
+                    </div>
+                    <span class="stat-value">5</span>
+                    <span class="card-subtitle">Causas disponíveis</span>
+                </div>
+            </section>
+
+            <nav class="impact-tabs">
+                <button class="tab-button active" id="tab-visao-geral"><i class="fa-solid fa-chart-pie"></i> Visão geral</button>
+                <button class="tab-button" id="tab-voluntarios"><i class="fa-solid fa-users"></i> Voluntários</button>
+                <button class="tab-button" id="tab-categorias"><i class="fa-solid fa-tags"></i> Categorias</button>
+                <button class="tab-button" id="tab-geografia"><i class="fa-solid fa-map-marked-alt"></i> Geografia</button>
+            </nav>
+
+            <div id="content-visao-geral" class="tab-content">
+                <section class="charts-container">
+                    <div class="chart-card">
+                        <h2>Horas de Voluntariado (Últimos 6 Meses)</h2>
+                        <canvas id="graficoHoras"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h2>Voluntários Ativos (Últimos 6 Meses)</h2>
+                        <canvas id="graficoVoluntarios"></canvas>
+                    </div>
+                </section>
+            </div>
+
+            <div id="content-voluntarios" class="tab-content hidden">
+                <div class="chart-card"> <h2>Top 10 voluntários</h2>
+                    <div class="empty-state" style="padding: 60px 0;">
+                        <i class="fa-solid fa-user-slash" style="color: #ccc; font-size: 40px;"></i>
+                        <p style="margin-top: 20px;">Nenhum dado de voluntário para exibir ainda.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-categorias" class="tab-content hidden">
+                <section class="charts-container">
+                    <div class="chart-card">
+                        <h2>Distribuição por Categoria</h2>
+                        <canvas id="graficoCategoriaPizza"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h2>Detalhamento por Categoria</h2>
+                        <ul class="detalhamento-list">
+                            <li>
+                                <span class="detalhe-cor" style="background-color: #007bff;"></span>
+                                <div class="detalhe-info">
+                                    <strong>Educação</strong>
+                                    <span>2 Oportunidades</span>
+                                </div>
+                                <div class="detalhe-horas">
+                                    <span>Horas Dedicadas</span>
+                                    <strong>0h</strong>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="detalhe-cor" style="background-color: #ffc107;"></span>
+                                <div class="detalhe-info">
+                                    <strong>Assistência Social</strong>
+                                    <span>1 Oportunidade</span>
+                                </div>
+                                <div class="detalhe-horas">
+                                    <span>Horas Dedicadas</span>
+                                    <strong>0h</strong>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="detalhe-cor" style="background-color: #28a745;"></span>
+                                <div class="detalhe-info">
+                                    <strong>Meio Ambiente</strong>
+                                    <span>1 Oportunidade</span>
+                                </div>
+                                <div class="detalhe-horas">
+                                    <span>Horas Dedicadas</span>
+                                    <strong>0h</strong>
+                                </div>
+                            </li>
+                             <li>
+                                <span class="detalhe-cor" style="background-color: #dc3545;"></span>
+                                <div class="detalhe-info">
+                                    <strong>Cultura</strong>
+                                    <span>1 Oportunidade</span>
+                                </div>
+                                <div class="detalhe-horas">
+                                    <span>Horas Dedicadas</span>
+                                    <strong>0h</strong>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+
+            <div id="content-geografia" class="tab-content hidden">
+                <section class="charts-container">
+                    <div class="chart-card">
+                        <h2>Impacto Geográfico</h2>
+                        <ul class="impacto-geo-list">
+                            <li>
+                                <i class="fa-solid fa-location-dot" style="color: #007bff;"></i>
+                                <div class="detalhe-info">
+                                    <strong>São Paulo, Brasil</strong>
+                                    <span>1 Oportunidade</span>
+                                </div>
+                                <div class="detalhe-horas">
+                                    <span>Horas</span>
+                                    <strong>0h</strong>
+                                </div>
+                            </li>
+                             <li>
+                                <i class="fa-solid fa-location-dot" style="color: #ffc107;"></i>
+                                <div class="detalhe-info">
+                                    <strong>Belo Horizonte, Brasil</strong>
+                                    <span>1 Oportunidade</span>
+                                </div>
+                                <div class="detalhe-horas">
+                                    <span>Horas</span>
+                                    <strong>0h</strong>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-location-dot" style="color: #dc3545;"></i>
+                                <div class="detalhe-info">
+                                    <strong>Salvador, Brasil</strong>
+                                    <span>1 Oportunidade</span>
+                                </div>
+                                <div class="detalhe-horas">
+                                    <span>Horas</span>
+                                    <strong>0h</strong>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-location-dot" style="color: #28a745;"></i>
+                                <div class="detalhe-info">
+                                    <strong>Rio de Janeiro, Brasil</strong>
+                                    <span>1 Oportunidade</span>
+                                </div>
+                                <div class="detalhe-horas">
+                                    <span>Horas</span>
+                                    <strong>0h</strong>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="chart-card">
+                        <h2>Resumo Geográfico</h2>
+                        <div class="resumo-geo-card">
+                            <span>Cidades Impactadas</span>
+                            <strong>4</strong>
+                        </div>
+                         <div class="resumo-geo-card">
+                            <span>Atividades Online</span>
+                            <strong>1</strong>
+                        </div>
+                        <div class="resumo-alcance">
+                            <strong>Alcance Global</strong>
+                            <p>Nosso voluntariado está fazendo a diferença em comunidades locais e online, superando barreiras.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <section class="banner-impact">
+                <i class="fa-solid fa-handshake-angle"></i>
+                <h2>Juntos somos mais fortes</h2>
+            </section>
+
+            <section class="values-grid">
+                <div class="value-card">
+                    <div class="icon-circle"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <h3>Impacto real</h3>
+                    <p>Cada hora dedicada transforma vidas e fortalece comunidades</p>
+                </div>
+                <div class="value-card">
+                    <div class="icon-circle"><i class="fa-solid fa-people-group"></i></div>
+                    <h3>Cultura de colaboração</h3>
+                    <p>Unidos pela causa comum de fazer a diferença</p>
+                </div>
+                <div class="value-card">
+                    <div class="icon-circle"><i class="fa-solid fa-chart-line"></i></div>
+                    <h3>Crescimento contínuo</h3>
+                    <p>Expandindo nosso impacto social mês após mês</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+<script src="app.js"></script>
+
+<script>
+    // Espera a página carregar antes de tentar desenhar
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- GRÁFICO 1: Horas de Voluntariado (Gráfico de Barras) ---
+        const ctxHoras = document.getElementById('graficoHoras');
+        if (ctxHoras) { // Verifica se o elemento existe
+            new Chart(ctxHoras, {
+                type: 'bar', 
+                data: {
+                    labels: ['Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out'],
+                    datasets: [{
+                        label: 'Horas de Voluntariado',
+                        data: [12, 19, 3, 17, 6, 8], 
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: { y: { beginAtZero: true } },
+                    plugins: { legend: { display: false } } 
+                }
+            });
+        }
+
+        // --- GRÁFICO 2: Voluntários Ativos (Gráfico de Linha) ---
+        const ctxVoluntarios = document.getElementById('graficoVoluntarios');
+        if (ctxVoluntarios) { // Verifica se o elemento existe
+            new Chart(ctxVoluntarios, {
+                type: 'line', 
+                data: {
+                    labels: ['Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out'],
+                    datasets: [{
+                        label: 'Voluntários Ativos',
+                        data: [1, 2, 2, 3, 5, 4], 
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    scales: { y: { beginAtZero: true } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+        
+        // --- NOVO GRÁFICO 3: Distribuição por Categoria (Gráfico de Pizza) ---
+        const ctxCategoria = document.getElementById('graficoCategoriaPizza');
+        if (ctxCategoria) { // Verifica se o elemento existe
+            new Chart(ctxCategoria, {
+                type: 'doughnut', // Tipo Pizza (doughnut é com furo no meio)
+                data: {
+                    labels: [
+                        'Educação (40%)',
+                        'Assistência Social (20%)',
+                        'Meio Ambiente (20%)',
+                        'Cultura (20%)'
+                    ],
+                    datasets: [{
+                        label: 'Distribuição',
+                        data: [2, 1, 1, 1], // 2 de Educação, 1 de cada dos outros
+                        backgroundColor: [
+                            '#007bff',  // Educação
+                            '#ffc107',  // Assistência Social
+                            '#28a745',  // Meio Ambiente
+                            '#dc3545'   // Cultura
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                     plugins: {
+                        legend: {
+                            position: 'bottom', // Coloca a legenda embaixo
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Pega todos os botões
+        const tabVisaoGeral = document.getElementById('tab-visao-geral');
+        const tabVoluntarios = document.getElementById('tab-voluntarios');
+        const tabCategorias = document.getElementById('tab-categorias');
+        const tabGeografia = document.getElementById('tab-geografia');
+        
+        // Pega todos os conteúdos
+        const contentVisaoGeral = document.getElementById('content-visao-geral');
+        const contentVoluntarios = document.getElementById('content-voluntarios');
+        const contentCategorias = document.getElementById('content-categorias');
+        const contentGeografia = document.getElementById('content-geografia');
+        
+        // Agrupa para facilitar
+        const tabButtons = [tabVisaoGeral, tabVoluntarios, tabCategorias, tabGeografia];
+        const tabContents = [contentVisaoGeral, contentVoluntarios, contentCategorias, contentGeografia];
+
+        function showTab(tabId) {
+            // Esconde todos os conteúdos
+            tabContents.forEach(content => {
+                if (content) content.classList.add('hidden');
+            });
+            // Remove 'active' de todos os botões
+            tabButtons.forEach(button => {
+                if (button) button.classList.remove('active');
+            });
+            
+            // Mostra o conteúdo e ativa o botão correto
+            const contentToShow = document.getElementById('content-' + tabId);
+            const buttonToActivate = document.getElementById('tab-' + tabId);
+            
+            if (contentToShow) contentToShow.classList.remove('hidden');
+            if (buttonToActivate) buttonToActivate.classList.add('active');
+        }
+
+        // Adiciona os 'click' listeners
+        if (tabVisaoGeral) tabVisaoGeral.addEventListener('click', () => showTab('visao-geral'));
+        if (tabVoluntarios) tabVoluntarios.addEventListener('click', () => showTab('voluntarios'));
+        if (tabCategorias) tabCategorias.addEventListener('click', () => showTab('categorias'));
+        if (tabGeografia) tabGeografia.addEventListener('click', () => showTab('geografia'));
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Nova Oportunidade</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <span>Voluntariado<br><strong>Liferay</strong></span>
+            </div>
+
+            <nav class="navigation">
+                <p>Navegação</p>
+                <ul>
+                    <li><a href="inicio.html"><i class="fa-solid fa-house"></i> Início</a></li>
+                    <li><a href="explorar.html"><i class="fa-solid fa-magnifying-glass"></i> Explorar</a></li>
+                    <li><a href="criar-oportunidade.html" class="active"><i class="fa-solid fa-circle-plus"></i> Criar Oportunidade</a></li>
+                    <li><a href="impacto.html"><i class="fa-solid fa-chart-line"></i> Impacto</a></li>
+                    <li><a href="testemunhos.html"><i class="fa-solid fa-comments"></i> Testemunhos</a></li>
+                    <li><a href="MeuPerfil.html"><i class="fa-solid fa-user"></i> Meu perfil</a></li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar-small">R</div>
+                    <div class="user-details">
+                        <strong>Rafael</strong>
+                        <span>Voluntariado</span>
+                    </div>
+                </div>
+                <button class="logout-button">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            
+            <div class="form-header">
+                <h1>Criar Nova Oportunidade</h1>
+                <p>Compartilhe uma causa e engaje seus colegas</p>
+            </div>
+
+            <form class="create-form" action="explorar.html" method="get">
+                
+                <section class="form-section">
+                    <h3>Informações Básicas</h3>
+                    <div class="form-row">
+                        <label for="titulo">Título da oportunidade *</label>
+                        <input type="text" id="titulo" placeholder="Ex: Mutirão de Pintura - Escola Municipal">
+                    </div>
+                    <div class="form-row">
+                        <label for="descricao">Descrição *</label>
+                        <textarea id="descricao" rows="4" placeholder="Descreva a oportunidade, o que será feito, e o impacto esperado"></textarea>
+                    </div>
+                    <div class="form-grid half">
+                        <div class="form-row">
+                            <label for="ong">Organização/ONG</label>
+                            <input type="text" id="ong" placeholder="Nome da instituição parceira">
+                        </div>
+                        <div class="form-row">
+                            <label for="tipo">Tipo da Atividade*</label>
+                            <input type="text" id="tipo" placeholder="Educação">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <h3>Local e data</h3>
+                    <div class="form-grid third">
+                        <div class="form-row">
+                            <label for="formato">Formato</label>
+                            <input type="text" id="formato" placeholder="Presencial">
+                        </div>
+                        <div class="form-row">
+                            <label for="cidade">Cidade</label>
+                            <input type="text" id="cidade" placeholder="Recife">
+                        </div>
+                        <div class="form-row">
+                            <label for="pais">País</label>
+                            <input type="text" id="pais" placeholder="Brasil">
+                        </div>
+                    </div>
+                    <div class="form-grid third">
+                        <div class="form-row">
+                            <label for="data">Data</label>
+                            <input type="number" id="data" placeholder="dd/mm/aaaa">
+                        </div>
+                        <div class="form-row">
+                            <label for="horario">Horário</label>
+                            <input type="number" id="horario" placeholder="--:--">
+                        </div>
+                        <div class="form-row">
+                            <label for="duracao">Duração (horas)</label>
+                            <input type="number" id="duracao" placeholder="dd/mm/aaaa">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <h3>Detalhes adicionais</h3>
+                    <div class="form-row">
+                        <label for="num_voluntarios">Número máximo de voluntários</label>
+                        <input type="number" id="num_voluntarios" placeholder="10">
+                    </div>
+                    <div class="form-row">
+                        <label for="habilidades">Habilidades Desejadas</label>
+                        <div class="input-with-button">
+                            <input type="text" id="habilidades" placeholder="Ex: Pintura, trabalhos manuais...">
+                            <button type="button" class="add-btn"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+                    <div class="form-grid half">
+                        <div class="form-row">
+                            <label for="email_contato">Email de contato</label>
+                            <input type="email" id="email_contato" placeholder="rafael126@gmail.com">
+                        </div>
+                        <div class="form-row">
+                            <label for="telefone_contato">Telefone de contato</label>
+                            <input type="number" id="telefone_contato" placeholder="(99) 99999-9999">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <h3>Imagem da Oportunidade</h3>
+                    <div class="upload-box">
+                        <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                        <span>Fazer upload</span>
+                        <p>Número máximo de voluntários: 1</p>
+                        <input type="file" class="file-input">
+                    </div>
+                </section>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel">Cancelar</button>
+                    <button type="submit" class="btn-submit">
+                        <i class="fa-solid fa-plus"></i> Criar Oportunidade
+                    </button>
+                </div>
+
+            </form>
+
+        </main>
+    </div>
+<script src="app.js"></script>
+</body>
+</html>
+</body>
+</html>

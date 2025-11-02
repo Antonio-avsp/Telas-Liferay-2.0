@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testemunhos</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body class="testemunhos-body"> <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <span>Voluntariado<br><strong>Liferay</strong></span>
+            </div>
+
+            <nav class="navigation">
+                <p>Navegação</p>
+                <ul>
+                    <li><a href="inicio.html"><i class="fa-solid fa-house"></i> Início</a></li>
+                    <li><a href="explorar.html"><i class="fa-solid fa-magnifying-glass"></i> Explorar</a></li>
+                    <li><a href="criar-oportunidade.html"><i class="fa-solid fa-circle-plus"></i> Criar Oportunidade</a></li>
+                    <li><a href="impacto.html"><i class="fa-solid fa-chart-line"></i> Impacto</a></li>
+                    <li><a href="testemunhos.html" class="active"><i class="fa-solid fa-comments"></i> Testemunhos</a></li>
+                    <li><a href="MeuPerfil.html"><i class="fa-solid fa-user"></i> Meu perfil</a></li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar-small">R</div>
+                    <div class="user-details">
+                        <strong>Rafael</strong>
+                        <span>Voluntariado</span>
+                    </div>
+                </div>
+                <button class="logout-button">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            
+            <div class="page-header">
+                <h1>Testemunhos</h1>
+                <p>Histórias inspiradoras de quem faz a diferença</p>
+            </div>
+
+            <div class="testemunhos-filter-bar">
+                <div class="testemunhos-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Buscar testemunhos...">
+                </div>
+                <select class="testemunhos-dropdown">
+                    <option value="recentes">Mais recentes</option>
+                    <option value="antigos">Mais antigos</option>
+                </select>
+                <select class="testemunhos-dropdown">
+                    <option value="todas">Todas avaliações</option>
+                    <option value="5-estrelas">5 estrelas</option>
+                    <option value="4-estrelas">4 estrelas</option>
+                </select>
+            </div>
+
+            <div class="testemunhos-empty-state">
+                <div class="empty-icon">
+                    <i class="fa-regular fa-heart"></i>
+                </div>
+                <h2>Nenhum testemunho encontrado</h2>
+                <p>Tente ajustar seus filtros de busca</p>
+            </div>
+
+        </main>
+    </div>
+<script src="app.js"></script>
+</body>
+</html>
+</body>
+</html>

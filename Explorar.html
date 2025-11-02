@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorar</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <span>Voluntariado<br><strong>Liferay</strong></span>
+            </div>
+
+            <nav class="navigation">
+    <p>Navegação</p>
+    <ul>
+        <li><a href="inicio.html"><i class="fa-solid fa-house"></i> Início</a></li>
+        <li><a href="explorar.html" class="active"><i class="fa-solid fa-magnifying-glass"></i> Explorar</a></li>
+        <li><a href="criar-oportunidade.html"><i class="fa-solid fa-circle-plus"></i> Criar Oportunidade</a></li>
+        <li><a href="impacto.html"><i class="fa-solid fa-chart-line"></i> Impacto</a></li>
+        <li><a href="testemunhos.html"><i class="fa-solid fa-comments"></i> Testemunhos</a></li>
+        <li><a href="MeuPerfil.html"><i class="fa-solid fa-user"></i> Meu perfil</a></li>
+    </ul>
+</nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar-small">R</div>
+                    <div class="user-details">
+                        <strong>Rafael</strong>
+                        <span>Voluntariado</span>
+                    </div>
+                </div>
+                <button class="logout-button">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            
+            <div class="explore-header">
+                <h1>Explorar Oportunidades</h1>
+                <p>Encontre a causa perfeita para você</p>
+            </div>
+
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Buscar por título, descrição ou organização...">
+                </div>
+                <button class="filter-button">
+                    <i class="fa-solid fa-filter"></i>
+                    Filtrar
+                </button>
+            </div>
+
+            <!-- Colocar esses cards de imagens no Banco de dados SQL real para otimizar o tempo e ser mais rapido -->
+             
+            <section class="opportunity-grid">
+
+                <div class="opportunity-card">
+                    <img src="images/explorar-pintura.jpeg" alt="Mutirão de pintura">
+                    <div class="card-content">
+                        <span class="tag tag-blue">Pintura</span>
+                        <h3>Mutirão de pintura - Escola Municipal</h3>
+                        <p>Vamos nos reunir no fim de semana para pintar o muro da escola uma ótima oportunidade para quem quer ter o impacto...</p>
+                        <div class="card-info">
+                            <span><i class="fa-solid fa-building"></i>  Instituto Educação para Todos</span>
+                            <span><i class="fa-solid fa-location-dot"></i> Recife </span>
+                            <span><i class="fa-solid fa-calendar-days"></i> 14 de Fevereiro</span>
+                            <span><i class="fa-regular fa-clock"></i> 08:00</span>
+                        </div>
+                        <a href="explorar-detalhe.html?id=pintura" class="details-button">Ver detalhes</a>
+                    </div>
+                </div>
+
+                <div class="opportunity-card">
+                    <img src="images/explorar-plantio.jpeg" alt="Plantio de Árvores">
+                    <div class="card-content">
+                        <span class="tag tag-green">Meio ambiente</span>
+                        <h3>Plantio de árvores - Parque Ecológico</h3>
+                        <p>Participe de um dia incrível de reflorestamento em um parque... esta ação visa... o local.</p>
+                        <div class="card-info">
+                            <span><i class="fa-solid fa-building"></i>  SOS Mata Atlantica</span>
+                            <span><i class="fa-solid fa-location-dot"></i> São Paulo</span>
+                            <span><i class="fa-solid fa-calendar-days"></i> 21 de Fevereiro</span>
+                            <span><i class="fa-regular fa-clock"></i> 07:00</span>
+                        </div>
+                        <a href="explorar-detalhe.html?id=plantio" class="details-button">Ver detalhes</a>
+                    </div>
+                </div>
+
+                <div class="opportunity-card">
+                    <img src="images/explorar-programacao.jpeg" alt="Aulas de Programação">
+                    <div class="card-content">
+                        <span class="tag tag-purple">Educação</span>
+                        <h3>Aulas de Programação para Jovens</h3>
+                        <p>Ensine conceitos básicos de programação para jovens... Python, JavaScript... futuro desses jovens.</p>
+                        <div class="card-info">
+                            <span><i class="fa-solid fa-building"></i> Code.org Brasil</span>
+                            <span><i class="fa-solid fa-location-dot"></i> Online</span>
+                            <span><i class="fa-solid fa-calendar-days"></i> 26 de Fevereiro</span>
+                            <span><i class="fa-regular fa-clock"></i> 19:00</span>
+                        </div>
+                        <a href="explorar-detalhe.html?id=programacao" class="details-button">Ver detalhes</a>
+                    </div>
+                </div>
+
+                <div class="opportunity-card">
+                    <img src="images/explorar-idosos.jpeg" alt="Visita ao lar de idosos">
+                    <div class="card-content">
+                        <span class="tag tag-yellow">Apoio social</span>
+                        <h3>Visita ao lar de idosos</h3>
+                        <p>Passe uma tarde agradável com os residentes... converse, jogue... traga sua companhia...</p>
+                        <div class="card-info">
+                            <span><i class="fa-solid fa-building"></i> Associação Vida Plena</span>
+                            <span><i class="fa-regular fa-calendar-days"></i> 01 de março</span>
+                            <span><i class="fa-solid fa-location-dot"></i> Recife</span>
+                            <span><i class="fa-regular fa-clock"></i> 15:00</span>
+                        </div>
+                        <a href="explorar-detalhe.html?id=idosos" class="details-button">Ver detalhes</a>
+                    </div>
+                </div>
+
+                <div class="opportunity-card">
+                    <img src="images/explorar-arte.jpeg" alt="Oficina de arte">
+                    <div class="card-content">
+                        <span class="tag tag-red">Cultura</span>
+                        <h3>Oficina de arte para as crianças</h3>
+                        <p>Conduza uma oficina de arte (pintura, desenho)... para crianças de 7 a 10 anos. O objetivo é...</p>
+                        <div class="card-info">
+                            <span><i class="fa-solid fa-building"></i> Arte na Periferia</span>
+                            <span><i class="fa-regular fa-calendar-days"></i> 03 de março</span>
+                            <span><i class="fa-solid fa-location-dot"></i> Rio de Janeiro</span>
+                            <span><i class="fa-regular fa-clock"></i> 09:00</span>
+                        </div>
+                        <a href="explorar-detalhe.html?id=arte" class="details-button">Ver detalhes</a>
+                    </div>
+                </div>
+
+                </section>
+        </main>
+    </div>
+<script src="app.js"></script>
+</body>
+</html>
+</body>
+</html>

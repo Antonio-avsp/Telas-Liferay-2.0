@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Voluntariado Liferay</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body class="login-body">
+
+    <div class="login-container">
+        
+        <div class="login-logo-frame">
+    <div class="login-logo-content">
+        <i class="fa-solid fa-heart"></i> <span>Liferay</span>
+    </div>
+</div>
+
+        <h2>Bem vindo ao Voluntariado Liferay</h2>
+        <p>Faça login para continuar</p>
+
+        <form id="login-form">
+            
+            <div class="input-group">
+                <label for="email">Email</label>
+                <div class="input-wrapper">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="senha">Senha</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="senha" name="senha" placeholder="•••••••••">
+                </div>
+            </div>
+
+            <p id="error-message" class="error-text"></p>
+            
+            <button type="submit" class="login-btn">Login</button>
+        
+        </form> 
+
+        <div class="login-links">
+            <a href="#">Esqueceu a senha?</a>
+            <a href="#">Criar uma conta</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async function(event) {
+            // 1. Impede o envio tradicional
+            event.preventDefault();
+
+            // 2. Pega os valores
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const errorMessage = document.getElementById('error-message');
+
+            try {
+                // 3. Envia os dados para o BACK (a nova parte!)
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email, senha: senha })
+                });
+
+                // 4. Espera a resposta do back-end
+                const data = await response.json();
+
+                // 5. Verifica a RESPOSTA DO SERVIDOR
+                if (data.success) {
+                    
+                    localStorage.setItem('userLoggedIn', 'true');
+                    window.location.href = 'inicio.html';
+                } else {
+                    
+                    errorMessage.textContent = data.message; // Ex: 'Email ou senha inválidos.'
+                }
+
+            } catch (error) {
+                // Erro de rede (ex: servidor desligado)
+                console.error('Erro ao tentar fazer login:', error);
+                errorMessage.textContent = 'Não foi possível conectar ao servidor.';
+            }
+        });
+    </script>
+</body>
+</html>
+
+</body>
+</html>

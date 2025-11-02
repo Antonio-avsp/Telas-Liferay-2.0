@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="detalhe-titulo-pagina">Detalhe da Oportunidade</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <span>Voluntariado<br><strong>Liferay</strong></span>
+            </div>
+            <nav class="navigation">
+                <p>Navegação</p>
+                <ul>
+                    <li><a href="inicio.html"><i class="fa-solid fa-house"></i> Início</a></li>
+                    <li><a href="explorar.html" class="active"><i class="fa-solid fa-magnifying-glass"></i> Explorar</a></li>
+                    <li><a href="criar-oportunidade.html"><i class="fa-solid fa-circle-plus"></i> Criar Oportunidade</a></li>
+                    <li><a href="impacto.html"><i class="fa-solid fa-chart-line"></i> Impacto</a></li>
+                    <li><a href="testemunhos.html"><i class="fa-solid fa-comments"></i> Testemunhos</a></li>
+                    <li><a href="MeuPerfil.html"><i class="fa-solid fa-user"></i> Meu perfil</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar-small">R</div>
+                    <div class="user-details">
+                        <strong>Rafael</strong>
+                        <span>Voluntariado</span>
+                    </div>
+                </div>
+                <button class="logout-button">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+
+            <header class="detail-page-header">
+                <a href="explorar.html" class="back-link">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar
+                </a>
+                
+                <button class="create-opportunity-btn-header" style="background-color: #d9534f;">
+                    <i class="fa-solid fa-trash"></i> Excluir Oportunidade
+                </button>
+            </header>
+
+            <div class="detail-banner-image">
+                <img src="images/explorar-pintura.jpeg" alt="Banner da oportunidade" id="detalhe-imagem">
+            </div>
+
+            <div class="detail-layout">
+
+                <div class="detail-main-column">
+                    <header class="detail-content-header">
+                        <div>
+                            <span class="tag tag-blue" id="detalhe-tag">Pintura</span>
+                            <h2 id="detalhe-titulo">Mutirão de pintura - Escola Estadual</h2>
+                        </div>
+                        <button class="share-button">
+                            <i class="fa-solid fa-share-nodes"></i>
+                        </button>
+                    </header>
+
+                    <section class="detail-info-boxes">
+                        <div class="info-box">
+                            <i class="fa-regular fa-calendar-days"></i>
+                            <span>Data</span>
+                            <strong id="detalhe-data">--</strong>
+                        </div>
+                        <div class="info-box">
+                            <i class="fa-regular fa-clock"></i>
+                            <span>Horário</span>
+                            <strong id="detalhe-horario">--</strong>
+                        </div>
+                        <div class="info-box">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span>Local</span>
+                            <strong id="detalhe-local">--</strong>
+                        </div>
+                        <div class="info-box">
+                            <i class="fa-solid fa-users"></i>
+                            <span>Inscritos</span>
+                            <strong id="detalhe-inscritos">--</strong>
+                        </div>
+                    </section>
+
+                    <section class="detail-section">
+                        <h3><i class="fa-solid fa-star"></i> Sobre a oportunidade</h3>
+                        <p id="detalhe-descricao">...</p>
+                    </section>
+
+                    <section class="detail-section">
+                        <h3>Habilidades Desejadas</h3>
+                        <div class="tag-list" id="detalhe-habilidades">
+                            </div>
+                    </section>
+
+                    <section class="detail-section detail-testimonials">
+    
+    <div class="testimonial-header">
+        <h3>Testemunhos (<span id="detalhe-testemunhos-num">0</span>)</h3>
+    </div>
+
+    <div class="empty-testimonial">
+        <i class="fa-regular fa-comments"></i>
+        <span id="detalhe-testemunhos-msg">Seja o primeiro a compartilhar uma experiência</span>
+    </div>
+</section>
+                </div>
+
+                <aside class="detail-sidebar-column">
+                    <div class="action-card">
+                        <h4>Participe desta oportunidade</h4>
+                        <p>Faça a diferença e contribua para uma causa importante</p>
+                        <button class="btn-inscricao">
+                            <i class="fa-solid fa-heart"></i> Inscrever-se
+                        </button>
+                    </div>
+
+                    <div class="action-card">
+                        <h4>Organização</h4>
+                        <p id="detalhe-org-nome">Nome da Organização</p>
+                        <small><i class="fa-regular fa-envelope"></i> <span id="detalhe-org-email">...</span></small>
+                    </div>
+
+                    <a href="#" class="action-card-link">
+                        <h4><i class="fa-solid fa-users"></i> Voluntários Inscritos</h4>
+                    </a>
+                </aside>
+
+            </div> </main>
+    </div>
+    
+    <script src="app.js"></script>
+
+    <script>
+        // Espera todo o HTML ser carregado
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // 1. Nosso "Mini Banco de Dados" com as informações
+            const oportunidades = {
+                'pintura': {
+                    titulo: "Mutirão de pintura - Escola Municipal",
+                    tag: "Pintura",
+                    tagClass: "tag-blue",
+                    imagem: "images/explorar-pintura.jpeg", // Imagem da tela Explorar
+                    data: "14 de Fevereiro de 2025",
+                    horario: "08:00",
+                    local: "Recife, Brasil",
+                    inscritos: "1 / 20",
+                    descricao: "Vamos nos reunir no fim de semana para pintar o muro da escola... uma ótima oportunidade para quem quer ter o impacto...",
+                    habilidades: ["Pintura", "Trabalho em equipe"],
+                    orgNome: "Instituto Educação para Todos",
+                    orgEmail: "contato@educa.org.br"
+                },
+                'plantio': {
+                    titulo: "Plantio de Árvores - Parque Ecológico",
+                    tag: "Meio ambiente",
+                    tagClass: "tag-green",
+                    imagem: "images/explorar-plantio.jpeg", // Imagem do "image_4fb1e1.jpg"
+                    data: "21 de Fevereiro de 2025",
+                    horario: "07:00",
+                    local: "São Paulo, Brasil",
+                    inscritos: "0 / 50",
+                    descricao: "Participe de um dia especial de reflorestamento em um parque ecológico da cidade. Vamos plantar 500 mudas nativas para recuperação da mata ciliar. Inclui café da manhã e almoço. Contribua para um futuro mais verde e sustentável!",
+                    habilidades: ["Disposição física", "Amor pela natureza"],
+                    orgNome: "SOS Mata Atlântica",
+                    orgEmail: "voluntarios@sosma.org.br"
+                },
+                'programacao': {
+                    titulo: "Aulas de Programação para Jovens",
+                    tag: "Educação",
+                    tagClass: "tag-purple",
+                    imagem: "images/explorar-programacao.jpeg", // Imagem do "image_4fb208.jpg"
+                    data: "26 de Fevereiro de 2025",
+                    horario: "19:00",
+                    local: "Online",
+                    inscritos: "0 / 10",
+                    descricao: "Ensine conceitos básicos de programação para jovens de comunidades carentes. As aulas são online, 2x por semana. Você pode escolher ensinar Python, JavaScript ou desenvolvimento web. Uma chance de multiplicar conhecimento e abrir portas para o futuro desses jovens!",
+                    habilidades: ["Programação", "Didática", "Paciência"],
+                    orgNome: "Code.org Brasil",
+                    orgEmail: "brasil@code.org"
+                },
+                'idosos': {
+                    titulo: "Visita ao Lar de Idosos",
+                    tag: "Assistência Social",
+                    tagClass: "tag-yellow",
+                    imagem: "images/explorar-idosos.jpeg", // Imagem do "image_4fb5c7.jpg"
+                    data: "01 de março de 2025",
+                    horario: "15:00",
+                    local: "Recife, Brasil",
+                    inscritos: "0 / 15",
+                    descricao: "Passe uma tarde agradável com os residentes de um lar de idosos. Atividades incluem conversas, jogos, leitura e música. Sua companhia faz toda diferença para quem muitas vezes se sente sozinho. Venha espalhar alegria e carinho!",
+                    habilidades: ["Empatia", "Comunicação"],
+                    orgNome: "Associação Vida Plena",
+                    orgEmail: "contato@vidaplena.org.br"
+                },
+                'arte': {
+                    titulo: "Oficina de Arte para Crianças",
+                    tag: "Cultura",
+                    tagClass: "tag-red",
+                    imagem: "images/explorar-arte.jpeg", // Imagem do "image_4fb890.jpg"
+                    data: "03 de março de 2025",
+                    horario: "09:00",
+                    local: "Rio de Janeiro, Brasil",
+                    inscritos: "0 / 8",
+                    descricao: "Conduza uma oficina de arte (pintura, desenho, artesanato) para crianças em situação de vulnerabilidade. Materiais fornecidos. O objetivo é estimular a criatividade e proporcionar momentos de alegria e expressão artística.",
+                    habilidades: ["Arte", "Criatividade", "Trabalho com crianças"],
+                    orgNome: "Arte na Periferia",
+                    orgEmail: "oficinas@artenaperiferia.org"
+                }
+            };
+
+            // 2. Descobrir qual página carregar
+            const urlParams = new URLSearchParams(window.location.search);
+            const oportunidadeId = urlParams.get('id'); // Pega o "plantio", "arte", etc.
+
+            // 3. Buscar os dados da oportunidade correta
+            // Se o ID for inválido ou não existir, usa 'pintura' como padrão
+            const dados = oportunidades[oportunidadeId] || oportunidades['pintura'];
+
+            // 4. Preencher a página com os dados
+            
+            // Preenche o Título da Aba do Navegador
+            document.getElementById('detalhe-titulo-pagina').textContent = dados.titulo;
+            
+            // Preenche o Banner
+            document.getElementById('detalhe-imagem').src = dados.imagem;
+            document.getElementById('detalhe-imagem').alt = dados.titulo;
+
+            // Preenche o Cabeçalho do Conteúdo
+            document.getElementById('detalhe-tag').textContent = dados.tag;
+            document.getElementById('detalhe-tag').className = 'tag ' + dados.tagClass; // Muda a cor da tag
+            document.getElementById('detalhe-titulo').textContent = dados.titulo;
+
+            // Preenche as caixas de informação
+            document.getElementById('detalhe-data').textContent = dados.data;
+            document.getElementById('detalhe-horario').textContent = dados.horario;
+            document.getElementById('detalhe-local').textContent = dados.local;
+            document.getElementById('detalhe-inscritos').textContent = dados.inscritos;
+            
+            // Preenche a Descrição
+            document.getElementById('detalhe-descricao').textContent = dados.descricao;
+
+            // Preenche as Habilidades
+            const habilidadesContainer = document.getElementById('detalhe-habilidades');
+            habilidadesContainer.innerHTML = ''; // Limpa o container
+            dados.habilidades.forEach(habilidade => {
+                const tagElement = document.createElement('span');
+                tagElement.className = 'skill-tag';
+                tagElement.textContent = habilidade;
+                habilidadesContainer.appendChild(tagElement);
+            });
+
+            // Preenche a barra lateral de Ação
+            document.getElementById('detalhe-org-nome').textContent = dados.orgNome;
+            document.getElementById('detalhe-org-email').textContent = dados.orgEmail;
+
+        });
+    </script>
+</body>
+</html>
