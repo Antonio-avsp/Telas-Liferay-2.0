@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+  
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model endereco {
+  idEndereco                Int         @id @default(autoincrement())
+  rua                       String      @db.VarChar(45)
+  numeracao                 String?     @db.VarChar(45)
+  CEP                       String?     @db.VarChar(45)
+  BAIRRO                    String?     @db.VarChar(45)
+  cidade                    String?     @db.VarChar(45)
+  instituicao_idinstituicao Int
+  estado                    String?     @db.VarChar(45)
+  complemento               String?     @db.VarChar(45)
+  instituicao               instituicao @relation(fields: [instituicao_idinstituicao], references: [idinstituicao], onDelete: NoAction, map: "fk_endereco_instituicao1")
+
+  @@index([instituicao_idinstituicao], map: "fk_endereco_instituicao1_idx")
+}
+
+model inscricao {
+  usuario_cpf                 Int
+  oportunidade_idoportunidade Int
+  data_inscricao              DateTime?    @default(now()) @db.DateTime(0)
+  status                      String?      @default("Inscrito") @db.VarChar(45)
+  oportunidade                oportunidade @relation(fields: [oportunidade_idoportunidade], references: [idoportunidade], onDelete: NoAction, map: "fk_usuario_has_oportunidade_oportunidade1")
+  usuario                     usuario      @relation(fields: [usuario_cpf], references: [cpf], onDelete: NoAction, map: "fk_usuario_has_oportunidade_usuario1")
+
+  @@id([usuario_cpf, oportunidade_idoportunidade])
+  @@index([oportunidade_idoportunidade], map: "fk_usuario_has_oportunidade_oportunidade1_idx")
+  @@index([usuario_cpf], map: "fk_usuario_has_oportunidade_usuario1_idx")
+}
+
+model instituicao {
+  idinstituicao       Int            @id @default(autoincrement())
+  nomeInstituicao     String         @db.VarChar(45)
+  cnpj                String?        @db.VarChar(45)
+  tipoEstabelecimento String?        @db.VarChar(45)
+  email_contato       String?        @db.VarChar(45)
+  telefone_contato    String?        @db.VarChar(20)
+  endereco            endereco[]
+  oportunidade        oportunidade[]
+}
+
+model oportunidade {
+  idoportunidade                        Int               @id @default(autoincrement())
+  titulo                                String            @db.VarChar(100)
+  descricao                             String?           @db.Text
+  data_evento                           DateTime?         @db.Date
+  horario                               String?           @db.VarChar(5)
+  duracao_horas                         Int?
+  local_evento                          String?           @db.VarChar(100)
+  num_vagas                             Int?
+  habilidades_desejadas                 String?           @db.VarChar(255)
+  imagem_url                            String?           @db.VarChar(255)
+  usuario_cpf_criador                   Int
+  instituicao_idinstituicao             Int
+  tipo_voluntariado_idtipo_voluntariado Int
+  inscricao                             inscricao[]
+  instituicao                           instituicao       @relation(fields: [instituicao_idinstituicao], references: [idinstituicao], onDelete: NoAction, map: "fk_oportunidade_instituicao1")
+  tipo_voluntariado                     tipo_voluntariado @relation(fields: [tipo_voluntariado_idtipo_voluntariado], references: [idtipo_voluntariado], onDelete: NoAction, map: "fk_oportunidade_tipo_voluntariado1")
+  usuario                               usuario           @relation(fields: [usuario_cpf_criador], references: [cpf], onDelete: NoAction, map: "fk_oportunidade_usuario1")
+  testemunhos                           testemunhos[]
+
+  @@index([instituicao_idinstituicao], map: "fk_oportunidade_instituicao1_idx")
+  @@index([tipo_voluntariado_idtipo_voluntariado], map: "fk_oportunidade_tipo_voluntariado1_idx")
+  @@index([usuario_cpf_criador], map: "fk_oportunidade_usuario1_idx")
+}
+
+model testemunhos {
+  idtestemunhos               Int          @id @default(autoincrement())
+  data                        DateTime?    @db.Date
+  texto                       String?      @db.VarChar(250)
+  usuario_cpf                 Int
+  oportunidade_idoportunidade Int
+  oportunidade                oportunidade @relation(fields: [oportunidade_idoportunidade], references: [idoportunidade], onDelete: NoAction, map: "fk_testemunhos_oportunidade1")
+  usuario                     usuario      @relation(fields: [usuario_cpf], references: [cpf], onDelete: NoAction, map: "fk_testemunhos_usuario1")
+
+  @@index([oportunidade_idoportunidade], map: "fk_testemunhos_oportunidade1_idx")
+  @@index([usuario_cpf], map: "fk_testemunhos_usuario1_idx")
+}
+
+model tipo_voluntariado {
+  idtipo_voluntariado Int            @id @default(autoincrement())
+  tipo                String?        @db.VarChar(45)
+  oportunidade        oportunidade[]
+}
+
+model usuario {
+  cpf          Int            @id
+  nomeUsuario  String         @db.VarChar(45)
+  login        String         @db.VarChar(45)
+  senha        String         @db.VarChar(45)
+  email        String?        @db.VarChar(45)
+  cargaHoraria Int?           @default(0)
+  inscricao    inscricao[]
+  oportunidade oportunidade[]
+  testemunhos  testemunhos[]
+}
+

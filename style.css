@@ -618,6 +618,31 @@ border-bottom: 3px solid #007bff;
 }
 
 
+/* --- Botão "Inscreva-se" --- */
+.inscricao-btn-explorar {
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Espaço entre o ícone e o texto */
+
+    text-align: center;
+    background-color: #007bff; /* Cor primária azul */
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background-color 0.2s;
+
+    margin-top: 10px; /* Espaço entre os dois botões */
+}
+
+.inscricao-btn-explorar:hover {
+    background-color: #0056b3;
+}
+
+
 /* ==== ESTILOS DA PÁGINA INICIO ==== */
 
 .page-header {
@@ -968,8 +993,8 @@ transition: all 0.2s ease-in-out;
 
 /* Logo */
 .login-logo-frame {
-    width: 160px;
-    height: 160px;
+    width: 240px;
+    height: 240px;
     border: 4px solid #007bff;
     border-radius: 50%;
     display: grid;
@@ -1173,6 +1198,16 @@ transition: all 0.2s ease-in-out;
     font-size: 14px;
     font-family: Arial, sans-serif;
     box-sizing: border-box; /* Garante que o padding não estoure */
+}
+.form-row select { 
+width: 100%;
+padding: 12px 15px;
+border: 1px solid #ddd;
+border-radius: 8px;
+font-size: 14px;
+font-family: Arial, sans-serif;
+ box-sizing: border-box; 
+    background-color: #fff; 
 }
 
 .form-row textarea {

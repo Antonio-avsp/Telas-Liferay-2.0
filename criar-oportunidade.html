@@ -51,7 +51,7 @@
                 <p>Compartilhe uma causa e engaje seus colegas</p>
             </div>
 
-            <form class="create-form" action="explorar.html" method="get">
+            <form class="create-form" id="opportunity-form"></form>
                 
                 <section class="form-section">
                     <h3>Informações Básicas</h3>
@@ -79,9 +79,12 @@
                     <h3>Local e data</h3>
                     <div class="form-grid third">
                         <div class="form-row">
-                            <label for="formato">Formato</label>
-                            <input type="text" id="formato" placeholder="Presencial">
-                        </div>
+    <label for="formato">Formato</label>
+    <select id="formato" name="formato">
+        <option value="Presencial">Presencial</option>
+        <option value="Online">Online</option>
+    </select>
+</div>
                         <div class="form-row">
                             <label for="cidade">Cidade</label>
                             <input type="text" id="cidade" placeholder="Recife">
@@ -154,6 +157,60 @@
         </main>
     </div>
 <script src="app.js"></script>
+<script>
+        document.getElementById('opportunity-form').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Impede o envio padrão
+
+            const form = event.target;
+            
+            // 1. Coleta dos dados
+            const dados = {
+                titulo: document.getElementById('titulo').value,
+                descricao: document.getElementById('descricao').value,
+                // Assumiremos que a ONG já existe no banco (ID 1)
+                ongNome: document.getElementById('ong').value, 
+                tipoAtividade: document.getElementById('tipo').value, 
+                
+                // Dados de Data e Local
+                formato: document.getElementById('formato').value,
+                cidade: document.getElementById('cidade').value,
+                pais: document.getElementById('pais').value,
+                data: document.getElementById('data').value,
+                horario: document.getElementById('horario').value,
+                duracao: document.getElementById('duracao').value,
+                
+                // Detalhes Adicionais
+                numVoluntarios: parseInt(document.getElementById('num_voluntarios').value) || 0,
+                habilidades: document.getElementById('habilidades').value,
+                emailContato: document.getElementById('email_contato').value,
+                telefoneContato: document.getElementById('telefone_contato').value,
+                // Imagem seria um processo mais complexo (usando FormData), vamos usar um placeholder:
+                imagem: 'https://placeholder.url/default.jpg'
+            };
+
+            // 2. Envio dos dados para a nova API
+            try {
+                const response = await fetch('/api/oportunidades', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                });
+
+                const resultado = await response.json();
+
+                if (resultado.success) {
+                    alert('Oportunidade criada com sucesso!');
+                    window.location.href = 'explorar.html'; // Redireciona para a página de listagem
+                } else {
+                    alert('Erro ao criar oportunidade: ' + resultado.message);
+                }
+
+            } catch (error) {
+                console.error('Erro de rede:', error);
+                alert('Não foi possível conectar ao servidor para criar a oportunidade.');
+            }
+        });
+    </script>
 </body>
 </html>
 </body>
