@@ -13,7 +13,7 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="logo-icon">
-                    <i class="fa-regular fa-heart"></i>
+                   <i class="fa-regular fa-heart"></i>
                 </div>
                 <span>Voluntariado<br><strong>Liferay</strong></span>
             </div>
@@ -51,26 +51,37 @@
                 <p>Compartilhe uma causa e engaje seus colegas</p>
             </div>
 
-            <form class="create-form" id="opportunity-form"></form>
+            <form class="create-form" id="opportunity-form">
                 
                 <section class="form-section">
                     <h3>Informações Básicas</h3>
                     <div class="form-row">
                         <label for="titulo">Título da oportunidade *</label>
-                        <input type="text" id="titulo" placeholder="Ex: Mutirão de Pintura - Escola Municipal">
+                        <input type="text" id="titulo" placeholder="Ex: Mutirão de Pintura - Escola Municipal" required>
                     </div>
                     <div class="form-row">
                         <label for="descricao">Descrição *</label>
-                        <textarea id="descricao" rows="4" placeholder="Descreva a oportunidade, o que será feito, e o impacto esperado"></textarea>
+                        <textarea id="descricao" rows="4" placeholder="Descreva a oportunidade, o que será feito, e o impacto esperado" required></textarea>
                     </div>
                     <div class="form-grid half">
                         <div class="form-row">
                             <label for="ong">Organização/ONG</label>
-                            <input type="text" id="ong" placeholder="Nome da instituição parceira">
+                            <input type="text" id="ong" placeholder="Nome da instituição parceira" required>
                         </div>
                         <div class="form-row">
-                            <label for="tipo">Tipo da Atividade*</label>
-                            <input type="text" id="tipo" placeholder="Educação">
+                            <label for="tipo_select">Tipo da Atividade*</label>
+                            <select id="tipo_select" required>
+                                <option value="" disabled selected>Selecione uma opção</option>
+                                <option value="Educação">Educação</option>
+                                <option value="Meio Ambiente">Meio Ambiente</option>
+                                <option value="Tecnologia">Tecnologia</option>
+                                <option value="Saúde">Saúde</option>
+                                <option value="Cultura">Cultura</option>
+                                <option value="Esporte">Esporte</option>
+                                <option value="Assistência Social">Assistência Social</option>
+                                <option value="Outros">Outros (Especificar)</option>
+                            </select>
+                            <input type="text" id="tipo_outro" placeholder="Digite qual o tipo da atividade" style="display: none; margin-top: 10px;">
                         </div>
                     </div>
                 </section>
@@ -79,12 +90,12 @@
                     <h3>Local e data</h3>
                     <div class="form-grid third">
                         <div class="form-row">
-    <label for="formato">Formato</label>
-    <select id="formato" name="formato">
-        <option value="Presencial">Presencial</option>
-        <option value="Online">Online</option>
-    </select>
-</div>
+                            <label for="formato">Formato</label>
+                            <select id="formato" name="formato">
+                                <option value="Presencial">Presencial</option>
+                                <option value="Online">Online</option>
+                            </select>
+                        </div>
                         <div class="form-row">
                             <label for="cidade">Cidade</label>
                             <input type="text" id="cidade" placeholder="Recife">
@@ -97,15 +108,15 @@
                     <div class="form-grid third">
                         <div class="form-row">
                             <label for="data">Data</label>
-                            <input type="number" id="data" placeholder="dd/mm/aaaa">
+                            <input type="date" id="data">
                         </div>
                         <div class="form-row">
                             <label for="horario">Horário</label>
-                            <input type="number" id="horario" placeholder="--:--">
+                            <input type="time" id="horario">
                         </div>
                         <div class="form-row">
                             <label for="duracao">Duração (horas)</label>
-                            <input type="number" id="duracao" placeholder="dd/mm/aaaa">
+                            <input type="number" id="duracao" placeholder="0">
                         </div>
                     </div>
                 </section>
@@ -130,7 +141,7 @@
                         </div>
                         <div class="form-row">
                             <label for="telefone_contato">Telefone de contato</label>
-                            <input type="number" id="telefone_contato" placeholder="(99) 99999-9999">
+                            <input type="text" id="telefone_contato" placeholder="(99) 99999-9999">
                         </div>
                     </div>
                 </section>
@@ -140,78 +151,114 @@
                     <div class="upload-box">
                         <i class="fa-solid fa-arrow-up-from-bracket"></i>
                         <span>Fazer upload</span>
-                        <p>Número máximo de voluntários: 1</p>
+                        <p>Formatos aceitos: JPG, PNG</p>
                         <input type="file" class="file-input">
                     </div>
                 </section>
                 
                 <div class="form-actions">
-                    <button type="button" class="btn-cancel">Cancelar</button>
+                    <button type="button" class="btn-cancel" onclick="window.location.href='inicio.html'">Cancelar</button>
                     <button type="submit" class="btn-submit">
                         <i class="fa-solid fa-plus"></i> Criar Oportunidade
                     </button>
                 </div>
 
-            </form>
-
-        </main>
+            </form> 
+            </main>
     </div>
 <script src="app.js"></script>
 <script>
-        document.getElementById('opportunity-form').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Impede o envio padrão
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        const selectTipo = document.getElementById('tipo_select');
+        const inputOutro = document.getElementById('tipo_outro');
+        const form = document.getElementById('opportunity-form');
 
-            const form = event.target;
-            
-            // 1. Coleta dos dados
-            const dados = {
-                titulo: document.getElementById('titulo').value,
-                descricao: document.getElementById('descricao').value,
-                // Assumiremos que a ONG já existe no banco (ID 1)
-                ongNome: document.getElementById('ong').value, 
-                tipoAtividade: document.getElementById('tipo').value, 
-                
-                // Dados de Data e Local
-                formato: document.getElementById('formato').value,
-                cidade: document.getElementById('cidade').value,
-                pais: document.getElementById('pais').value,
-                data: document.getElementById('data').value,
-                horario: document.getElementById('horario').value,
-                duracao: document.getElementById('duracao').value,
-                
-                // Detalhes Adicionais
-                numVoluntarios: parseInt(document.getElementById('num_voluntarios').value) || 0,
-                habilidades: document.getElementById('habilidades').value,
-                emailContato: document.getElementById('email_contato').value,
-                telefoneContato: document.getElementById('telefone_contato').value,
-                // Imagem seria um processo mais complexo (usando FormData), vamos usar um placeholder:
-                imagem: 'https://placeholder.url/default.jpg'
-            };
-
-            // 2. Envio dos dados para a nova API
-            try {
-                const response = await fetch('/api/oportunidades', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dados)
-                });
-
-                const resultado = await response.json();
-
-                if (resultado.success) {
-                    alert('Oportunidade criada com sucesso!');
-                    window.location.href = 'explorar.html'; // Redireciona para a página de listagem
+        // 1. Lógica Visual
+        if (selectTipo && inputOutro) {
+            selectTipo.addEventListener('change', function() {
+                if (this.value === 'Outros') {
+                    inputOutro.style.display = 'block';
+                    inputOutro.required = true;
                 } else {
-                    alert('Erro ao criar oportunidade: ' + resultado.message);
+                    inputOutro.style.display = 'none';
+                    inputOutro.required = false;
+                    inputOutro.value = ''; 
+                }
+            });
+        }
+
+        // 2. Lógica de Envio
+        if (form) {
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault(); 
+
+                // --- LOGIN CHECK ---
+                const userJson = localStorage.getItem('userData');
+                if (!userJson) {
+                    alert("Erro: Você precisa estar logado.");
+                    window.location.href = "login.html";
+                    return;
+                }
+                const user = JSON.parse(userJson);
+
+                // --- PREPARA DADOS ---
+                const tipoSelecionado = selectTipo.value;
+                const valorFinalTipo = (tipoSelecionado === 'Outros') ? inputOutro.value : tipoSelecionado;
+
+                const formData = new FormData();
+                
+                // Adiciona CPF (Obrigatório)
+                formData.append('usuario_cpf', user.cpf); 
+
+                // Adiciona Campos do Formulário (CORRIGIDO: Agora pega todos os valores)
+                formData.append('titulo', document.getElementById('titulo').value);
+                formData.append('descricao', document.getElementById('descricao').value);
+                formData.append('ongNome', document.getElementById('ong').value);
+                formData.append('tipoAtividade', valorFinalTipo); 
+                
+                formData.append('formato', document.getElementById('formato').value);
+                formData.append('cidade', document.getElementById('cidade').value);
+                formData.append('pais', document.getElementById('pais').value);
+                
+                formData.append('data', document.getElementById('data').value);
+                formData.append('horario', document.getElementById('horario').value);
+                formData.append('duracao', document.getElementById('duracao').value);
+                
+                formData.append('numVoluntarios', document.getElementById('num_voluntarios').value);
+                formData.append('habilidades', document.getElementById('habilidades').value);
+                
+                formData.append('emailContato', document.getElementById('email_contato').value);
+                formData.append('telefoneContato', document.getElementById('telefone_contato').value);
+                
+                // Arquivo
+                const fileInput = document.querySelector('.file-input');
+                if (fileInput && fileInput.files[0]) {
+                    formData.append('imagem', fileInput.files[0]);
                 }
 
-            } catch (error) {
-                console.error('Erro de rede:', error);
-                alert('Não foi possível conectar ao servidor para criar a oportunidade.');
-            }
-        });
-    </script>
-</body>
-</html>
+                // --- ENVIA ---
+                try {
+                    const response = await fetch('/api/oportunidades', {
+                        method: 'POST',
+                        body: formData 
+                    });
+                    const resultado = await response.json();
+                    
+                    if (response.ok && resultado.success) {
+                        alert('Oportunidade criada com sucesso!');
+                        window.location.href = 'explorar.html';
+                    } else {
+                        console.error(resultado);
+                        alert('Erro: ' + (resultado.message || 'Erro desconhecido'));
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert('Erro de conexão com o servidor.');
+                }
+            });
+        }
+    });
+</script>
 </body>
 </html>

@@ -7,15 +7,14 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
-<body class="testemunhos-body"> <div class="container">
+<body class="testemunhos-body">
+
+    <div class="container">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <div class="logo-icon">
-                    <i class="fa-regular fa-heart"></i>
-                </div>
+                <div class="logo-icon"><i class="fa-regular fa-heart"></i></div>
                 <span>Voluntariado<br><strong>Liferay</strong></span>
             </div>
-
             <nav class="navigation">
                 <p>Navegação</p>
                 <ul>
@@ -27,62 +26,270 @@
                     <li><a href="MeuPerfil.html"><i class="fa-solid fa-user"></i> Meu perfil</a></li>
                 </ul>
             </nav>
-
             <div class="sidebar-footer">
                 <div class="user-info">
-                    <div class="avatar-small">R</div>
+                    <div class="avatar-small">A</div>
                     <div class="user-details">
-                        <strong>Rafael</strong>
+                        <strong>Antonio</strong>
                         <span>0h de voluntariado</span>
                     </div>
                 </div>
-                <button class="logout-button">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
-                </button>
+                <button class="logout-button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</button>
             </div>
         </aside>
 
         <main class="main-content">
             
             <div class="page-header">
-    <div> 
-        <h1>Impacto coletivo</h1>
-        <p>Histórias inspiradoras de quem faz a diferença</p>
-    </div>
-    
-    <button class="create-opportunity-btn">
-        <i class="fa-solid fa-pen-to-square"></i> Criar Testemunho
-    </button>
-</div>
+                <div>
+                    <h1>Histórias que inspiram</h1>
+                    <p>Veja o que nossa comunidade está construindo</p>
+                </div>
+                <button class="create-opportunity-btn" id="btn-abrir-modal">
+                    <i class="fa-regular fa-pen-to-square"></i> Deixar meu depoimento
+                </button>
+            </div>
 
             <div class="testemunhos-filter-bar">
                 <div class="testemunhos-search">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Buscar testemunhos...">
+                    <input type="text" id="input-busca" placeholder="Buscar por palavra-chave ou nome...">
                 </div>
-                <select class="testemunhos-dropdown">
-                    <option value="recentes">Mais recentes</option>
-                    <option value="antigos">Mais antigos</option>
-                </select>
-                <select class="testemunhos-dropdown">
-                    <option value="todas">Todas avaliações</option>
-                    <option value="5-estrelas">5 estrelas</option>
-                    <option value="4-estrelas">4 estrelas</option>
-                </select>
             </div>
 
-            <div class="testemunhos-empty-state">
-                <div class="empty-icon">
-                    <i class="fa-regular fa-heart"></i>
+            <section class="testimonials-grid" id="grid-testemunhos">
+                <div class="testemunhos-empty-state">
+                    <i class="fa-regular fa-comment-dots empty-icon"></i>
+                    <p>Carregando histórias...</p>
                 </div>
-                <h2>Nenhum testemunho encontrado</h2>
-                <p>Tente ajustar seus filtros de busca</p>
-            </div>
+            </section>
 
         </main>
     </div>
-<script src="app.js"></script>
-</body>
-</html>
+
+    <div class="modal-overlay" id="modal-testemunho">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Escrever Depoimento</h2>
+                <button class="close-modal-btn" id="btn-fechar-modal">&times;</button>
+            </div>
+            
+            <form id="form-testemunho">
+                <label for="select-oportunidade-modal" style="display:block; margin-bottom:5px; font-weight:600; color:#555;">Sobre qual oportunidade?</label>
+                <select id="select-oportunidade-modal" required>
+                    <option value="" disabled selected>Carregando suas participações...</option>
+                </select>
+
+                <label for="texto-depoimento" style="display:block; margin-bottom:5px; font-weight:600; color:#555;">Seu depoimento</label>
+                <textarea id="texto-depoimento" rows="5" class="form-row" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; resize:vertical;" placeholder="Conte como foi sua experiência..." required></textarea>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="btn-cancelar-modal">Cancelar</button>
+                    <button type="submit" class="btn-submit">Publicar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    
+   <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarTestemunhos();
+            configurarModal();
+            configurarBusca();
+        });
+
+        // 1. Função para Carregar e Listar Testemunhos (ATUALIZADA)
+        async function carregarTestemunhos() {
+            try {
+                // Busca TODOS os testemunhos do banco
+                const response = await fetch('/api/testemunhos');
+                const lista = await response.json();
+                
+                // Salva globalmente para a busca funcionar
+                window.todosTestemunhos = lista; 
+                
+                // Renderiza na tela
+                renderizarLista(lista);
+
+            } catch (error) {
+                console.error(error);
+                const grid = document.getElementById('grid-testemunhos');
+                grid.innerHTML = '<p class="error-text">Erro ao carregar histórias.</p>';
+            }
+        }
+
+        // 2. Função de Renderizar (ATUALIZADA COM BOTÃO EXCLUIR)
+        function renderizarLista(lista) {
+            const grid = document.getElementById('grid-testemunhos');
+            const userJson = localStorage.getItem('userData');
+            const user = userJson ? JSON.parse(userJson) : null;
+
+            grid.innerHTML = '';
+
+            if (lista.length === 0) {
+                grid.innerHTML = '<div class="testemunhos-empty-state"><p>Nenhum testemunho encontrado.</p></div>';
+                return;
+            }
+
+            lista.forEach(t => {
+                const card = document.createElement('div');
+                card.className = 'testimonial-card';
+                
+                const dataFormatada = new Date(t.data).toLocaleDateString('pt-BR');
+                const inicial = t.usuario ? t.usuario.nomeUsuario.charAt(0).toUpperCase() : '?';
+                const nomeUser = t.usuario ? t.usuario.nomeUsuario : 'Usuário';
+                const nomeOpp = t.oportunidade ? t.oportunidade.titulo : 'Atividade Geral';
+
+                // Botão de Excluir (Só aparece se for o dono)
+                let btnExcluir = '';
+                if (user && t.usuario_cpf === user.cpf) {
+                    btnExcluir = `
+                        <button onclick="excluirTestemunho(${t.idtestemunhos}, 'pagina')" 
+                                style="margin-top: auto; align-self: flex-end; background: none; border: none; color: #dc3545; font-size: 12px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 5px;">
+                            <i class="fa-regular fa-trash-can"></i> Excluir
+                        </button>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="testimonial-header-content">
+                        <div class="testimonial-avatar">${inicial}</div>
+                        <div class="testimonial-info">
+                            <h4>${nomeUser}</h4>
+                            <span>${dataFormatada}</span>
+                        </div>
+                    </div>
+                    <div class="testimonial-body">
+                        ${t.texto}
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                        <a href="explorar-detalhe.html?id=${t.oportunidade_idoportunidade}" class="testimonial-tag">
+                            <i class="fa-solid fa-link"></i> ${nomeOpp}
+                        </a>
+                        ${btnExcluir}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // 3. Lógica de Busca (Mantida igual)
+        function configurarBusca() {
+            const input = document.getElementById('input-busca');
+            input.addEventListener('input', (e) => {
+                const termo = e.target.value.toLowerCase();
+                const filtrados = window.todosTestemunhos.filter(t => {
+                    const texto = t.texto.toLowerCase();
+                    const nome = t.usuario ? t.usuario.nomeUsuario.toLowerCase() : '';
+                    const opp = t.oportunidade ? t.oportunidade.titulo.toLowerCase() : '';
+                    return texto.includes(termo) || nome.includes(termo) || opp.includes(termo);
+                });
+                renderizarLista(filtrados);
+            });
+        }
+
+        // 4. Configuração do Modal (Mantida igual, mas chama carregarTestemunhos ao final)
+        function configurarModal() {
+            const modal = document.getElementById('modal-testemunho');
+            const btnAbrir = document.getElementById('btn-abrir-modal');
+            const btnFechar = document.getElementById('btn-fechar-modal');
+            const btnCancelar = document.getElementById('btn-cancelar-modal');
+            const form = document.getElementById('form-testemunho');
+            const select = document.getElementById('select-oportunidade-modal');
+
+            btnAbrir.addEventListener('click', async () => {
+                const userJson = localStorage.getItem('userData');
+                if (!userJson) { alert("Faça login para avaliar."); window.location.href='login.html'; return; }
+                const user = JSON.parse(userJson);
+
+                select.innerHTML = '<option>Carregando...</option>';
+                try {
+                    const resp = await fetch(`/api/minhas-atividades/${user.cpf}`);
+                    const inscricoes = await resp.json();
+                    
+                    select.innerHTML = '<option value="" disabled selected>Selecione uma oportunidade...</option>';
+                    
+                    if (inscricoes.length === 0) {
+                        const opt = document.createElement('option');
+                        opt.disabled = true;
+                        opt.text = "Você ainda não participou de nenhuma atividade.";
+                        select.appendChild(opt);
+                    } else {
+                        inscricoes.forEach(ins => {
+                            const opt = document.createElement('option');
+                            opt.value = ins.oportunidade.idoportunidade;
+                            opt.text = ins.oportunidade.titulo;
+                            select.appendChild(opt);
+                        });
+                    }
+                } catch (e) { console.error(e); select.innerHTML = '<option>Erro ao carregar</option>'; }
+
+                modal.style.display = 'flex';
+            });
+
+            const fechar = () => modal.style.display = 'none';
+            btnFechar.addEventListener('click', fechar);
+            btnCancelar.addEventListener('click', fechar);
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const user = JSON.parse(localStorage.getItem('userData'));
+                
+                const dados = {
+                    usuario_cpf: user.cpf,
+                    oportunidade_id: select.value,
+                    texto: document.getElementById('texto-depoimento').value
+                };
+
+                try {
+                    const res = await fetch('/api/testemunhos', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(dados)
+                    });
+                    const json = await res.json();
+                    
+                    if (res.ok) {
+                        alert("Depoimento enviado com sucesso!");
+                        fechar();
+                        form.reset();
+                        carregarTestemunhos();
+                    } else {
+                        alert(json.message);
+                    }
+                } catch (err) { console.error(err); alert("Erro ao enviar."); }
+            });
+        }
+
+        // --- Função Compartilhada de Excluir ---
+        async function excluirTestemunho(id, origem) {
+            const userJson = localStorage.getItem('userData');
+            if (!userJson) return;
+            const user = JSON.parse(userJson);
+
+            if (confirm("Tem certeza que deseja apagar este depoimento?")) {
+                try {
+                    const res = await fetch(`/api/testemunhos/${id}`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ usuario_cpf: user.cpf })
+                    });
+                    
+                    if (res.ok) {
+                        alert("Depoimento excluído.");
+                        if (origem === 'pagina') carregarTestemunhos();
+                    } else {
+                        const json = await res.json();
+                        alert("Erro: " + json.message);
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert("Erro de conexão.");
+                }
+            }
+        }
+    </script>
 </body>
 </html>

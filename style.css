@@ -971,6 +971,57 @@ transition: all 0.2s ease-in-out;
     box-shadow: 0 4px 8px rgba(0,0,0,0.05);
 }
 
+/* --- CORREÇÃO DE ALINHAMENTO PERFEITO (HOME) --- */
+
+/* 1. Container da Direita (Coluna fixa) */
+.recommendation-actions {
+    display: flex;
+    flex-direction: column; /* Empilha um sobre o outro */
+    gap: 8px;               /* Espaço entre os botões */
+    width: 150px;           /* Largura FIXA para a coluna */
+    min-width: 150px;       /* Garante que não seja esmagado */
+    flex-shrink: 0;         /* Trava o tamanho da coluna */
+}
+
+/* 2. Estilo Base IDÊNTICO para os dois botões */
+.btn-detalhes-home,
+.btn-inscrever-home {
+    display: flex;            /* Flex para alinhar ícone e texto */
+    justify-content: center;  /* Centraliza horizontalmente */
+    align-items: center;      /* Centraliza verticalmente */
+    width: 100%;              /* Ocupa 100% da largura de 150px */
+    height: 40px;             /* Altura FIXA igual para ambos */
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;    /* Remove sublinhado do link */
+    border: none;             /* Remove borda do button */
+    cursor: pointer;
+    box-sizing: border-box;   /* Garante cálculo exato de tamanho */
+    transition: background-color 0.2s;
+}
+
+/* 3. Cores e Ícones */
+
+/* Botão Ver Detalhes (Azul Claro) */
+.btn-detalhes-home {
+    background-color: #e6f2ff;
+    color: #007bff;
+}
+.btn-detalhes-home:hover {
+    background-color: #d0e4ff;
+}
+
+/* Botão Inscreva-se (Azul Forte) */
+.btn-inscrever-home {
+    background-color: #007bff;
+    color: white;
+    gap: 6px; /* Espacinho entre o coração e o texto */
+}
+.btn-inscrever-home:hover {
+    background-color: #0056b3;
+}
+
 /* ==== ESTILOS DA PÁGINA DE LOGIN ==== */
 
 /* Aplica o layout centrado ao body da pág. de login */
@@ -1136,7 +1187,7 @@ transition: all 0.2s ease-in-out;
 
 .create-form {
     width: 100%;
-    max-width: 900px; /* Limita a largura do formulário */
+    max-width: auto; /* Limita a largura do formulário */
 }
 
 .form-section {
@@ -1190,6 +1241,8 @@ transition: all 0.2s ease-in-out;
 .form-row input[type="email"],
 .form-row input[type="tel"],
 .form-row input[type="number"],
+.form-row input[type="date"],  
+.form-row input[type="time"],  
 .form-row textarea {
     width: 100%;
     padding: 12px 15px;
@@ -1568,6 +1621,165 @@ padding: 15px 25px 0 25px;
     margin-bottom: 15px;
     text-align: center;
 }
+
+
+/* --- ESTILOS DE TESTEMUNHOS E MODAL ( testemunhos com uma pagina real e nao mais estática--- */
+
+/* --- Grid de Testemunhos (Página Testemunhos) --- */
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+/* --- Card de Testemunho (Design Padrão) --- */
+.testimonial-card {
+    background-color: #fff;
+    border: 1px solid #e0e6ed;
+    border-radius: 12px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+}
+
+/* Cabeçalho do Card (Avatar + Nome + Data) */
+.testimonial-header-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.testimonial-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #e6f2ff;
+    color: #007bff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.testimonial-info h4 {
+    margin: 0;
+    font-size: 15px;
+    color: #333;
+}
+
+.testimonial-info span {
+    font-size: 12px;
+    color: #888;
+}
+
+/* Corpo do Testemunho */
+.testimonial-body {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+    font-style: italic;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    position: relative;
+}
+
+/* "Aspas" decorativas */
+.testimonial-body::before {
+    content: '"';
+    font-size: 40px;
+    color: #e0e0e0;
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    font-family: serif;
+}
+
+/* Tag da Oportunidade (Sobre o que ele falou) */
+.testimonial-tag {
+    font-size: 12px;
+    font-weight: 600;
+    color: #007bff;
+    background-color: #e6f2ff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none; /* Caso seja link */
+}
+
+/* --- MODAL (Janela flutuante para criar testemunho) --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro transparente */
+    display: none; /* Começa escondido */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #333;
+}
+
+.close-modal-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #888;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Ajuste para o Select do Modal */
+#select-oportunidade-modal {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background-color: #fff;
+}
+
 
 /* ============================================= */
 /* --- ESTILOS DA PAGINA "explorar-oportunidade" --- */

@@ -23,7 +23,7 @@
                 <ul>
                     <li><a href="inicio.html" class="active"><i class="fa-solid fa-house"></i> Início</a></li>
                     <li><a href="explorar.html"><i class="fa-solid fa-magnifying-glass"></i> Explorar</a></li>
-                   <li><a href="criar-oportunidade.html"><i class="fa-solid fa-circle-plus"></i> Criar Oportunidade</a></li>
+                    <li><a href="criar-oportunidade.html"><i class="fa-solid fa-circle-plus"></i> Criar Oportunidade</a></li>
                     <li><a href="impacto.html"><i class="fa-solid fa-chart-line"></i> Impacto</a></li>
                     <li><a href="testemunhos.html"><i class="fa-solid fa-comments"></i> Testemunhos</a></li>
                     <li><a href="MeuPerfil.html"><i class="fa-solid fa-user"></i> Meu perfil</a></li>
@@ -32,9 +32,9 @@
 
             <div class="sidebar-footer">
                 <div class="user-info">
-                    <div class="avatar-small">R</div>
+                    <div class="avatar-small">A</div>
                     <div class="user-details">
-                        <strong>Rafael</strong>
+                        <strong>Antonio</strong>
                         <span>0h de voluntariado</span>
                     </div>
                 </div>
@@ -48,12 +48,14 @@
             
             <div class="page-header">
                 <div>
-                    <h1>Olá, Rafael! <span class="wave-emoji">👋</span></h1>
+                    <h1>Olá, Antonio! <span class="wave-emoji">👋</span></h1>
                     <p>Pronto para fazer a diferença hoje?</p>
                 </div>
-                <button class="create-opportunity-btn">
-                    <i class="fa-solid fa-plus"></i> Criar Oportunidade
-                </button>
+                <a href="criar-oportunidade.html" style="text-decoration: none;">
+                    <button class="create-opportunity-btn" style="cursor: pointer;">
+                        <i class="fa-solid fa-plus"></i> Criar Oportunidade
+                    </button>
+                </a>
             </div>
 
             <section class="stats-grid">
@@ -62,117 +64,86 @@
                         <span>Oportunidades abertas</span>
                         <i class="fa-solid fa-briefcase icon-blue"></i>
                     </div>
-                    <span class="stat-value">5</span>
+                    <span class="stat-value" id="stat-oportunidades">0</span>
                 </div>
                 <div class="stat-card">
                     <div class="card-header">
                         <span>Minhas horas</span>
                         <i class="fa-solid fa-clock icon-green"></i>
                     </div>
-                    <span class="stat-value">0h</span>
+                    <span class="stat-value" id="stat-horas">0h</span>
                 </div>
                 <div class="stat-card">
                     <div class="card-header">
                         <span>Próximas atividades</span>
                         <i class="fa-solid fa-calendar-alt icon-teal"></i>
                     </div>
-                    <span class="stat-value">0</span>
+                    <span class="stat-value" id="stat-proximas">0</span>
                 </div>
                 <div class="stat-card">
                     <div class="card-header">
-                        <span>Voluntariados totais</span>
+                        <span>Voluntários totais</span>
                         <i class="fa-solid fa-users icon-purple"></i>
                     </div>
-                    <span class="stat-value">5</span>
+                    <span class="stat-value" id="stat-total-geral">0</span>
                 </div>
             </section>
 
             <div class="home-layout">
                 
                 <div class="main-column">
+                    
                     <div class="widget-card">
                         <h2><i class="fa-solid fa-wand-magic-sparkles"></i> Recomendados para Você</h2>
-                        <ul class="recommendation-list">
-                            <li class="recommendation-item">
-                                <div class="item-details">
-                                    <h3>Mutirão de pintura - Escola Municipal</h3>
-                                    <span class="tag tag-purple">Educação</span>
-                                    <p>Vamos renovar a pintura de uma escola pública que atende 300 crianças...</p>
-                                    <div class="item-info">
-                                        <span><i class="fa-regular fa-calendar-days"></i> 14 de Fevereiro</span>
-                                        <span><i class="fa-solid fa-location-dot"></i> Recife</span>
-                                    </div>
-                                </div>
-                                <a href="#" class="inscricao-btn">
-    <i class="fa-regular fa-heart"></i> Inscreva-se
-</a>
-                            </li>
-                            <li class="recommendation-item">
-                                <div class="item-details">
-                                    <h3>Plantio de Árvores - Parque Ecológico</h3>
-                                    <span class="tag tag-green">Meio ambiente</span>
-                                    <p>Participe de um dia especial de reflorestamento em um parque ecológico da cidade...</p>
-                                    <div class="item-info">
-                                        <span><i class="fa-regular fa-calendar-days"></i> 20 de Fevereiro</span>
-                                        <span><i class="fa-solid fa-location-dot"></i> São Paulo</span>
-                                    </div>
-                                </div>
-                                <a href="#" class="inscricao-btn">
-    <i class="fa-regular fa-heart"></i> Inscreva-se
-</a>
-                            </li>
-                            <li class="recommendation-item">
-                                <div class="item-details">
-                                    <h3>Aulas de Programação para Jovens</h3>
-                                    <span class="tag tag-purple">Educação</span>
-                                    <p>Ensine conceitos básicos de programação para jovens de comunidades carentes...</p>
-                                    <div class="item-info">
-                                        <span><i class="fa-regular fa-calendar-days"></i> 28 de Fevereiro</span>
-                                        <span><i class="fa-solid fa-location-dot"></i> Online</span>
-                                    </div>
-                                </div>
-                                <a href="#" class="inscricao-btn">
-    <i class="fa-regular fa-heart"></i> Inscreva-se
-</a>
-                            </li>
+                        <ul class="recommendation-list" id="lista-recomendados">
                         </ul>
                     </div>
                     
                     <div class="widget-card">
                         <h2><i class="fa-regular fa-calendar-days"></i> Minhas próximas atividades</h2>
-                        <div class="empty-state" style="padding: 30px 0;">
-                            <i class="fa-regular fa-calendar-xmark"></i>
-                            <p>Você ainda não está inscrito em nenhuma atividade.</p>
+                        
+                        <div id="container-minhas-atividades">
+                            <div class="empty-state" id="empty-state-atividades" style="padding: 30px 0;">
+                                <i class="fa-regular fa-calendar-xmark"></i>
+                                <p>Você ainda não está inscrito em nenhuma atividade futura.</p>
+                            </div>
+
+                            <ul class="recommendation-list" id="lista-minhas-atividades" style="display: none;">
+                            </ul>
                         </div>
                     </div>
                 </div>
 
                 <div class="sidebar-column">
+                    
                     <div class="widget-card impact-card-blue">
-    <h2><i class="fa-regular fa-heart"></i> Seu Impacto</h2>
-    
-    <div class="impact-main-value">
-        <span>0</span>
-        <p>Horas de voluntariado</p>
-    </div>
-    
-    <div class="impact-sub-stat">
-        <span>Atividades concluídas</span>
-        <strong>0</strong>
-    </div>
-    <div class="impact-sub-stat">
-        <span>Próximas atividades</span>
-        <strong>0</strong>
-    </div>
+                        <h2><i class="fa-regular fa-heart"></i> Seu Impacto</h2>
+                        
+                        <div class="impact-main-value">
+                            <span id="impact-horas-valor">0</span>
+                            <p>Horas de voluntariado</p>
+                        </div>
+                        
+                        <div class="impact-sub-stat">
+                            <span>Atividades concluídas</span>
+                            <strong id="impact-concluidas">0</strong>
+                        </div>
+                        <div class="impact-sub-stat">
+                            <span>Próximas atividades</span>
+                            <strong id="impact-proximas">0</strong>
+                        </div>
 
-    <a href="MeuPerfil.html" class="ver-perfil-link-styled">
-        <i class="fa-solid fa-arrow-right-from-bracket"></i> Ver meu perfil
-    </a>
-</div>
+                        <a href="MeuPerfil.html" class="ver-perfil-link-styled">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i> Ver meu perfil
+                        </a>
+                    </div>
                     
                     <div class="widget-card">
                         <h2>Testemunhos Recentes</h2>
-                        <div class="empty-state" style="padding: 30px 0;">
+                        <div id="lista-testemunhos-home" style="display: flex; flex-direction: column; gap: 15px;">
+                        </div>
+                        
+                        <div class="empty-state" id="empty-state-testemunhos" style="padding: 30px 0;">
                             <i class="fa-regular fa-comment-dots"></i>
                             <p>Nenhum testemunho ainda.</p>
                         </div>
@@ -183,8 +154,340 @@
 
         </main>
     </div>
-<script src="app.js"></script>
-</body>
-</html>
+    
+    <script src="app.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // 1. Chama API para pegar todas as oportunidades
+                const response = await fetch('/api/oportunidades');
+                const oportunidades = await response.json();
+
+                // 2. Filtra: Pega apenas as 3 primeiras do array (mais recentes)
+                const recentes = oportunidades.slice(0, 3); 
+                const lista = document.getElementById('lista-recomendados');
+                lista.innerHTML = ''; // Limpa loading ou lixo anterior
+
+                // Validação: Se não houver nada, exibe mensagem
+                if (recentes.length === 0) {
+                    lista.innerHTML = '<p style="padding: 20px; color: #666; text-align:center;">Nenhuma oportunidade recente.</p>';
+                    return;
+                }
+
+                // 3. Renderização: Cria o HTML para cada item
+                recentes.forEach(op => {
+                    const item = document.createElement('li');
+                    item.className = 'recommendation-item';
+
+                    // Formatação de Data (JS nativo para dd de mês)
+                    const dataObj = new Date(op.data_evento);
+                    const dataUser = new Date(dataObj.getTime() + dataObj.getTimezoneOffset() * 60000); // Ajuste fuso
+                    const dataFormatada = dataUser.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
+
+                    // Definição de cores das tags baseado no tipo
+                    let tagClass = 'tag-blue';
+                    const tipo = op.tipo_voluntariado ? op.tipo_voluntariado.tipo : 'Geral';
+                    const mapTipos = { 'Meio Ambiente': 'tag-green', 'Educação': 'tag-purple', 'Saúde': 'tag-red', 'Cultura': 'tag-red', 'Assistência Social': 'tag-yellow' };
+                    if(mapTipos[tipo]) tagClass = mapTipos[tipo];
+
+                    // Template String do HTML
+                    item.innerHTML = `
+                        <div class="item-details">
+                            <h3>${op.titulo}</h3>
+                            <span class="tag ${tagClass}">${tipo}</span>
+                            <p>${op.descricao ? op.descricao : ''}</p>
+                            <div class="item-info">
+                                <span><i class="fa-regular fa-calendar-days"></i> ${dataFormatada}</span>
+                                <span><i class="fa-solid fa-location-dot"></i> ${op.local_evento.split(',')[0]}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="recommendation-actions">
+                            <a href="explorar-detalhe.html?id=${op.idoportunidade}" class="btn-detalhes-home">
+                                Ver detalhes
+                            </a>
+                            <button onclick="inscreverHome(${op.idoportunidade})" class="btn-inscrever-home">
+                                <i class="fa-regular fa-heart"></i> Inscreva-se
+                            </button>
+                        </div>
+                    `;
+                    lista.appendChild(item);
+                });
+            } catch (error) {
+                console.error("Erro ao carregar recomendações:", error);
+            }
+        });
+
+        /**
+         * Função global para inscrever o usuário em uma oportunidade.
+         * Faz um POST para /api/inscricao.
+         */
+        async function inscreverHome(id) {
+            // Validação de sessão
+            const userJson = localStorage.getItem('userData');
+            if (!userJson) { alert("Faça login para se inscrever!"); window.location.href = "login.html"; return; }
+            const user = JSON.parse(userJson);
+
+            if (confirm("Deseja se inscrever nesta oportunidade?")) {
+                try {
+                    const response = await fetch('/api/inscricao', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ usuario_cpf: user.cpf, oportunidade_id: id })
+                    });
+                    const res = await response.json();
+                    if (response.ok) { alert("Inscrição realizada com sucesso! 🎉"); } 
+                    else { alert(res.message); }
+                } catch (e) { console.error(e); alert("Erro de conexão."); }
+            }
+        }
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        carregarMinhasAtividades();
+    });
+
+    async function carregarMinhasAtividades() {
+        // 1. Verifica login (obrigatório para ver minhas atividades)
+        const userJson = localStorage.getItem('userData');
+        if (!userJson) return; 
+        const user = JSON.parse(userJson);
+
+        const lista = document.getElementById('lista-minhas-atividades');
+        const emptyState = document.getElementById('empty-state-atividades');
+
+        try {
+            // 2. Busca na API filtrando pelo CPF
+            const response = await fetch(`/api/minhas-atividades/${user.cpf}`);
+            const inscricoes = await response.json();
+
+            // Lógica de Estado Vazio
+            if (inscricoes.length === 0) {
+                lista.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            lista.style.display = 'block';
+            lista.innerHTML = ''; 
+
+            // 3. Renderiza cada inscrição
+            inscricoes.forEach(item => {
+                const op = item.oportunidade; 
+                const li = document.createElement('li');
+                li.className = 'recommendation-item';
+
+                const dataObj = new Date(op.data_evento);
+                const dataUser = new Date(dataObj.getTime() + dataObj.getTimezoneOffset() * 60000);
+                const dataFormatada = dataUser.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' });
+
+                let tagClass = 'tag-blue';
+                const tipo = op.tipo_voluntariado ? op.tipo_voluntariado.tipo : 'Geral';
+
+                li.innerHTML = `
+                    <div class="item-details">
+                        <h3>${op.titulo}</h3>
+                        <span class="tag ${tagClass}" style="font-size: 11px;">${tipo}</span>
+                        
+                        <div class="item-info" style="margin-top: 8px;">
+                            <span><i class="fa-regular fa-calendar-days"></i> ${dataFormatada}</span>
+                            <span><i class="fa-regular fa-clock"></i> ${op.horario}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="recommendation-actions" style="min-width: 120px;">
+                        <a href="explorar-detalhe.html?id=${op.idoportunidade}" class="btn-detalhes-home" style="font-size: 12px; padding: 6px;">
+                            Detalhes
+                        </a>
+                        <button onclick="cancelarInscricao(${op.idoportunidade})" style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #dc3545; background: #fff; color: #dc3545; cursor: pointer; font-weight: 600; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                            <i class="fa-solid fa-xmark"></i> Cancelar
+                        </button>
+                    </div>
+                `;
+                lista.appendChild(li);
+            });
+        } catch (error) {
+            console.error("Erro ao carregar minhas atividades:", error);
+        }
+    }
+
+    /**
+     * Função para cancelar inscrição.
+     * Envia DELETE para a API e recarrega a lista se der certo.
+     */
+    async function cancelarInscricao(idOportunidade) {
+        const userJson = localStorage.getItem('userData');
+        if (!userJson) return;
+        const user = JSON.parse(userJson);
+
+        if (confirm("Tem certeza que deseja cancelar sua inscrição nesta atividade?")) {
+            try {
+                const response = await fetch('/api/inscricao', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        usuario_cpf: user.cpf, 
+                        oportunidade_id: idOportunidade 
+                    })
+                });
+                const resultado = await response.json();
+                if (response.ok) {
+                    alert("Inscrição cancelada.");
+                    carregarMinhasAtividades(); // Atualiza UI lista
+                    carregarEstatisticas();     // Atualiza UI contadores
+                } else {
+                    alert("Erro: " + resultado.message);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Erro de conexão.");
+            }
+        }
+    }
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        carregarTestemunhosHome();
+    });
+
+    async function carregarTestemunhosHome() {
+        try {
+            // Pega usuário logado para lógica de permissão (dono do post)
+            const userJson = localStorage.getItem('userData');
+            const user = userJson ? JSON.parse(userJson) : null;
+
+            const response = await fetch('/api/testemunhos');
+            const lista = await response.json();
+            
+            const container = document.getElementById('lista-testemunhos-home');
+            const emptyState = document.getElementById('empty-state-testemunhos');
+
+            const recentes = lista.slice(0, 2); // Apenas os 2 mais recentes
+
+            if (recentes.length === 0) {
+                container.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            container.style.display = 'flex'; 
+            container.innerHTML = '';
+
+            recentes.forEach(t => {
+                const div = document.createElement('div');
+                div.className = 'testimonial-card'; 
+                // Estilos inline específicos para o widget da Home
+                div.style.padding = '15px'; 
+                div.style.border = '1px solid #f0f0f0';
+                div.style.boxShadow = 'none'; 
+
+                const nomeUser = t.usuario ? t.usuario.nomeUsuario : 'Anônimo';
+                const inicial = nomeUser.charAt(0).toUpperCase();
+                
+                // LÓGICA DE SEGURANÇA VISUAL:
+                // Se o CPF do logado == CPF do criador do testemunho -> Mostra botão Excluir
+                let btnExcluirHTML = '';
+                if (user && t.usuario_cpf === user.cpf) {
+                    btnExcluirHTML = `
+                        <button onclick="excluirTestemunho(${t.idtestemunhos}, 'home')" 
+                                style="margin-top:10px; width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #dc3545; background: #fff; color: #dc3545; cursor: pointer; font-weight: 600; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                            <i class="fa-regular fa-trash-can"></i> Excluir meu depoimento
+                        </button>
+                    `;
+                }
+                
+                div.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                        <div class="testimonial-avatar" style="width:30px; height:30px; font-size:12px;">
+                            ${inicial}
+                        </div>
+                        <strong style="font-size:13px; color:#333;">${nomeUser}</strong>
+                    </div>
+                    <p style="font-size:13px; color:#666; margin:0; font-style:italic; line-height: 1.4;">
+                        "${t.texto}"
+                    </p>
+                    <small style="color:#007bff; font-size:11px; margin-top:8px; display:block; font-weight:500;">
+                        Em: ${t.oportunidade ? t.oportunidade.titulo : 'Atividade'}
+                    </small>
+                    ${btnExcluirHTML}
+                `;
+                container.appendChild(div);
+            });
+
+        } catch (error) {
+            console.error("Erro ao carregar testemunhos home:", error);
+        }
+    }
+
+    /**
+     * Função para excluir testemunho.
+     * 'origem' define qual lista atualizar após deletar ('home' ou 'pagina').
+     */
+    async function excluirTestemunho(id, origem) {
+        const userJson = localStorage.getItem('userData');
+        if (!userJson) return;
+        const user = JSON.parse(userJson);
+
+        if (confirm("Tem certeza que deseja apagar este depoimento?")) {
+            try {
+                const res = await fetch(`/api/testemunhos/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usuario_cpf: user.cpf })
+                });
+                
+                if (res.ok) {
+                    alert("Depoimento excluído.");
+                    if (origem === 'home') carregarTestemunhosHome();
+                    if (origem === 'pagina') carregarTestemunhos(); 
+                } else {
+                    const json = await res.json();
+                    alert("Erro: " + json.message);
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Erro de conexão.");
+            }
+        }
+    }
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        carregarEstatisticas();
+    });
+
+    async function carregarEstatisticas() {
+        const userJson = localStorage.getItem('userData');
+        if (!userJson) return;
+        const user = JSON.parse(userJson);
+
+        try {
+            // 1. Busca os dados calculados no servidor
+            const response = await fetch(`/api/estatisticas/${user.cpf}`);
+            const dados = await response.json();
+
+            // 2. Atualiza o Painel Superior (Grid) procurando pelos IDs definidos no HTML
+            document.getElementById('stat-oportunidades').textContent = dados.totalOportunidades;
+            document.getElementById('stat-horas').textContent = dados.minhasHoras + 'h';
+            document.getElementById('stat-proximas').textContent = dados.proximasAtividades;
+            document.getElementById('stat-total-geral').textContent = dados.totalVoluntariados;
+
+            // 3. Atualiza o Card Lateral (Seu Impacto)
+            document.getElementById('impact-horas-valor').textContent = dados.minhasHoras;
+            document.getElementById('impact-concluidas').textContent = dados.atividadesConcluidas;
+            document.getElementById('impact-proximas').textContent = dados.proximasAtividades;
+
+        } catch (error) {
+            console.error("Erro ao carregar estatísticas:", error);
+        }
+    }
+    </script>
+
 </body>
 </html>

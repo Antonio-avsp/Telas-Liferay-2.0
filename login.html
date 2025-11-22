@@ -75,8 +75,10 @@
 
                 // 5. Verifica a RESPOSTA DO SERVIDOR
                 if (data.success) {
-                    
+                    // Salva que está logado E os dados do usuário (importante para inscrição)
                     localStorage.setItem('userLoggedIn', 'true');
+                    localStorage.setItem('userData', JSON.stringify(data.user)); // Salva CPF e Nome
+                    
                     window.location.href = 'inicio.html';
                 } else {
                     
