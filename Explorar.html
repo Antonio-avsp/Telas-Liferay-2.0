@@ -31,13 +31,16 @@
             </nav>
 
             <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="avatar-small">R</div>
-                    <div class="user-details">
-                        <strong>Rafael</strong>
-                        <span>0h de voluntariado</span>
+                <a href="MeuPerfil.html" class="user-info-link">
+                    <div class="user-info">
+                        <div class="avatar-small">...</div>
+                        <div class="user-details">
+                            <strong>Carregando...</strong>
+                            <span id="sidebar-horas">0h de voluntariado</span>
+                        </div>
                     </div>
-                </div>
+                </a>
+                
                 <button class="logout-button">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
                 </button>
@@ -63,127 +66,128 @@
             </div>
 
             <section class="opportunity-grid" id="grid-oportunidades">
-
-                <div class="opportunity-card">
-                    <img src="images/explorar-pintura.jpeg" alt="Mutirão de pintura">
-                    <div class="card-content">
-                        <span class="tag tag-blue">Pintura</span>
-                        <h3>Mutirão de pintura - Escola Municipal</h3>
-                        <p>Vamos nos reunir no fim de semana para pintar o muro da escola uma ótima oportunidade para quem quer ter o impacto...</p>
-                        <div class="card-info">
-                            <span><i class="fa-solid fa-building"></i>  Instituto Educação para Todos</span>
-                            <span><i class="fa-solid fa-location-dot"></i> Recife </span>
-                            <span><i class="fa-solid fa-calendar-days"></i> 14 de Fevereiro</span>
-                            <span><i class="fa-regular fa-clock"></i> 08:00</span>
-                        </div>
-                        <a href="explorar-detalhe.html?id=pintura" class="details-button">Ver detalhes</a>
-                        <a href="#" class="inscricao-btn-explorar" onclick="alert('Este é um card de exemplo. Crie uma oportunidade real para testar a inscrição!')"><i class="fa-regular fa-heart"></i> Inscreva-se</a>
-                    </div>
+                <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: #777;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 30px; color: #007bff; margin-bottom: 15px;"></i>
+                    <p>Buscando oportunidades disponíveis...</p>
                 </div>
+            </section>
 
-                <div class="opportunity-card">
-                    <img src="images/explorar-plantio.jpeg" alt="Plantio de Árvores">
-                    <div class="card-content">
-                        <span class="tag tag-green">Meio ambiente</span>
-                        <h3>Plantio de árvores - Parque Ecológico</h3>
-                        <p>Participe de um dia incrível de reflorestamento em um parque... esta ação visa... o local.</p>
-                        <div class="card-info">
-                            <span><i class="fa-solid fa-building"></i>  SOS Mata Atlantica</span>
-                            <span><i class="fa-solid fa-location-dot"></i> São Paulo</span>
-                            <span><i class="fa-solid fa-calendar-days"></i> 21 de Fevereiro</span>
-                            <span><i class="fa-regular fa-clock"></i> 07:00</span>
-                        </div>
-                        <a href="explorar-detalhe.html?id=plantio" class="details-button">Ver detalhes</a>
-                        <a href="#" class="inscricao-btn-explorar" onclick="alert('Este é um card de exemplo. Crie uma oportunidade real para testar a inscrição!')"><i class="fa-regular fa-heart"></i> Inscreva-se</a>
-                    </div>
-                </div>
-
-                <div class="opportunity-card">
-                    <img src="images/explorar-programacao.jpeg" alt="Aulas de Programação">
-                    <div class="card-content">
-                        <span class="tag tag-purple">Educação</span>
-                        <h3>Aulas de Programação para Jovens</h3>
-                        <p>Ensine conceitos básicos de programação para jovens... Python, JavaScript... futuro desses jovens.</p>
-                        <div class="card-info">
-                            <span><i class="fa-solid fa-building"></i> Code.org Brasil</span>
-                            <span><i class="fa-solid fa-location-dot"></i> Online</span>
-                            <span><i class="fa-solid fa-calendar-days"></i> 26 de Fevereiro</span>
-                            <span><i class="fa-regular fa-clock"></i> 19:00</span>
-                        </div>
-                        <a href="explorar-detalhe.html?id=programacao" class="details-button">Ver detalhes</a>
-                        <a href="#" class="inscricao-btn-explorar" onclick="alert('Este é um card de exemplo. Crie uma oportunidade real para testar a inscrição!')"><i class="fa-regular fa-heart"></i> Inscreva-se</a>
-                    </div>
-                </div>
-
-                <div class="opportunity-card">
-                    <img src="images/explorar-idosos.jpeg" alt="Visita ao lar de idosos">
-                    <div class="card-content">
-                        <span class="tag tag-yellow">Apoio social</span>
-                        <h3>Visita ao lar de idosos</h3>
-                        <p>Passe uma tarde agradável com os residentes... converse, jogue... traga sua companhia...</p>
-                        <div class="card-info">
-                            <span><i class="fa-solid fa-building"></i> Associação Vida Plena</span>
-                            <span><i class="fa-solid fa-location-dot"></i> Recife</span>
-                            <span><i class="fa-solid fa-calendar-days"></i> 01 de março</span>
-                            <span><i class="fa-regular fa-clock"></i> 15:00</span>
-                        </div>
-                        <a href="explorar-detalhe.html?id=idosos" class="details-button">Ver detalhes</a>
-                        <a href="#" class="inscricao-btn-explorar" onclick="alert('Este é um card de exemplo. Crie uma oportunidade real para testar a inscrição!')"><i class="fa-regular fa-heart"></i> Inscreva-se</a>
-                    </div>
-                </div>
-
-                <div class="opportunity-card">
-                    <img src="images/explorar-arte.jpeg" alt="Oficina de arte">
-                    <div class="card-content">
-                        <span class="tag tag-red">Cultura</span>
-                        <h3>Oficina de arte para as crianças</h3>
-                        <p>Conduza uma oficina de arte (pintura, desenho)... para crianças de 7 a 10 anos. O objetivo é...</p>
-                        <div class="card-info">
-                            <span><i class="fa-solid fa-building"></i> Arte na Periferia</span>
-                            <span><i class="fa-solid fa-location-dot"></i> Rio de Janeiro</span>
-                            <span><i class="fa-solid fa-calendar-days"></i> 03 de março</span>
-                            <span><i class="fa-regular fa-clock"></i> 09:00</span>
-                        </div>
-                        <a href="explorar-detalhe.html?id=arte" class="details-button">Ver detalhes</a>
-                        <a href="#" class="inscricao-btn-explorar" onclick="alert('Este é um card de exemplo. Crie uma oportunidade real para testar a inscrição!')"><i class="fa-regular fa-heart"></i> Inscreva-se</a>
-                    </div>
-                </div>
-
-                </section>
         </main>
     </div>
-<script src="app.js"></script>
+    
+    <script src="app.js"></script>
 
-<script>
-    // Função principal que carrega as oportunidades do Banco de Dados
-    async function carregarOportunidades() {
-        try {
-            const response = await fetch('/api/oportunidades');
-            const oportunidades = await response.json();
-            
-            // Pega o grid onde já existem os cards estáticos (fictícios)
-            const grid = document.getElementById('grid-oportunidades'); 
+    <script>
+        // =====================================================================
+        // LÓGICA ESPECÍFICA DA PÁGINA EXPLORAR
+        // =====================================================================
 
-            // NÃO usamos 'grid.innerHTML = ""' aqui, pois queremos manter os cards estáticos.
-            // O forEach vai criar os novos e adicionar no FINAL da lista (append).
+        // Variável global para armazenar TODOS os dados vindos do banco.
+        // Isso permite filtrar localmente sem precisar chamar a API a cada letra digitada.
+        let todasOportunidades = [];
 
-            oportunidades.forEach(op => {
+        // Inicialização: Carrega dados assim que o DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', carregarOportunidades);
+
+        // Configuração da Busca em Tempo Real
+        const searchInput = document.querySelector('.search-box input');
+        searchInput.addEventListener('input', (e) => {
+            const termo = e.target.value.toLowerCase();
+            filtrarOportunidades(termo);
+        });
+
+        /**
+         * 1. BUSCAR DADOS (FETCH)
+         * Busca todas as oportunidades na API e salva na variável global.
+         */
+        async function carregarOportunidades() {
+            try {
+                const response = await fetch('/api/oportunidades');
+                
+                if (!response.ok) throw new Error("Falha ao buscar dados");
+
+                todasOportunidades = await response.json();
+                
+                // Renderiza a lista completa inicialmente
+                renderizarGrid(todasOportunidades);
+
+            } catch (error) { 
+                console.error("Erro ao carregar oportunidades:", error); 
+                // Mostra erro visual para o usuário
+                const grid = document.getElementById('grid-oportunidades');
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #dc3545;">
+                        <i class="fa-solid fa-triangle-exclamation" style="font-size: 30px; margin-bottom: 10px;"></i>
+                        <p>Não foi possível carregar as oportunidades. Verifique se o servidor está rodando.</p>
+                    </div>`;
+            }
+        }
+
+        /**
+         * 2. FILTRAR LISTA (Lógica Local)
+         * Filtra o array global baseado no texto digitado (Título ou ONG).
+         */
+        function filtrarOportunidades(termo) {
+            const filtradas = todasOportunidades.filter(op => {
+                const titulo = op.titulo.toLowerCase();
+                // Verifica se existe instituição, senão usa string vazia para não quebrar
+                const ong = op.instituicao ? op.instituicao.nomeInstituicao.toLowerCase() : '';
+                
+                // Retorna true se o termo estiver no título OU na ONG
+                return titulo.includes(termo) || ong.includes(termo);
+            });
+            // Redesenha a tela apenas com os itens filtrados
+            renderizarGrid(filtradas);
+        }
+
+        /**
+         * 3. RENDERIZAR GRID (Visual)
+         * Recebe uma lista (completa ou filtrada) e cria o HTML dos cards.
+         */
+        function renderizarGrid(lista) {
+            const grid = document.getElementById('grid-oportunidades');
+            grid.innerHTML = ''; // Limpa o loading ou conteúdo anterior
+
+            // Estado Vazio (Busca sem resultados)
+            if (lista.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #777;">
+                        <i class="fa-regular fa-folder-open" style="font-size: 30px; margin-bottom: 10px; color: #ccc;"></i>
+                        <p>Nenhuma oportunidade encontrada.</p>
+                    </div>`;
+                return;
+            }
+
+            // Loop para criar cada Card
+            lista.forEach(op => {
                 const card = document.createElement('div');
                 card.className = 'opportunity-card';
                 
-                // 1. Formatação da Data
+                // Tratamento de Data (Ajuste de fuso horário)
                 const dataObj = new Date(op.data_evento);
                 const dataUser = new Date(dataObj.getTime() + dataObj.getTimezoneOffset() * 60000);
                 const dataFormatada = dataUser.toLocaleDateString('pt-BR');
+                
+                // Tratamento de Nome da ONG
+                const nomeOng = op.instituicao ? op.instituicao.nomeInstituicao : 'Organização';
 
-                // 2. Tratamento do Nome da ONG
-                const nomeOng = op.instituicao ? op.instituicao.nomeInstituicao : 'ONG';
+                // Mapa de Cores para Tags (Visual)
+                let tagClass = 'tag-blue';
+                const tipo = op.tipo_voluntariado ? op.tipo_voluntariado.tipo : 'Geral';
+                const mapTipos = { 
+                    'Meio Ambiente': 'tag-green', 
+                    'Educação': 'tag-purple', 
+                    'Saúde': 'tag-red', 
+                    'Cultura': 'tag-red', 
+                    'Assistência Social': 'tag-yellow' 
+                };
+                if(mapTipos[tipo]) tagClass = mapTipos[tipo];
 
-                // 3. HTML do Card (Incluindo a correção da Hora que você pediu)
+                // Template HTML do Card
                 card.innerHTML = `
                     <img src="${op.imagem_url}" alt="${op.titulo}">
                     <div class="card-content">
-                        <span class="tag tag-blue">Nova</span>
+                        <span class="tag ${tagClass}">${tipo}</span>
                         <h3>${op.titulo}</h3>
                         <p>${op.descricao ? op.descricao.substring(0, 100) + '...' : ''}</p>
                         
@@ -201,47 +205,45 @@
                         </button>
                     </div>
                 `;
-                
-                // Adiciona o novo card DEPOIS dos que já existem no HTML
                 grid.appendChild(card);
             });
-        } catch (error) { 
-            console.error("Erro ao carregar oportunidades:", error); 
         }
-    }
 
-    // Função de Inscrição
-    async function inscreverDinamicamente(id) {
-         const userJson = localStorage.getItem('userData');
-         if(!userJson) { 
-             alert('Faça login para se inscrever!'); 
-             window.location.href = 'login.html';
-             return; 
-         }
-         const user = JSON.parse(userJson);
-         
-         if(confirm("Deseja se inscrever nesta oportunidade?")) {
-             try {
-                const response = await fetch('/api/inscricao', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ usuario_cpf: user.cpf, oportunidade_id: id })
-                });
-                const res = await response.json();
-                if(response.ok) {
-                    alert("Inscrição realizada com sucesso! 🎉");
-                } else {
-                    alert(res.message);
-                }
-             } catch(e) {
-                 console.error(e);
-                 alert("Erro de conexão.");
+        /**
+         * 4. FUNÇÃO DE INSCRIÇÃO
+         * Gerencia o clique no botão "Inscreva-se" direto do card.
+         */
+        async function inscreverDinamicamente(id) {
+             // Verifica Sessão
+             const userJson = localStorage.getItem('userData');
+             if(!userJson) { 
+                 alert('Faça login para se inscrever!'); 
+                 window.location.href = 'login.html';
+                 return; 
              }
-         }
-    }
-
-    document.addEventListener('DOMContentLoaded', carregarOportunidades);
-
-</script>
+             const user = JSON.parse(userJson);
+             
+             // Confirmação e Envio
+             if(confirm("Deseja se inscrever nesta oportunidade?")) {
+                 try {
+                    const response = await fetch('/api/inscricao', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ usuario_cpf: user.cpf, oportunidade_id: id })
+                    });
+                    const res = await response.json();
+                    
+                    if(response.ok) {
+                        alert("Inscrição realizada com sucesso! 🎉");
+                    } else {
+                        alert(res.message); // Ex: "Já inscrito"
+                    }
+                 } catch(e) {
+                     console.error(e);
+                     alert("Erro de conexão.");
+                 }
+             }
+        }
+    </script>
 </body>
 </html>

@@ -26,15 +26,21 @@
                     <li><a href="MeuPerfil.html"><i class="fa-solid fa-user"></i> Meu perfil</a></li>
                 </ul>
             </nav>
+            
             <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="avatar-small">A</div>
-                    <div class="user-details">
-                        <strong>Antonio</strong>
-                        <span>0h de voluntariado</span>
+                <a href="MeuPerfil.html" class="user-info-link">
+                    <div class="user-info">
+                        <div class="avatar-small">...</div>
+                        <div class="user-details">
+                            <strong>Carregando...</strong>
+                            <span id="sidebar-horas">0h de voluntariado</span>
+                        </div>
                     </div>
-                </div>
-                <button class="logout-button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</button>
+                </a>
+                
+                <button class="logout-button">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
+                </button>
             </div>
         </aside>
 
@@ -76,6 +82,7 @@
             
             <form id="form-testemunho">
                 <label for="select-oportunidade-modal" style="display:block; margin-bottom:5px; font-weight:600; color:#555;">Sobre qual oportunidade?</label>
+                
                 <select id="select-oportunidade-modal" required>
                     <option value="" disabled selected>Carregando suas participações...</option>
                 </select>
@@ -94,23 +101,32 @@
     <script src="app.js"></script>
     
    <script>
+        // =================================================================
+        // VARIÁVEIS GLOBAIS DE CONTROLE
+        // =================================================================
+        let modoEdicao = false; // Define se o modal vai Criar (POST) ou Editar (PUT)
+        let idEdicao = null;    // Guarda o ID do item sendo editado
+        let todosTestemunhos = []; // Guarda a lista completa para busca local
+
+        // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
             carregarTestemunhos();
             configurarModal();
             configurarBusca();
         });
 
-        // 1. Função para Carregar e Listar Testemunhos (ATUALIZADA)
+        // =================================================================
+        // FUNÇÃO 1: CARREGAR LISTA (GET)
+        // Busca todos os testemunhos e salva na memória.
+        // =================================================================
         async function carregarTestemunhos() {
             try {
-                // Busca TODOS os testemunhos do banco
                 const response = await fetch('/api/testemunhos');
                 const lista = await response.json();
                 
-                // Salva globalmente para a busca funcionar
+                // Salva globalmente (Importante para a edição funcionar sem erros de aspas)
                 window.todosTestemunhos = lista; 
                 
-                // Renderiza na tela
                 renderizarLista(lista);
 
             } catch (error) {
@@ -120,7 +136,10 @@
             }
         }
 
-        // 2. Função de Renderizar (ATUALIZADA COM BOTÃO EXCLUIR)
+        // =================================================================
+        // FUNÇÃO 2: RENDERIZAR CARDS
+        // Cria o HTML de cada card.
+        // =================================================================
         function renderizarLista(lista) {
             const grid = document.getElementById('grid-testemunhos');
             const userJson = localStorage.getItem('userData');
@@ -142,14 +161,23 @@
                 const nomeUser = t.usuario ? t.usuario.nomeUsuario : 'Usuário';
                 const nomeOpp = t.oportunidade ? t.oportunidade.titulo : 'Atividade Geral';
 
-                // Botão de Excluir (Só aparece se for o dono)
-                let btnExcluir = '';
+                // --- LÓGICA DE BOTÕES (SEGURANÇA VISUAL) ---
+                // Só mostra Editar/Excluir se o usuário logado for o autor
+                let acoesHTML = '';
                 if (user && t.usuario_cpf === user.cpf) {
-                    btnExcluir = `
-                        <button onclick="excluirTestemunho(${t.idtestemunhos}, 'pagina')" 
-                                style="margin-top: auto; align-self: flex-end; background: none; border: none; color: #dc3545; font-size: 12px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 5px;">
-                            <i class="fa-regular fa-trash-can"></i> Excluir
-                        </button>
+                    // CORREÇÃO DO BUG: Passamos APENAS o ID. O JS busca o texto na memória depois.
+                    // Isso evita que aspas ou enters quebrem o HTML.
+                    acoesHTML = `
+                        <div style="margin-top: auto; align-self: flex-end; display: flex; gap: 15px;">
+                            <button onclick="abrirModalEdicao(${t.idtestemunhos})" 
+                                    style="background: none; border: none; color: #007bff; font-size: 12px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 5px;">
+                                <i class="fa-regular fa-pen-to-square"></i> Editar
+                            </button>
+                            <button onclick="excluirTestemunho(${t.idtestemunhos})" 
+                                    style="background: none; border: none; color: #dc3545; font-size: 12px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 5px;">
+                                <i class="fa-regular fa-trash-can"></i> Excluir
+                            </button>
+                        </div>
                     `;
                 }
 
@@ -161,36 +189,136 @@
                             <span>${dataFormatada}</span>
                         </div>
                     </div>
-                    <div class="testimonial-body">
-                        ${t.texto}
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                    <div class="testimonial-body">${t.texto}</div>
+                    <div style="margin-top: 10px; margin-bottom: 10px;">
                         <a href="explorar-detalhe.html?id=${t.oportunidade_idoportunidade}" class="testimonial-tag">
                             <i class="fa-solid fa-link"></i> ${nomeOpp}
                         </a>
-                        ${btnExcluir}
                     </div>
+                    ${acoesHTML}
                 `;
                 grid.appendChild(card);
             });
         }
 
-        // 3. Lógica de Busca (Mantida igual)
+        // =================================================================
+        // FUNÇÃO 3: ABRIR MODAL PARA EDIÇÃO (CORRIGIDA)
+        // Busca o objeto na memória pelo ID para evitar erros de caracteres.
+        // =================================================================
+        window.abrirModalEdicao = function(id) {
+            // Busca o item na lista global
+            const item = window.todosTestemunhos.find(t => t.idtestemunhos === id);
+            if (!item) return; // Segurança
+
+            modoEdicao = true;
+            idEdicao = id;
+            
+            const modal = document.getElementById('modal-testemunho');
+            const tituloModal = document.querySelector('.modal-header h2');
+            const btnSubmit = document.querySelector('.modal-actions .btn-submit');
+            const textarea = document.getElementById('texto-depoimento');
+
+            // Ajusta textos visuais
+            tituloModal.textContent = "Editar Depoimento";
+            btnSubmit.textContent = "Salvar Alterações";
+            
+            // Preenche o campo de texto com o dado seguro da memória
+            textarea.value = item.texto;
+            
+            // Carrega o select e seleciona a oportunidade correta
+            carregarOpcoesSelect(item.oportunidade_idoportunidade);
+            
+            modal.style.display = 'flex';
+        };
+
+        // =================================================================
+        // FUNÇÃO 4: CARREGAR SELECT (Minhas Atividades)
+        // Preenche o dropdown do modal.
+        // =================================================================
+        async function carregarOpcoesSelect(idPreSelecionado = null) {
+            const user = JSON.parse(localStorage.getItem('userData'));
+            const select = document.getElementById('select-oportunidade-modal');
+            select.innerHTML = '<option>Carregando...</option>';
+
+            try {
+                const resp = await fetch(`/api/minhas-atividades/${user.cpf}`);
+                const inscricoes = await resp.json();
+                
+                select.innerHTML = '<option value="" disabled selected>Selecione uma oportunidade...</option>';
+                
+                if (inscricoes.length === 0) {
+                    const opt = document.createElement('option');
+                    opt.disabled = true;
+                    opt.text = "Você não participou de atividades recentes.";
+                    select.appendChild(opt);
+                } else {
+                    inscricoes.forEach(ins => {
+                        const opt = document.createElement('option');
+                        opt.value = ins.oportunidade.idoportunidade;
+                        opt.text = ins.oportunidade.titulo;
+                        
+                        // Se estiver editando, seleciona a opção certa
+                        if (idPreSelecionado && idPreSelecionado === ins.oportunidade.idoportunidade) {
+                            opt.selected = true;
+                        }
+                        select.appendChild(opt);
+                    });
+                }
+                
+                // Na edição, bloqueamos a troca de oportunidade (regra de negócio)
+                if (modoEdicao) select.disabled = true;
+                else select.disabled = false;
+
+            } catch (e) { console.error(e); select.innerHTML = '<option>Erro ao carregar</option>'; }
+        }
+
+        // =================================================================
+        // FUNÇÃO 5: EXCLUIR (DELETE)
+        // =================================================================
+        window.excluirTestemunho = async function(id) {
+             const userJson = localStorage.getItem('userData');
+             if (!userJson) return;
+             const user = JSON.parse(userJson);
+
+             if (confirm("Tem certeza que deseja apagar este depoimento?")) {
+                 try {
+                     const res = await fetch(`/api/testemunhos/${id}`, {
+                         method: 'DELETE',
+                         headers: { 'Content-Type': 'application/json' },
+                         body: JSON.stringify({ usuario_cpf: user.cpf })
+                     });
+                     if (res.ok) {
+                         alert("Depoimento excluído.");
+                         carregarTestemunhos();
+                     } else { 
+                         const json = await res.json();
+                         alert("Erro: " + json.message); 
+                     }
+                 } catch (e) { console.error(e); }
+             }
+        }
+
+        // =================================================================
+        // FUNÇÃO 6: FILTRO (BUSCA)
+        // =================================================================
         function configurarBusca() {
             const input = document.getElementById('input-busca');
             input.addEventListener('input', (e) => {
                 const termo = e.target.value.toLowerCase();
+                
                 const filtrados = window.todosTestemunhos.filter(t => {
                     const texto = t.texto.toLowerCase();
                     const nome = t.usuario ? t.usuario.nomeUsuario.toLowerCase() : '';
-                    const opp = t.oportunidade ? t.oportunidade.titulo.toLowerCase() : '';
-                    return texto.includes(termo) || nome.includes(termo) || opp.includes(termo);
+                    return texto.includes(termo) || nome.includes(termo);
                 });
+                
                 renderizarLista(filtrados);
             });
         }
 
-        // 4. Configuração do Modal (Mantida igual, mas chama carregarTestemunhos ao final)
+        // =================================================================
+        // FUNÇÃO 7: CONFIGURAÇÃO GERAL DO MODAL (Abrir/Fechar/Salvar)
+        // =================================================================
         function configurarModal() {
             const modal = document.getElementById('modal-testemunho');
             const btnAbrir = document.getElementById('btn-abrir-modal');
@@ -199,33 +327,20 @@
             const form = document.getElementById('form-testemunho');
             const select = document.getElementById('select-oportunidade-modal');
 
-            btnAbrir.addEventListener('click', async () => {
+            // Botão "Criar Novo"
+            btnAbrir.addEventListener('click', () => {
                 const userJson = localStorage.getItem('userData');
-                if (!userJson) { alert("Faça login para avaliar."); window.location.href='login.html'; return; }
-                const user = JSON.parse(userJson);
-
-                select.innerHTML = '<option>Carregando...</option>';
-                try {
-                    const resp = await fetch(`/api/minhas-atividades/${user.cpf}`);
-                    const inscricoes = await resp.json();
-                    
-                    select.innerHTML = '<option value="" disabled selected>Selecione uma oportunidade...</option>';
-                    
-                    if (inscricoes.length === 0) {
-                        const opt = document.createElement('option');
-                        opt.disabled = true;
-                        opt.text = "Você ainda não participou de nenhuma atividade.";
-                        select.appendChild(opt);
-                    } else {
-                        inscricoes.forEach(ins => {
-                            const opt = document.createElement('option');
-                            opt.value = ins.oportunidade.idoportunidade;
-                            opt.text = ins.oportunidade.titulo;
-                            select.appendChild(opt);
-                        });
-                    }
-                } catch (e) { console.error(e); select.innerHTML = '<option>Erro ao carregar</option>'; }
-
+                if (!userJson) { alert("Faça login."); window.location.href='login.html'; return; }
+                
+                // Reseta para modo Criação
+                modoEdicao = false;
+                idEdicao = null;
+                document.querySelector('.modal-header h2').textContent = "Escrever Depoimento";
+                document.querySelector('.modal-actions .btn-submit').textContent = "Publicar";
+                document.getElementById('texto-depoimento').value = "";
+                select.value = "";
+                
+                carregarOpcoesSelect();
                 modal.style.display = 'flex';
             });
 
@@ -233,6 +348,7 @@
             btnFechar.addEventListener('click', fechar);
             btnCancelar.addEventListener('click', fechar);
 
+            // Submit do Formulário (Gerencia Criação e Edição)
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const user = JSON.parse(localStorage.getItem('userData'));
@@ -243,16 +359,25 @@
                     texto: document.getElementById('texto-depoimento').value
                 };
 
+                // Define rota e método dinamicamente
+                let url = '/api/testemunhos';
+                let metodo = 'POST';
+
+                if (modoEdicao) {
+                    url = `/api/testemunhos/${idEdicao}`;
+                    metodo = 'PUT';
+                }
+
                 try {
-                    const res = await fetch('/api/testemunhos', {
-                        method: 'POST',
+                    const res = await fetch(url, {
+                        method: metodo,
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify(dados)
                     });
                     const json = await res.json();
                     
                     if (res.ok) {
-                        alert("Depoimento enviado com sucesso!");
+                        alert(modoEdicao ? "Atualizado com sucesso!" : "Enviado com sucesso!");
                         fechar();
                         form.reset();
                         carregarTestemunhos();
@@ -261,34 +386,6 @@
                     }
                 } catch (err) { console.error(err); alert("Erro ao enviar."); }
             });
-        }
-
-        // --- Função Compartilhada de Excluir ---
-        async function excluirTestemunho(id, origem) {
-            const userJson = localStorage.getItem('userData');
-            if (!userJson) return;
-            const user = JSON.parse(userJson);
-
-            if (confirm("Tem certeza que deseja apagar este depoimento?")) {
-                try {
-                    const res = await fetch(`/api/testemunhos/${id}`, {
-                        method: 'DELETE',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ usuario_cpf: user.cpf })
-                    });
-                    
-                    if (res.ok) {
-                        alert("Depoimento excluído.");
-                        if (origem === 'pagina') carregarTestemunhos();
-                    } else {
-                        const json = await res.json();
-                        alert("Erro: " + json.message);
-                    }
-                } catch (e) {
-                    console.error(e);
-                    alert("Erro de conexão.");
-                }
-            }
         }
     </script>
 </body>

@@ -28,14 +28,18 @@
                     <li><a href="MeuPerfil.html"><i class="fa-solid fa-user"></i> Meu perfil</a></li>
                 </ul>
             </nav>
+
             <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="avatar-small">R</div>
-                    <div class="user-details">
-                        <strong>Rafael</strong>
-                        <span>0h oluntariado</span>
+                <a href="MeuPerfil.html" class="user-info-link">
+                    <div class="user-info">
+                        <div class="avatar-small">...</div>
+                        <div class="user-details">
+                            <strong>Carregando...</strong>
+                            <span id="sidebar-horas">0h de voluntariado</span>
+                        </div>
                     </div>
-                </div>
+                </a>
+                
                 <button class="logout-button">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
                 </button>
@@ -49,13 +53,13 @@
                     <i class="fa-solid fa-arrow-left"></i> Voltar
                 </a>
                 
-                <button class="create-opportunity-btn-header" style="background-color: #d9534f;">
+                <button class="create-opportunity-btn-header" style="background-color: #d9534f; display: none;">
                     <i class="fa-solid fa-trash"></i> Excluir Oportunidade
                 </button>
             </header>
 
             <div class="detail-banner-image">
-                <img src="images/explorar-pintura.jpeg" alt="Banner da oportunidade" id="detalhe-imagem">
+                <img src="" alt="Banner da oportunidade" id="detalhe-imagem" style="display: none; width: 100%; height: 100%; object-fit: cover;">
             </div>
 
             <div class="detail-layout">
@@ -63,8 +67,8 @@
                 <div class="detail-main-column">
                     <header class="detail-content-header">
                         <div>
-                            <span class="tag tag-blue" id="detalhe-tag">Pintura</span>
-                            <h2 id="detalhe-titulo">Mutirão de pintura - Escola Estadual</h2>
+                            <span class="tag tag-blue" id="detalhe-tag">Carregando...</span>
+                            <h2 id="detalhe-titulo">Carregando título...</h2>
                         </div>
                         <button class="share-button">
                             <i class="fa-solid fa-share-nodes"></i>
@@ -89,7 +93,7 @@
                         </div>
                         <div class="info-box">
                             <i class="fa-solid fa-users"></i>
-                            <span>Inscritos</span>
+                            <span>Vagas</span>
                             <strong id="detalhe-inscritos">--</strong>
                         </div>
                     </section>
@@ -106,23 +110,21 @@
                     </section>
 
                     <section class="detail-section detail-testimonials">
-    
-    <div class="testimonial-header">
-        <h3>Testemunhos (<span id="detalhe-testemunhos-num">0</span>)</h3>
-    </div>
-
-    <div class="empty-testimonial">
-        <i class="fa-regular fa-comments"></i>
-        <span id="detalhe-testemunhos-msg">Seja o primeiro a compartilhar uma experiência</span>
-    </div>
-</section>
+                        <div class="testimonial-header">
+                            <h3>Testemunhos</h3>
+                        </div>
+                        <div class="empty-testimonial">
+                            <i class="fa-regular fa-comments"></i>
+                            <span id="detalhe-testemunhos-msg">Os testemunhos desta atividade aparecerão aqui.</span>
+                        </div>
+                    </section>
                 </div>
 
                 <aside class="detail-sidebar-column">
                     <div class="action-card">
                         <h4>Participe desta oportunidade</h4>
                         <p>Faça a diferença e contribua para uma causa importante</p>
-                        <button class="btn-inscricao">
+                        <button class="btn-inscricao" id="btn-inscrever-detalhe">
                             <i class="fa-regular fa-heart"></i> Inscrever-se
                         </button>
                     </div>
@@ -132,13 +134,10 @@
                         <p id="detalhe-org-nome">Nome da Organização</p>
                         <small><i class="fa-regular fa-envelope"></i> <span id="detalhe-org-email">...</span></small>
                     </div>
-
-                    <a href="#" class="action-card-link">
-                        <h4><i class="fa-solid fa-users"></i> Voluntários Inscritos</h4>
-                    </a>
                 </aside>
 
-            </div> </main>
+            </div> 
+        </main>
     </div>
     
     <script src="app.js"></script>
@@ -146,219 +145,151 @@
     <script>
     document.addEventListener('DOMContentLoaded', async () => {
 
-        // --- 0. CONFIGURAÇÃO DO BOTÃO DE EXCLUIR ---
-        // Pega o botão pela classe que você usou no HTML
+        // --- 0. CONFIGURAÇÃO INICIAL ---
         const btnExcluir = document.querySelector('.create-opportunity-btn-header');
-        
-        // Por segurança, ESCONDE o botão assim que a página carrega.
-        // Só vamos mostrar se confirmarmos que o usuário é o dono.
-        if (btnExcluir) {
-            btnExcluir.style.display = 'none';
-        }
-
-        // --- 1. DADOS ESTÁTICOS (Fictícios) ---
-        const oportunidadesEstaticas = {
-            'pintura': {
-                titulo: "Mutirão de pintura - Escola Municipal",
-                tag: "Pintura",
-                tagClass: "tag-blue",
-                imagem: "images/explorar-pintura.jpeg",
-                data: "2025-02-14",
-                horario: "08:00",
-                local: "Recife",
-                vagas: 20,
-                descricao: "Vamos nos reunir no fim de semana para pintar o muro da escola...",
-                habilidades: ["Pintura", "Trabalho em equipe"],
-                orgNome: "Instituto Educação para Todos",
-                orgEmail: "contato@educa.org.br",
-                isStatic: true
-            },
-            'plantio': {
-                titulo: "Plantio de Árvores - Parque Ecológico",
-                tag: "Meio ambiente",
-                tagClass: "tag-green",
-                imagem: "images/explorar-plantio.jpeg",
-                data: "2025-02-21",
-                horario: "07:00",
-                local: "São Paulo",
-                vagas: 50,
-                descricao: "Participe de um dia especial de reflorestamento...",
-                habilidades: ["Disposição física", "Natureza"],
-                orgNome: "SOS Mata Atlântica",
-                orgEmail: "voluntarios@sosma.org.br",
-                isStatic: true
-            },
-            'programacao': {
-                titulo: "Aulas de Programação para Jovens",
-                tag: "Educação",
-                tagClass: "tag-purple",
-                imagem: "images/explorar-programacao.jpeg",
-                data: "2025-02-26",
-                horario: "19:00",
-                local: "Online",
-                vagas: 10,
-                descricao: "Ensine conceitos básicos de programação...",
-                habilidades: ["Programação", "Didática"],
-                orgNome: "Code.org Brasil",
-                orgEmail: "brasil@code.org",
-                isStatic: true
-            },
-            'idosos': {
-                titulo: "Visita ao Lar de Idosos",
-                tag: "Apoio social",
-                tagClass: "tag-yellow",
-                imagem: "images/explorar-idosos.jpeg",
-                data: "2025-03-01",
-                horario: "15:00",
-                local: "Recife",
-                vagas: 15,
-                descricao: "Passe uma tarde agradável com os residentes...",
-                habilidades: ["Empatia", "Comunicação"],
-                orgNome: "Associação Vida Plena",
-                orgEmail: "contato@vidaplena.org",
-                isStatic: true
-            },
-            'arte': {
-                titulo: "Oficina de arte para as crianças",
-                tag: "Cultura",
-                tagClass: "tag-red",
-                imagem: "images/explorar-arte.jpeg",
-                data: "2025-03-03",
-                horario: "09:00",
-                local: "Rio de Janeiro",
-                vagas: 8,
-                descricao: "Conduza uma oficina de arte...",
-                habilidades: ["Arte", "Criatividade"],
-                orgNome: "Arte na Periferia",
-                orgEmail: "contato@arteperiferia.org",
-                isStatic: true
-            }
-        };
-
-        // --- 2. LÓGICA PRINCIPAL ---
         const urlParams = new URLSearchParams(window.location.search);
-        const id = urlParams.get('id');
+        const id = urlParams.get('id'); // Pega o ID da URL (ex: ?id=5)
         let dadosFinais = null;
 
         try {
+            // Validação básica: Precisa ter ID na URL
             if (!id) throw new Error("ID não fornecido");
 
-            // PEGA USUÁRIO LOGADO
+            // Recupera dados do usuário logado para verificar permissões
             const userJson = localStorage.getItem('userData');
             const user = userJson ? JSON.parse(userJson) : null;
 
-            // VERIFICAÇÃO: É estático ou dinâmico?
-            if (oportunidadesEstaticas[id]) {
-                // CASO 1: É ESTÁTICO
-                dadosFinais = oportunidadesEstaticas[id];
-            } else {
-                // CASO 2: É DINÂMICO (Busca no Servidor)
-                const response = await fetch(`/api/oportunidades/${id}`);
-                if (!response.ok) throw new Error('Erro no servidor');
-                
-                const dbData = await response.json();
-                
-                dadosFinais = {
-                    id: dbData.idoportunidade, // Guardamos o ID para usar na exclusão
-                    usuario_cpf_criador: dbData.usuario_cpf_criador, // IMPORTANTE: CPF do dono
-                    titulo: dbData.titulo,
-                    tag: dbData.tipo_voluntariado ? dbData.tipo_voluntariado.tipo : 'Geral',
-                    tagClass: 'tag-blue',
-                    imagem: dbData.imagem_url || 'images/default.jpg',
-                    data: dbData.data_evento,
-                    horario: dbData.horario,
-                    local: dbData.local_evento,
-                    vagas: dbData.num_vagas,
-                    descricao: dbData.descricao,
-                    habilidades: dbData.habilidades_desejadas ? dbData.habilidades_desejadas.split(',') : [],
-                    orgNome: dbData.instituicao ? dbData.instituicao.nomeInstituicao : 'Organização',
-                    orgEmail: dbData.instituicao ? dbData.instituicao.email_contato : '---',
-                    isStatic: false 
-                };
+            // --- 1. BUSCA DADOS REAIS NA API ---
+            const response = await fetch(`/api/oportunidades/${id}`);
+            
+            if (!response.ok) throw new Error('Oportunidade não encontrada no banco de dados');
+            
+            const dbData = await response.json();
+            
+            // Formata os dados recebidos para facilitar o uso no DOM
+            dadosFinais = {
+                id: dbData.idoportunidade, 
+                usuario_cpf_criador: dbData.usuario_cpf_criador, // Essencial para verificar dono
+                titulo: dbData.titulo,
+                tag: dbData.tipo_voluntariado ? dbData.tipo_voluntariado.tipo : 'Geral',
+                tagClass: 'tag-blue',
+                imagem: dbData.imagem_url || 'images/default.jpg',
+                data: dbData.data_evento,
+                horario: dbData.horario,
+                local: dbData.local_evento,
+                vagas: dbData.num_vagas,
+                descricao: dbData.descricao,
+                // Converte string de habilidades em array (se houver)
+                habilidades: dbData.habilidades_desejadas ? dbData.habilidades_desejadas.split(',') : [],
+                orgNome: dbData.instituicao ? dbData.instituicao.nomeInstituicao : 'Organização',
+                orgEmail: dbData.instituicao ? dbData.instituicao.email_contato : '---',
+                isStatic: false 
+            };
 
-                // --- LÓGICA DE EXIBIR O BOTÃO EXCLUIR ---
-                // Se o usuário estiver logado E o CPF dele for igual ao do criador
-                if (user && dadosFinais.usuario_cpf_criador == user.cpf) {
-                    if (btnExcluir) {
-                        btnExcluir.style.display = 'block'; // Mostra o botão
-                        
-                        // Adiciona o evento de clique para excluir
-                        btnExcluir.onclick = async () => {
-                            if (confirm("Tem certeza que deseja EXCLUIR esta oportunidade? Essa ação não pode ser desfeita.")) {
-                                try {
-                                    const resDel = await fetch(`/api/oportunidades/${dadosFinais.id}`, {
-                                        method: 'DELETE',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ usuario_cpf: user.cpf }) // Manda o CPF para confirmar autoria
-                                    });
-                                    
-                                    const jsonDel = await resDel.json();
-                                    
-                                    if (resDel.ok) {
-                                        alert("Oportunidade excluída!");
-                                        window.location.href = 'explorar.html'; // Volta para a lista
-                                    } else {
-                                        alert("Erro: " + jsonDel.message);
-                                    }
-                                } catch (err) {
-                                    console.error(err);
-                                    alert("Erro de conexão ao tentar excluir.");
-                                }
-                            }
-                        };
-                    }
-                }
-            }
+            // --- 2. LÓGICA DE SEGURANÇA (BOTÃO EXCLUIR) ---
+            // Se o usuário estiver logado E o CPF dele for igual ao criador da oportunidade:
+            // EM: explorar-detalhe.html (Dentro do script)
 
-            // --- 3. RENDERIZAR NA TELA ---
-            if (dadosFinais) {
-                document.getElementById('detalhe-titulo-pagina').textContent = dadosFinais.titulo;
-                
-                const imgElement = document.getElementById('detalhe-imagem');
-                imgElement.src = dadosFinais.imagem;
-                imgElement.alt = dadosFinais.titulo;
+// --- 2. LÓGICA DE BOTÕES DE DONO (EDITAR E EXCLUIR) ---
+if (user && dadosFinais.usuario_cpf_criador == user.cpf) {
+    const headerActions = document.querySelector('.detail-page-header');
+    
+    // Cria container para botões
+    const containerBtns = document.createElement('div');
+    containerBtns.style.display = 'flex';
+    containerBtns.style.gap = '10px';
+    containerBtns.style.marginLeft = 'auto';
 
-                const tagElement = document.getElementById('detalhe-tag');
-                tagElement.textContent = dadosFinais.tag;
-                tagElement.className = `tag ${dadosFinais.tagClass || 'tag-blue'}`;
-                
-                document.getElementById('detalhe-titulo').textContent = dadosFinais.titulo;
-                
-                const dataObj = new Date(dadosFinais.data);
-                const dataUser = new Date(dataObj.getTime() + dataObj.getTimezoneOffset() * 60000);
-                document.getElementById('detalhe-data').textContent = dataUser.toLocaleDateString('pt-BR');
+    // 1. BOTÃO EDITAR
+    const btnEditar = document.createElement('button');
+    btnEditar.innerHTML = '<i class="fa-solid fa-pen"></i> Editar';
+    btnEditar.style.cssText = "background-color: #007bff; color: white; border: none; border-radius: 6px; padding: 10px 16px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 14px;";
+    
+    // A MÁGICA ACONTECE AQUI: Redireciona para a página de criar, mas passando o ID na URL
+    btnEditar.onclick = () => {
+        window.location.href = `criar-oportunidade.html?mode=edit&id=${dadosFinais.id}`;
+    };
 
-                document.getElementById('detalhe-horario').textContent = dadosFinais.horario;
-                document.getElementById('detalhe-local').textContent = dadosFinais.local;
-                document.getElementById('detalhe-inscritos').textContent = `Vagas: ${dadosFinais.vagas}`;
-                document.getElementById('detalhe-descricao').textContent = dadosFinais.descricao;
-
-                const habContainer = document.getElementById('detalhe-habilidades');
-                habContainer.innerHTML = '';
-                dadosFinais.habilidades.forEach(h => {
-                    const span = document.createElement('span');
-                    span.className = 'tag';
-                    span.style.backgroundColor = '#eee';
-                    span.style.color = '#333';
-                    span.style.marginRight = '5px';
-                    span.textContent = h.trim();
-                    habContainer.appendChild(span);
+    // 2. BOTÃO EXCLUIR (Código que você já tinha)
+    const btnExcluir = document.createElement('button');
+    btnExcluir.innerHTML = '<i class="fa-solid fa-trash"></i> Excluir';
+    btnExcluir.style.cssText = "background-color: #d9534f; color: white; border: none; border-radius: 6px; padding: 10px 16px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 14px;";
+    
+    btnExcluir.onclick = async () => {
+        if (confirm("Tem certeza que deseja EXCLUIR?")) {
+            // ... (Lógica de exclusão existente) ...
+             try {
+                const resDel = await fetch(`/api/oportunidades/${dadosFinais.id}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usuario_cpf: user.cpf }) 
                 });
+                if (resDel.ok) { alert("Excluído!"); window.location.href = 'explorar.html'; }
+            } catch (e) { console.error(e); }
+        }
+    };
 
-                document.getElementById('detalhe-org-nome').textContent = dadosFinais.orgNome;
-                document.getElementById('detalhe-org-email').textContent = dadosFinais.orgEmail;
-            }
+    // Remove o botão antigo se existir e adiciona os novos
+    const btnAntigo = document.querySelector('.create-opportunity-btn-header');
+    if(btnAntigo) btnAntigo.remove();
+
+    containerBtns.appendChild(btnEditar);
+    containerBtns.appendChild(btnExcluir);
+    headerActions.appendChild(containerBtns);
+}
+
+            // --- 3. RENDERIZAR DADOS NA TELA ---
+            document.getElementById('detalhe-titulo-pagina').textContent = dadosFinais.titulo;
+            
+            // Tratamento da Imagem: Define o SRC e depois mostra (evita piscar imagem quebrada)
+            const imgElement = document.getElementById('detalhe-imagem');
+            imgElement.src = dadosFinais.imagem;
+            imgElement.alt = dadosFinais.titulo;
+            imgElement.style.display = 'block'; 
+
+            // Tag de Categoria
+            const tagElement = document.getElementById('detalhe-tag');
+            tagElement.textContent = dadosFinais.tag;
+            tagElement.className = `tag ${dadosFinais.tagClass}`;
+            
+            // Textos principais
+            document.getElementById('detalhe-titulo').textContent = dadosFinais.titulo;
+            
+            // Formatação de Data
+            const dataObj = new Date(dadosFinais.data);
+            const dataUser = new Date(dataObj.getTime() + dataObj.getTimezoneOffset() * 60000);
+            document.getElementById('detalhe-data').textContent = dataUser.toLocaleDateString('pt-BR');
+
+            document.getElementById('detalhe-horario').textContent = dadosFinais.horario;
+            document.getElementById('detalhe-local').textContent = dadosFinais.local;
+            document.getElementById('detalhe-inscritos').textContent = `${dadosFinais.vagas}`;
+            document.getElementById('detalhe-descricao').textContent = dadosFinais.descricao;
+
+            // Renderização da lista de habilidades (tags cinzas)
+            const habContainer = document.getElementById('detalhe-habilidades');
+            habContainer.innerHTML = '';
+            dadosFinais.habilidades.forEach(h => {
+                const span = document.createElement('span');
+                span.className = 'skill-tag'; 
+                span.textContent = h.trim();
+                habContainer.appendChild(span);
+            });
+
+            // Dados da Organização
+            document.getElementById('detalhe-org-nome').textContent = dadosFinais.orgNome;
+            document.getElementById('detalhe-org-email').textContent = dadosFinais.orgEmail;
 
         } catch (error) {
             console.error(error);
-            alert("Erro ao carregar detalhes: " + error.message);
-            window.location.href = 'explorar.html';
+            alert("Erro: " + error.message);
+            window.location.href = 'explorar.html'; // Volta se der erro fatal
         }
 
         // --- 4. LÓGICA DO BOTÃO DE INSCRIÇÃO ---
         const btnInscrever = document.getElementById('btn-inscrever-detalhe');
         if (btnInscrever) {
             btnInscrever.addEventListener('click', async () => {
+                // Validação de Login antes de qualquer coisa
                 const userJson = localStorage.getItem('userData');
                 if (!userJson) {
                     alert("Faça login para se inscrever!");
@@ -366,13 +297,6 @@
                     return;
                 }
                 const user = JSON.parse(userJson);
-
-                if (dadosFinais && dadosFinais.isStatic) {
-                    alert(`Inscrição realizada com sucesso para ${dadosFinais.titulo}! \n(Modo Simulação)`);
-                    btnInscrever.disabled = true;
-                    btnInscrever.innerHTML = '<i class="fa-solid fa-check"></i> Inscrito';
-                    return;
-                }
 
                 if(confirm("Deseja confirmar sua inscrição?")) {
                     try {
@@ -387,13 +311,13 @@
                             btnInscrever.disabled = true;
                             btnInscrever.innerHTML = '<i class="fa-solid fa-check"></i> Inscrito';
                         } else {
-                            alert(res.message);
+                            alert(res.message); // Ex: "Já inscrito"
                         }
                     } catch (e) { console.error(e); alert("Erro de conexão"); }
                 }
             });
         }
     });
-</script>
+    </script>
 </body>
 </html>

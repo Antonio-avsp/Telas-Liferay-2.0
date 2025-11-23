@@ -31,13 +31,16 @@
             </nav>
 
             <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="avatar-small">R</div>
-                    <div class="user-details">
-                        <strong>Rafael</strong>
-                        <span>0h de voluntariado</span>
+                <a href="MeuPerfil.html" class="user-info-link">
+                    <div class="user-info">
+                        <div class="avatar-small">...</div>
+                        <div class="user-details">
+                            <strong>Carregando...</strong>
+                            <span id="sidebar-horas">0h de voluntariado</span>
+                        </div>
                     </div>
-                </div>
+                </a>
+                
                 <button class="logout-button">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
                 </button>
@@ -164,17 +167,76 @@
                 </div>
 
             </form> 
-            </main>
+        </main>
     </div>
+
 <script src="app.js"></script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
         
         const selectTipo = document.getElementById('tipo_select');
         const inputOutro = document.getElementById('tipo_outro');
         const form = document.getElementById('opportunity-form');
+        
+        // --- VERIFICAÇÃO DE MODO EDIÇÃO ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode'); // 'edit'
+        const editId = urlParams.get('id');
+        const isEdit = (mode === 'edit' && editId);
 
-        // 1. Lógica Visual
+        // Se for edição, ajusta a tela
+        if (isEdit) {
+            document.querySelector('.form-header h1').textContent = "Editar Oportunidade";
+            document.querySelector('.form-header p').textContent = "Atualize os dados da sua ação social";
+            document.querySelector('.btn-submit').innerHTML = '<i class="fa-solid fa-check"></i> Salvar Alterações';
+            
+            // Carrega os dados atuais
+            try {
+                const response = await fetch(`/api/oportunidades/${editId}`);
+                const dados = await response.json();
+                
+                // Preenche os campos
+                document.getElementById('titulo').value = dados.titulo;
+                document.getElementById('descricao').value = dados.descricao;
+                document.getElementById('ong').value = dados.instituicao.nomeInstituicao;
+                
+                // Lógica do Tipo
+                const tipoNome = dados.tipo_voluntariado.tipo;
+                const options = Array.from(selectTipo.options).map(o => o.value);
+                if (options.includes(tipoNome)) {
+                    selectTipo.value = tipoNome;
+                } else {
+                    selectTipo.value = 'Outros';
+                    inputOutro.style.display = 'block';
+                    inputOutro.value = tipoNome;
+                }
+
+                // Local e Data (Parse manual do formato "Recife, Brasil (Presencial)")
+                if(dados.local_evento.includes('(')) {
+                    const partes = dados.local_evento.split('(');
+                    const local = partes[0].split(',');
+                    document.getElementById('cidade').value = local[0].trim();
+                    document.getElementById('pais').value = local[1] ? local[1].trim() : '';
+                    document.getElementById('formato').value = partes[1].replace(')', '');
+                }
+
+                // Data (ISO string para YYYY-MM-DD)
+                document.getElementById('data').value = dados.data_evento.split('T')[0];
+                document.getElementById('horario').value = dados.horario;
+                document.getElementById('duracao').value = dados.duracao_horas;
+                document.getElementById('num_voluntarios').value = dados.num_vagas;
+                document.getElementById('habilidades').value = dados.habilidades_desejadas;
+                document.getElementById('email_contato').value = dados.instituicao.email_contato;
+                document.getElementById('telefone_contato').value = dados.instituicao.telefone_contato;
+
+            } catch (e) {
+                console.error("Erro ao carregar dados para edição:", e);
+                alert("Erro ao carregar dados.");
+            }
+        }
+
+        // Lógica Visual "Outros"
         if (selectTipo && inputOutro) {
             selectTipo.addEventListener('change', function() {
                 if (this.value === 'Outros') {
@@ -188,73 +250,65 @@
             });
         }
 
-        // 2. Lógica de Envio
+        // Lógica de Envio (POST ou PUT)
         if (form) {
             form.addEventListener('submit', async function(event) {
                 event.preventDefault(); 
 
-                // --- LOGIN CHECK ---
                 const userJson = localStorage.getItem('userData');
-                if (!userJson) {
-                    alert("Erro: Você precisa estar logado.");
-                    window.location.href = "login.html";
-                    return;
-                }
+                if (!userJson) { alert("Faça login."); window.location.href = "login.html"; return; }
                 const user = JSON.parse(userJson);
 
-                // --- PREPARA DADOS ---
                 const tipoSelecionado = selectTipo.value;
                 const valorFinalTipo = (tipoSelecionado === 'Outros') ? inputOutro.value : tipoSelecionado;
 
                 const formData = new FormData();
-                
-                // Adiciona CPF (Obrigatório)
                 formData.append('usuario_cpf', user.cpf); 
-
-                // Adiciona Campos do Formulário (CORRIGIDO: Agora pega todos os valores)
                 formData.append('titulo', document.getElementById('titulo').value);
                 formData.append('descricao', document.getElementById('descricao').value);
                 formData.append('ongNome', document.getElementById('ong').value);
                 formData.append('tipoAtividade', valorFinalTipo); 
-                
                 formData.append('formato', document.getElementById('formato').value);
                 formData.append('cidade', document.getElementById('cidade').value);
                 formData.append('pais', document.getElementById('pais').value);
-                
                 formData.append('data', document.getElementById('data').value);
                 formData.append('horario', document.getElementById('horario').value);
                 formData.append('duracao', document.getElementById('duracao').value);
-                
                 formData.append('numVoluntarios', document.getElementById('num_voluntarios').value);
                 formData.append('habilidades', document.getElementById('habilidades').value);
-                
                 formData.append('emailContato', document.getElementById('email_contato').value);
                 formData.append('telefoneContato', document.getElementById('telefone_contato').value);
                 
-                // Arquivo
                 const fileInput = document.querySelector('.file-input');
                 if (fileInput && fileInput.files[0]) {
                     formData.append('imagem', fileInput.files[0]);
                 }
 
-                // --- ENVIA ---
                 try {
-                    const response = await fetch('/api/oportunidades', {
-                        method: 'POST',
+                    // DEFINE URL E MÉTODO DINAMICAMENTE
+                    let url = '/api/oportunidades';
+                    let method = 'POST';
+
+                    if (isEdit) {
+                        url = `/api/oportunidades/${editId}`; // Rota PUT
+                        method = 'PUT'; // Método de atualização
+                    }
+
+                    const response = await fetch(url, {
+                        method: method,
                         body: formData 
                     });
                     const resultado = await response.json();
                     
                     if (response.ok && resultado.success) {
-                        alert('Oportunidade criada com sucesso!');
-                        window.location.href = 'explorar.html';
+                        alert(isEdit ? 'Oportunidade atualizada!' : 'Oportunidade criada!');
+                        window.location.href = isEdit ? `explorar-detalhe.html?id=${editId}` : 'explorar.html';
                     } else {
-                        console.error(resultado);
                         alert('Erro: ' + (resultado.message || 'Erro desconhecido'));
                     }
                 } catch (error) {
                     console.error(error);
-                    alert('Erro de conexão com o servidor.');
+                    alert('Erro de conexão.');
                 }
             });
         }

@@ -10,6 +10,7 @@
 <body>
 
     <div class="container">
+        
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="logo-icon">
@@ -31,13 +32,16 @@
             </nav>
 
             <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="avatar-small">A</div>
-                    <div class="user-details">
-                        <strong>Antonio</strong>
-                        <span>0h de voluntariado</span>
+                <a href="MeuPerfil.html" class="user-info-link">
+                    <div class="user-info">
+                        <div class="avatar-small">...</div>
+                        <div class="user-details">
+                            <strong>Carregando...</strong>
+                            <span id="sidebar-horas">0h de voluntariado</span>
+                        </div>
                     </div>
-                </div>
+                </a>
+                
                 <button class="logout-button">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
                 </button>
@@ -48,7 +52,7 @@
             
             <div class="page-header">
                 <div>
-                    <h1>Olá, Antonio! <span class="wave-emoji">👋</span></h1>
+                    <h1 id="header-greeting">Olá! <span class="wave-emoji">👋</span></h1>
                     <p>Pronto para fazer a diferença hoje?</p>
                 </div>
                 <a href="criar-oportunidade.html" style="text-decoration: none;">
@@ -159,39 +163,42 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
+            // Atualiza a saudação "Olá, [Nome]" no topo
+            atualizarSaudacao();
+
             try {
-                // 1. Chama API para pegar todas as oportunidades
+                // 1. Busca TODAS as oportunidades na API
                 const response = await fetch('/api/oportunidades');
                 const oportunidades = await response.json();
 
-                // 2. Filtra: Pega apenas as 3 primeiras do array (mais recentes)
+                // 2. Filtra apenas as 3 primeiras (mais recentes)
                 const recentes = oportunidades.slice(0, 3); 
                 const lista = document.getElementById('lista-recomendados');
-                lista.innerHTML = ''; // Limpa loading ou lixo anterior
+                lista.innerHTML = ''; 
 
-                // Validação: Se não houver nada, exibe mensagem
+                // Se não houver oportunidades, exibe mensagem
                 if (recentes.length === 0) {
                     lista.innerHTML = '<p style="padding: 20px; color: #666; text-align:center;">Nenhuma oportunidade recente.</p>';
                     return;
                 }
 
-                // 3. Renderização: Cria o HTML para cada item
+                // 3. Renderiza cada card
                 recentes.forEach(op => {
                     const item = document.createElement('li');
                     item.className = 'recommendation-item';
 
-                    // Formatação de Data (JS nativo para dd de mês)
+                    // Formatação de Data
                     const dataObj = new Date(op.data_evento);
-                    const dataUser = new Date(dataObj.getTime() + dataObj.getTimezoneOffset() * 60000); // Ajuste fuso
+                    const dataUser = new Date(dataObj.getTime() + dataObj.getTimezoneOffset() * 60000);
                     const dataFormatada = dataUser.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
 
-                    // Definição de cores das tags baseado no tipo
+                    // Definição de cores das tags (Visual)
                     let tagClass = 'tag-blue';
                     const tipo = op.tipo_voluntariado ? op.tipo_voluntariado.tipo : 'Geral';
                     const mapTipos = { 'Meio Ambiente': 'tag-green', 'Educação': 'tag-purple', 'Saúde': 'tag-red', 'Cultura': 'tag-red', 'Assistência Social': 'tag-yellow' };
                     if(mapTipos[tipo]) tagClass = mapTipos[tipo];
 
-                    // Template String do HTML
+                    // HTML do Card
                     item.innerHTML = `
                         <div class="item-details">
                             <h3>${op.titulo}</h3>
@@ -202,14 +209,9 @@
                                 <span><i class="fa-solid fa-location-dot"></i> ${op.local_evento.split(',')[0]}</span>
                             </div>
                         </div>
-                        
                         <div class="recommendation-actions">
-                            <a href="explorar-detalhe.html?id=${op.idoportunidade}" class="btn-detalhes-home">
-                                Ver detalhes
-                            </a>
-                            <button onclick="inscreverHome(${op.idoportunidade})" class="btn-inscrever-home">
-                                <i class="fa-regular fa-heart"></i> Inscreva-se
-                            </button>
+                            <a href="explorar-detalhe.html?id=${op.idoportunidade}" class="btn-detalhes-home">Ver detalhes</a>
+                            <button onclick="inscreverHome(${op.idoportunidade})" class="btn-inscrever-home"><i class="fa-regular fa-heart"></i> Inscreva-se</button>
                         </div>
                     `;
                     lista.appendChild(item);
@@ -219,12 +221,18 @@
             }
         });
 
-        /**
-         * Função global para inscrever o usuário em uma oportunidade.
-         * Faz um POST para /api/inscricao.
-         */
+        // Função Auxiliar: Atualiza o H1 com o nome do usuário
+        function atualizarSaudacao() {
+            const userJson = localStorage.getItem('userData');
+            if (userJson) {
+                const user = JSON.parse(userJson);
+                const headerGreeting = document.getElementById('header-greeting');
+                headerGreeting.innerHTML = `Olá, ${user.nome}! <span class="wave-emoji">👋</span>`;
+            }
+        }
+
+        // Função Auxiliar: Inscrever-se direto da Home
         async function inscreverHome(id) {
-            // Validação de sessão
             const userJson = localStorage.getItem('userData');
             if (!userJson) { alert("Faça login para se inscrever!"); window.location.href = "login.html"; return; }
             const user = JSON.parse(userJson);
@@ -250,7 +258,7 @@
     });
 
     async function carregarMinhasAtividades() {
-        // 1. Verifica login (obrigatório para ver minhas atividades)
+        // 1. Verifica Login
         const userJson = localStorage.getItem('userData');
         if (!userJson) return; 
         const user = JSON.parse(userJson);
@@ -259,22 +267,23 @@
         const emptyState = document.getElementById('empty-state-atividades');
 
         try {
-            // 2. Busca na API filtrando pelo CPF
+            // 2. Busca inscrições na API filtrando pelo CPF
             const response = await fetch(`/api/minhas-atividades/${user.cpf}`);
             const inscricoes = await response.json();
 
-            // Lógica de Estado Vazio
+            // Se vazio, mostra estado vazio
             if (inscricoes.length === 0) {
                 lista.style.display = 'none';
                 emptyState.style.display = 'block';
                 return;
             }
 
+            // Se tem dados, mostra lista
             emptyState.style.display = 'none';
             lista.style.display = 'block';
             lista.innerHTML = ''; 
 
-            // 3. Renderiza cada inscrição
+            // 3. Renderiza inscrições
             inscricoes.forEach(item => {
                 const op = item.oportunidade; 
                 const li = document.createElement('li');
@@ -291,20 +300,14 @@
                     <div class="item-details">
                         <h3>${op.titulo}</h3>
                         <span class="tag ${tagClass}" style="font-size: 11px;">${tipo}</span>
-                        
                         <div class="item-info" style="margin-top: 8px;">
                             <span><i class="fa-regular fa-calendar-days"></i> ${dataFormatada}</span>
                             <span><i class="fa-regular fa-clock"></i> ${op.horario}</span>
                         </div>
                     </div>
-                    
                     <div class="recommendation-actions" style="min-width: 120px;">
-                        <a href="explorar-detalhe.html?id=${op.idoportunidade}" class="btn-detalhes-home" style="font-size: 12px; padding: 6px;">
-                            Detalhes
-                        </a>
-                        <button onclick="cancelarInscricao(${op.idoportunidade})" style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #dc3545; background: #fff; color: #dc3545; cursor: pointer; font-weight: 600; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px;">
-                            <i class="fa-solid fa-xmark"></i> Cancelar
-                        </button>
+                        <a href="explorar-detalhe.html?id=${op.idoportunidade}" class="btn-detalhes-home" style="font-size: 12px; padding: 6px;">Detalhes</a>
+                        <button onclick="cancelarInscricao(${op.idoportunidade})" style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #dc3545; background: #fff; color: #dc3545; cursor: pointer; font-weight: 600; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px;"><i class="fa-solid fa-xmark"></i> Cancelar</button>
                     </div>
                 `;
                 lista.appendChild(li);
@@ -314,10 +317,7 @@
         }
     }
 
-    /**
-     * Função para cancelar inscrição.
-     * Envia DELETE para a API e recarrega a lista se der certo.
-     */
+    // Função para Cancelar Inscrição (DELETE na API)
     async function cancelarInscricao(idOportunidade) {
         const userJson = localStorage.getItem('userData');
         if (!userJson) return;
@@ -336,8 +336,8 @@
                 const resultado = await response.json();
                 if (response.ok) {
                     alert("Inscrição cancelada.");
-                    carregarMinhasAtividades(); // Atualiza UI lista
-                    carregarEstatisticas();     // Atualiza UI contadores
+                    carregarMinhasAtividades(); // Recarrega a lista para atualizar a tela
+                    carregarEstatisticas();     // Recarrega estatísticas para atualizar contadores
                 } else {
                     alert("Erro: " + resultado.message);
                 }
@@ -356,7 +356,6 @@
 
     async function carregarTestemunhosHome() {
         try {
-            // Pega usuário logado para lógica de permissão (dono do post)
             const userJson = localStorage.getItem('userData');
             const user = userJson ? JSON.parse(userJson) : null;
 
@@ -366,7 +365,7 @@
             const container = document.getElementById('lista-testemunhos-home');
             const emptyState = document.getElementById('empty-state-testemunhos');
 
-            const recentes = lista.slice(0, 2); // Apenas os 2 mais recentes
+            const recentes = lista.slice(0, 2); // Pega apenas os 2 últimos
 
             if (recentes.length === 0) {
                 container.style.display = 'none';
@@ -381,7 +380,6 @@
             recentes.forEach(t => {
                 const div = document.createElement('div');
                 div.className = 'testimonial-card'; 
-                // Estilos inline específicos para o widget da Home
                 div.style.padding = '15px'; 
                 div.style.border = '1px solid #f0f0f0';
                 div.style.boxShadow = 'none'; 
@@ -389,8 +387,8 @@
                 const nomeUser = t.usuario ? t.usuario.nomeUsuario : 'Anônimo';
                 const inicial = nomeUser.charAt(0).toUpperCase();
                 
-                // LÓGICA DE SEGURANÇA VISUAL:
-                // Se o CPF do logado == CPF do criador do testemunho -> Mostra botão Excluir
+                // Lógica de Segurança Visual:
+                // Só mostra o botão "Excluir" se o CPF do usuário logado for igual ao do autor.
                 let btnExcluirHTML = '';
                 if (user && t.usuario_cpf === user.cpf) {
                     btnExcluirHTML = `
@@ -403,17 +401,11 @@
                 
                 div.innerHTML = `
                     <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-                        <div class="testimonial-avatar" style="width:30px; height:30px; font-size:12px;">
-                            ${inicial}
-                        </div>
+                        <div class="testimonial-avatar" style="width:30px; height:30px; font-size:12px;">${inicial}</div>
                         <strong style="font-size:13px; color:#333;">${nomeUser}</strong>
                     </div>
-                    <p style="font-size:13px; color:#666; margin:0; font-style:italic; line-height: 1.4;">
-                        "${t.texto}"
-                    </p>
-                    <small style="color:#007bff; font-size:11px; margin-top:8px; display:block; font-weight:500;">
-                        Em: ${t.oportunidade ? t.oportunidade.titulo : 'Atividade'}
-                    </small>
+                    <p style="font-size:13px; color:#666; margin:0; font-style:italic; line-height: 1.4;">"${t.texto}"</p>
+                    <small style="color:#007bff; font-size:11px; margin-top:8px; display:block; font-weight:500;">Em: ${t.oportunidade ? t.oportunidade.titulo : 'Atividade'}</small>
                     ${btnExcluirHTML}
                 `;
                 container.appendChild(div);
@@ -424,10 +416,7 @@
         }
     }
 
-    /**
-     * Função para excluir testemunho.
-     * 'origem' define qual lista atualizar após deletar ('home' ou 'pagina').
-     */
+    // Função para excluir testemunho (DELETE na API)
     async function excluirTestemunho(id, origem) {
         const userJson = localStorage.getItem('userData');
         if (!userJson) return;
@@ -438,11 +427,12 @@
                 const res = await fetch(`/api/testemunhos/${id}`, {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ usuario_cpf: user.cpf })
+                    body: JSON.stringify({ usuario_cpf: user.cpf }) // O Back-end checa se é dono
                 });
                 
                 if (res.ok) {
                     alert("Depoimento excluído.");
+                    // Recarrega a lista correta dependendo de onde veio o clique
                     if (origem === 'home') carregarTestemunhosHome();
                     if (origem === 'pagina') carregarTestemunhos(); 
                 } else {
@@ -468,17 +458,16 @@
         const user = JSON.parse(userJson);
 
         try {
-            // 1. Busca os dados calculados no servidor
             const response = await fetch(`/api/estatisticas/${user.cpf}`);
             const dados = await response.json();
 
-            // 2. Atualiza o Painel Superior (Grid) procurando pelos IDs definidos no HTML
+            // Atualiza Painel Superior
             document.getElementById('stat-oportunidades').textContent = dados.totalOportunidades;
             document.getElementById('stat-horas').textContent = dados.minhasHoras + 'h';
             document.getElementById('stat-proximas').textContent = dados.proximasAtividades;
             document.getElementById('stat-total-geral').textContent = dados.totalVoluntariados;
 
-            // 3. Atualiza o Card Lateral (Seu Impacto)
+            // Atualiza Card Lateral (Seu Impacto)
             document.getElementById('impact-horas-valor').textContent = dados.minhasHoras;
             document.getElementById('impact-concluidas').textContent = dados.atividadesConcluidas;
             document.getElementById('impact-proximas').textContent = dados.proximasAtividades;

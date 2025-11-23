@@ -1,3 +1,15 @@
+/* ================================================================== */
+/* ARQUIVO: style.css                                                 */
+/* PROJETO: Voluntariado Liferay                                      */
+/* DESCRIÇÃO: Folha de estilos global para todas as páginas.          */
+/* PALETA DE CORES:                                                   */
+/* - Primária (Azul): #007bff                                        */
+/* - Fundo Sidebar: #f4f7fa                                          */
+/* - Fundo Cards: #fdfdfd / #ffffff                                  */
+/* - Texto Principal: #333                                           */
+/* - Texto Secundário: #555 / #777                                   */
+/* ================================================================== */
+
 /* ==== CONFIGURAÇÕES GLOBAIS ==== */
 body {
     font-family: Arial, sans-serif;
@@ -624,12 +636,12 @@ border-bottom: 3px solid #007bff;
     align-items: center;
     justify-content: center;
     gap: 8px; /* Espaço entre o ícone e o texto */
-
     text-align: center;
     background-color: #007bff; /* Cor primária azul */
     color: white;
     padding: 10px;
     border-radius: 8px;
+    border: 1px solid #007bff;
     text-decoration: none;
     font-weight: 600;
     font-size: 14px;
@@ -1022,76 +1034,84 @@ transition: all 0.2s ease-in-out;
     background-color: #0056b3;
 }
 
-/* ==== ESTILOS DA PÁGINA DE LOGIN ==== */
+/* --- ESTILOS DO CARD DE USUÁRIO e E BOTAO SAIR (no sidebar) --- */
 
-/* Aplica o layout centrado ao body da pág. de login */
+/* Remove estilos padrão de link */
+.user-info-link {
+    text-decoration: none;
+    color: inherit;
+    display: block; /* Ocupa a largura toda */
+}
+
+/* Efeito ao passar o mouse (Hover) */
+.user-info-link:hover .user-info {
+    background-color: #eef6ff; /* Azul bem clarinho */
+    border-color: #007bff;     /* Borda azul */
+    cursor: pointer;
+    transform: translateY(-2px); /* Leve elevação */
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.15);
+}
+
+/* Garante transição suave */
+.user-info {
+    transition: all 0.2s ease-in-out;
+}
+
+
+/* ==== ESTILOS DA PÁGINA DE LOGIN (ATUALIZADO) ==== */
+
 .login-body {
     display: grid;
-    place-items: center; /* Atalho para centralizar vertical e horizontalmente */
+    place-items: center;
     min-height: 100vh;
-    background-color: #ffffff;
     margin: 0;
     padding: 0;
+    
+    /* Fundo Degradê (Azul Liferay para Branco/Cinza Claro) */
+    background: linear-gradient(135deg, #007bff 0%, #e6f2ff 100%);
+    background-attachment: fixed; /* Garante que o fundo não se mova */
 }
 
 .login-container {
     max-width: 400px;
-    width: 100%;
+    width: 90%; /* Melhor para celular */
     text-align: center;
-    padding: 20px;
-    box-sizing: border-box; /* Garante que o padding não estoure a largura */
+    padding: 40px 30px;
+    
+    /* Cria o card branco flutuante */
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 65, 200, 0.15); /* Sombra suave azulada */
 }
 
-/* Logo */
-.login-logo-frame {
-    width: 240px;
-    height: 240px;
-    border: 4px solid #007bff;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    margin: 0 auto 25px auto;
-}
-
-.login-logo-content {
+/* Estilo do Logo (Imagem) */
+.login-logo-image {
+    margin-bottom: 20px;
     display: flex;
-    align-items: center; /* Alinha verticalmente os itens no centro */
-    justify-content: center; /* Centraliza horizontalmente o ícone e texto */
-    gap: 10px; /* Espaço entre o ícone e o texto */
+    justify-content: center;
 }
 
-.login-logo-content i {
-    font-size: 40px; /* Tamanho do ícone */
-    color: #007bff;
+.login-logo-image img {
+    max-width: 300px; /* Ajuste esse tamanho conforme sua imagem */
+    height: auto;
+    display: block;
 }
 
-.login-logo-content span { /* Adiciona estilo para o texto Liferay */
-    font-size: 36px;
-    font-weight: 700;
-    color: #333;
-}
-
-.login-logo-content span {
-    font-size: 36px;
-    font-weight: 700;
-    color: #333;
-}
-
-/* Títulos */
+/* Ajuste nos textos */
 .login-container h2 {
-    font-size: 22px;
-    font-weight: 600;
-    color: #333;
+    font-size: 24px;
+    font-weight: 700;
+    color: #0b2e4a; /* Azul bem escuro para contraste */
     margin: 0 0 8px 0;
 }
 
 .login-container p {
     font-size: 15px;
-    color: #777;
+    color: #6c757d;
     margin-bottom: 30px;
 }
 
-/* Formulário */
+/* Formulário (Mantendo o padrão anterior com ajustes) */
 .login-container form {
     text-align: left;
 }
@@ -1103,7 +1123,7 @@ transition: all 0.2s ease-in-out;
 .input-group label {
     font-size: 14px;
     font-weight: 600;
-    color: #555;
+    color: #495057;
     margin-bottom: 8px;
     display: block;
 }
@@ -1117,17 +1137,26 @@ transition: all 0.2s ease-in-out;
     left: 15px;
     top: 50%;
     transform: translateY(-50%);
-    color: #aaa;
-    font-size: 14px;
+    color: #007bff; /* Ícone azul */
+    font-size: 16px;
 }
 
 .input-wrapper input {
     width: 100%;
-    padding: 12px 15px 12px 45px; /* Padding esquerdo maior para o ícone */
-    border: 1px solid #ddd;
+    padding: 14px 15px 14px 45px;
+    border: 1px solid #dee2e6;
     border-radius: 8px;
     font-size: 15px;
-    box-sizing: border-box; /* Importante para o padding funcionar com width 100% */
+    box-sizing: border-box;
+    background-color: #f8f9fa; /* Fundo levemente cinza nos inputs */
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.input-wrapper input:focus {
+    border-color: #007bff;
+    background-color: #fff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
 /* Botão de Login */
@@ -1141,30 +1170,43 @@ transition: all 0.2s ease-in-out;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, transform 0.1s;
+    margin-top: 10px;
 }
 
 .login-btn:hover {
     background-color: #0056b3;
 }
 
+.login-btn:active {
+    transform: scale(0.98);
+}
+
 /* Links inferiores */
 .login-links {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
+    margin-top: 25px;
 }
 
 .login-links a {
-    font-size: 13px;
-    color: #888;
+    font-size: 14px;
+    color: #007bff;
     text-decoration: none;
+    font-weight: 500;
 }
 
 .login-links a:hover {
     text-decoration: underline;
 }
 
+/* Mensagem de erro */
+.error-text {
+    color: #dc3545;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 15px;
+    text-align: center;
+    min-height: 20px; /* Evita pulo de layout */
+}
 
 /* ==== ESTILOS DA PÁGINA CRIAR OPORTUNIDADE ==== */
 
