@@ -1724,7 +1724,7 @@ padding: 15px 25px 0 25px;
 
 /* Corpo do Testemunho */
 .testimonial-body {
-    font-size: 14px;
+    font-size: 15px;
     color: #555;
     line-height: 1.6;
     font-style: italic;
@@ -1743,12 +1743,6 @@ padding: 15px 25px 0 25px;
     top: -10px;
     left: 10px;
     font-family: serif;
-}
-
-.testimonial-body {
-    font-size: 15px; /* Aumenta um pouco a letra de leitura */
-    line-height: 1.7; /* Dá mais espaço entre as linhas */
-    min-height: 80px; /* Garante uma altura mínima para o card não ficar achatado */
 }
 
 /* Tag da Oportunidade (Sobre o que ele falou) */
