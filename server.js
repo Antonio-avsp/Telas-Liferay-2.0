@@ -20,9 +20,9 @@ const PORT = process.env.PORT || 3000;
 // --- CONFIGURAÇÃO DO CLOUDINARY ---
 // Atenção: Copie os valores do Dashboard do Cloudinary e cole DENTRO das aspas
 cloudinary.config({
-    cloud_name: 'didlnylqz ', 
-    api_key: '354614493322183', 
-    api_secret: '3QuD85fkfaD10UYVUWc3lt59oLg' 
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Lê do Render
+    api_key: process.env.CLOUDINARY_API_KEY,       // Lê do Render
+    api_secret: process.env.CLOUDINARY_API_SECRET  // Lê do Render
 });
 
 const storage = new CloudinaryStorage({
