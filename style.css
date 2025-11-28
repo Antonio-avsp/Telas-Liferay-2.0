@@ -2316,7 +2316,7 @@ padding: 15px 25px 0 25px;
 
 /* --- Tag "Novo" --- */
 .tag-novo {
-    background-color: #ffc107; /* Amarelo */
+    background-color: #007bff; /* Amarelo */
     color: #333;
     font-weight: 700;
     padding: 2px 8px;
@@ -2326,4 +2326,5 @@ padding: 15px 25px 0 25px;
     display: inline-block;
     margin-bottom: 5px;
     vertical-align: middle;
+    float: right;
 }
