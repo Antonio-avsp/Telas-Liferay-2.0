@@ -2,26 +2,25 @@
 // ARQUIVO: server.js
 // PROJETO: Voluntariado Liferay
 // DESCRIÇÃO: Servidor Back-end (API REST)
-// TECNOLOGIAS: Node.js, Express, Prisma ORM, MySQL e cloudinary
+// TECNOLOGIAS: Node.js, Express, Prisma ORM, MySQL, Multer e Cloudinary
 // RESPONSABILIDADE: Gerenciar todas as regras de negócio, autenticação, uploads e comunicação com o Banco de Dados.
 // ==================================================================
 
 const express = require('express');
 const path = require('path');
 const { PrismaClient } = require('@prisma/client');
-const multer = require('multer');
+const multer = require('multer'); 
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const app = express();
 const prisma = new PrismaClient(); 
 const PORT = process.env.PORT || 3000;
 
-// --- CONFIGURAÇÃO DE UPLOAD (Cloudinary) ---
-const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-
-// Dados das chaves do Cloudinary!
+// --- CONFIGURAÇÃO DO CLOUDINARY ---
+// Atenção: Copie os valores do Dashboard do Cloudinary e cole DENTRO das aspas
 cloudinary.config({
-    cloud_name: 'didlnylqz  ', 
+    cloud_name: 'didlnylqz ', 
     api_key: '354614493322183', 
     api_secret: '3QuD85fkfaD10UYVUWc3lt59oLg' 
 });
@@ -36,7 +35,6 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
-// ... (O resto do seu código continua igual abaixo: app.use, rotas, etc.)
 
 // --- MIDDLEWARES GLOBAIS ---
 app.use(express.json()); // Habilita leitura de JSON no corpo das requisições (req.body)
