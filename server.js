@@ -33,6 +33,10 @@ app.use(express.json()); // Habilita leitura de JSON no corpo das requisições 
 app.use(express.static(path.join(__dirname, ''))); // Serve arquivos estáticos do Front-end (HTML, CSS, JS)
 app.use('/uploads', express.static('uploads')); // Torna a pasta de uploads acessível publicamente via URL
 
+app.get('/', (req, res) => {
+    res.redirect('/login.html');
+});
+
 // ==================================================================
 // 1. MÓDULO DE AUTENTICAÇÃO
 // ==================================================================
