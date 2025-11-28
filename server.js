@@ -2,31 +2,41 @@
 // ARQUIVO: server.js
 // PROJETO: Voluntariado Liferay
 // DESCRIÇÃO: Servidor Back-end (API REST)
-// TECNOLOGIAS: Node.js, Express, Prisma ORM, MySQL, Multer
+// TECNOLOGIAS: Node.js, Express, Prisma ORM, MySQL e cloudinary
 // RESPONSABILIDADE: Gerenciar todas as regras de negócio, autenticação, uploads e comunicação com o Banco de Dados.
 // ==================================================================
 
 const express = require('express');
 const path = require('path');
 const { PrismaClient } = require('@prisma/client');
-const multer = require('multer'); // Middleware para upload de arquivos (imagens)
+const multer = require('multer');
 
 const app = express();
-const prisma = new PrismaClient(); // Cliente de conexão com o DB
+const prisma = new PrismaClient(); 
 const PORT = process.env.PORT || 3000;
 
-// --- CONFIGURAÇÃO DE UPLOAD (MULTER) ---
-// Define o local de armazenamento e a estratégia de nomeação dos arquivos
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/') // Pasta onde as imagens serão salvas
-    },
-    filename: function (req, file, cb) {
-        // Adiciona timestamp (Date.now) para garantir nomes únicos e evitar sobrescrita
-        cb(null, Date.now() + '-' + file.originalname)
-    }
+// --- CONFIGURAÇÃO DE UPLOAD (Cloudinary) ---
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
+// Dados das chaves do Cloudinary!
+cloudinary.config({
+    cloud_name: 'didlnylqz  ', 
+    api_key: '354614493322183', 
+    api_secret: '3QuD85fkfaD10UYVUWc3lt59oLg' 
 });
+
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'voluntariado-uploads', 
+        allowed_formats: ['jpg', 'png', 'jpeg'],
+    },
+});
+
 const upload = multer({ storage: storage });
+
+// ... (O resto do seu código continua igual abaixo: app.use, rotas, etc.)
 
 // --- MIDDLEWARES GLOBAIS ---
 app.use(express.json()); // Habilita leitura de JSON no corpo das requisições (req.body)
