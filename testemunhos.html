@@ -352,24 +352,30 @@
             // Envio do Formulário
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const user = JSON.parse(localStorage.getItem('userData'));
-                const select = document.getElementById('select-oportunidade-modal');
                 
-                // --- CORREÇÃO DE SEGURANÇA AQUI ---
-                // Se o valor for vazio (usuário não selecionou ou não tem atividades), PARA TUDO.
-                if (!select.value || select.value === "") {
-                    alert("Você precisa selecionar uma atividade para avaliar.\nSe a lista está vazia, inscreva-se em uma oportunidade primeiro!");
-                    return; // Impede o envio para o servidor
-                }
-                // ----------------------------------
+                const userJson = localStorage.getItem('userData');
+                const user = userJson ? JSON.parse(userJson) : null;
+                const select = document.getElementById('select-oportunidade-modal');
+                const texto = document.getElementById('texto-depoimento').value;
 
+                // 1. Validação Visual
+                if (!select.value || select.value === "") {
+                    alert("Atenção: Selecione uma atividade na lista.");
+                    return;
+                }
+                if (!user) {
+                    alert("Erro de sessão: Faça login novamente.");
+                    return;
+                }
+
+                // 2. Prepara os dados convertendo para Número (Evita erros de tipo no servidor)
                 const dados = {
-                    usuario_cpf: user.cpf,
-                    oportunidade_id: select.value,
-                    texto: document.getElementById('texto-depoimento').value
+                    usuario_cpf: Number(user.cpf), 
+                    oportunidade_id: Number(select.value),
+                    texto: texto
                 };
 
-                // Define rota e método dinamicamente
+                // Define rota (POST ou PUT)
                 let url = '/api/testemunhos';
                 let metodo = 'POST';
 
@@ -385,24 +391,25 @@
                         body: JSON.stringify(dados)
                     });
                     
-                    // Verifica se a resposta foi OK antes de tentar ler o JSON
-                    if (!res.ok) {
-                        throw new Error(`Erro do servidor: ${res.status}`);
-                    }
-
+                    // Tenta ler a resposta do servidor (seja sucesso ou erro)
                     const json = await res.json();
-                    
+
                     if (res.ok) {
-                        alert(modoEdicao ? "Atualizado com sucesso!" : "Enviado com sucesso!");
+                        // SUCESSO (Código 200)
+                        alert(modoEdicao ? "Depoimento atualizado com sucesso!" : "Depoimento publicado!");
                         fechar();
                         form.reset();
                         carregarTestemunhos();
                     } else {
-                        alert(json.message);
+                        // ERRO DO SERVIDOR (Código 400, 500, etc.)
+                        // Agora vai mostrar a mensagem real do problema
+                        alert("Não foi possível enviar: " + (json.message || "Erro desconhecido no servidor"));
+                        console.error("Erro detalhado:", json);
                     }
                 } catch (err) { 
-                    console.error("Detalhes do erro:", err); 
-                    alert("Ocorreu um erro ao enviar. Verifique se você selecionou uma atividade válida."); 
+                    // ERRO DE REDE (Internet caiu ou servidor desligado)
+                    console.error("Erro de conexão:", err); 
+                    alert("Erro de conexão. Verifique se o servidor está online."); 
                 }
             });
         }
