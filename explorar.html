@@ -154,8 +154,7 @@
                 return;
             }
 
-            // Pega a data de hoje para comparar se é "Novo" (ex: criado nos últimos 3 dias)
-            // Como não temos data de criação, vamos assumir que os 5 primeiros IDs da lista (que vem ordenada desc) são novos
+            // Lógica para Tag "Novo" (5 primeiros)
             const isNovo = (index) => index < 5; 
 
             lista.forEach((op, index) => {
@@ -172,11 +171,13 @@
                 const mapTipos = { 'Meio Ambiente': 'tag-green', 'Educação': 'tag-purple', 'Saúde': 'tag-red', 'Cultura': 'tag-red', 'Assistência Social': 'tag-yellow' };
                 if(mapTipos[tipo]) tagClass = mapTipos[tipo];
 
-                // HTML da Tag Novo
-               const htmlNovo = isNovo(index) ? '<span class="tag-novo" style="margin-right:5px;">NOVO</span>' : '';
+                const htmlNovo = isNovo(index) ? '<span class="tag-novo" style="background:#ffc107; color:#333; font-size:10px; padding:2px 6px; border-radius:4px; margin-right:5px; font-weight:700;">NOVO</span>' : '';
+
+                // Se op.imagem_url existir, usa ela. Se não, usa placeholder.
+                const imagemFinal = op.imagem_url ? op.imagem_url : 'https://placehold.co/600x400?text=Sem+Imagem';
 
                 card.innerHTML = `
-                    <img src="${op.imagem_url}" alt="${op.titulo}">
+                    <img src="${imagemFinal}" alt="${op.titulo}" onerror="this.src='https://placehold.co/600x400?text=Erro+Imagem'">
                     <div class="card-content">
                         <div>
                             ${htmlNovo}
@@ -203,7 +204,7 @@
             });
         }
 
-        // --- 4. FUNÇÃO DE INSCRIÇÃO (ATUALIZADA) ---
+        // --- 4. FUNÇÃO DE INSCRIÇÃO (ATUALIZADA COM FEEDBACK VISUAL) ---
         async function inscreverDinamicamente(id, btnElement) {
              const userJson = localStorage.getItem('userData');
              if(!userJson) { alert('Faça login!'); window.location.href = 'login.html'; return; }
@@ -219,12 +220,12 @@
                     const res = await response.json();
                     
                     if(response.ok) {
-                        // MUDA O BOTÃO VISUALMENTE
+                        // MUDANÇA VISUAL DO BOTÃO
                         btnElement.innerHTML = '<i class="fa-solid fa-check"></i> Inscrito';
-                        btnElement.className = 'btn-inscrito'; // Estilo slim verde
-                        btnElement.style.width = '100%'; // Garante alinhamento
-                        btnElement.style.marginTop = '10px';
-                        btnElement.disabled = true;
+                        btnElement.className = 'btn-inscrito'; // Aplica a classe CSS que foi criado
+                        btnElement.style.marginTop = '10px';   // Mantém espaçamento
+                        btnElement.style.width = '100%';       // Garante largura total
+                        btnElement.disabled = true;            // Desabilita
                     } else {
                         alert(res.message);
                     }

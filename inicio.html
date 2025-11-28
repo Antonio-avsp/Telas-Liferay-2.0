@@ -100,7 +100,7 @@
                     <div class="widget-card">
                         <h2><i class="fa-solid fa-wand-magic-sparkles"></i> Recomendados para Você</h2>
                         <ul class="recommendation-list" id="lista-recomendados">
-                        </ul>
+                            </ul>
                     </div>
                     
                     <div class="widget-card">
@@ -111,7 +111,6 @@
                                 <i class="fa-regular fa-calendar-xmark"></i>
                                 <p>Você ainda não está inscrito em nenhuma atividade futura.</p>
                             </div>
-
                             <ul class="recommendation-list" id="lista-minhas-atividades" style="display: none;">
                             </ul>
                         </div>
@@ -161,46 +160,47 @@
     
     <script src="app.js"></script>
 
-   <script>
+    <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            // Atualiza a saudação "Olá, [Nome]" no topo
+            // Atualiza o H1 com o nome do usuário logado
             atualizarSaudacao();
 
             try {
-                // 1. Busca TODAS as oportunidades na API
+                // 1. Busca TODAS as oportunidades
                 const response = await fetch('/api/oportunidades');
                 const oportunidades = await response.json();
 
-                // 2. Filtra apenas as 3 primeiras (mais recentes)
+                // 2. Filtra: Pega apenas as 3 primeiras (Slice)
                 const recentes = oportunidades.slice(0, 3); 
                 const lista = document.getElementById('lista-recomendados');
                 lista.innerHTML = ''; 
 
-                // Se não houver oportunidades, exibe mensagem
+                // Se lista vazia, mostra mensagem
                 if (recentes.length === 0) {
                     lista.innerHTML = '<p style="padding: 20px; color: #666; text-align:center;">Nenhuma oportunidade recente.</p>';
                     return;
                 }
 
-                // 3. Renderiza cada card
+                // 3. Renderização dos Cards
                 recentes.forEach(op => {
                     const item = document.createElement('li');
                     item.className = 'recommendation-item';
 
-                    // Formatação de Data
+                    // Formatação de Data e Fuso Horário
                     const dataObj = new Date(op.data_evento);
                     const dataUser = new Date(dataObj.getTime() + dataObj.getTimezoneOffset() * 60000);
                     const dataFormatada = dataUser.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
 
-                    // Definição de cores das tags (Visual)
+                    // Mapa de Cores para Tags
                     let tagClass = 'tag-blue';
                     const tipo = op.tipo_voluntariado ? op.tipo_voluntariado.tipo : 'Geral';
                     const mapTipos = { 'Meio Ambiente': 'tag-green', 'Educação': 'tag-purple', 'Saúde': 'tag-red', 'Cultura': 'tag-red', 'Assistência Social': 'tag-yellow' };
                     if(mapTipos[tipo]) tagClass = mapTipos[tipo];
 
-                    // HTML do Card
+                    // Template String HTML
                     item.innerHTML = `
                         <div class="item-details">
+                            <span class="tag-novo" style="background:#ffc107; color:#333; font-size:10px; padding:2px 6px; border-radius:4px; margin-right:5px; font-weight:700;">NOVO</span>
                             <h3>${op.titulo}</h3>
                             <span class="tag ${tagClass}">${tipo}</span>
                             <p>${op.descricao ? op.descricao : ''}</p>
@@ -209,9 +209,14 @@
                                 <span><i class="fa-solid fa-location-dot"></i> ${op.local_evento.split(',')[0]}</span>
                             </div>
                         </div>
+                        
                         <div class="recommendation-actions">
-                            <a href="explorar-detalhe.html?id=${op.idoportunidade}" class="btn-detalhes-home">Ver detalhes</a>
-                            <button onclick="inscreverHome(${op.idoportunidade})" class="btn-inscrever-home"><i class="fa-regular fa-heart"></i> Inscreva-se</button>
+                            <a href="explorar-detalhe.html?id=${op.idoportunidade}" class="btn-detalhes-home">
+                                Ver detalhes
+                            </a>
+                            <button onclick="inscreverHome(${op.idoportunidade}, this)" class="btn-inscrever-home">
+                                <i class="fa-regular fa-heart"></i> Inscreva-se
+                            </button>
                         </div>
                     `;
                     lista.appendChild(item);
@@ -221,18 +226,22 @@
             }
         });
 
-        // Função Auxiliar: Atualiza o H1 com o nome do usuário
+        // Função Auxiliar: Saudação do Header
         function atualizarSaudacao() {
             const userJson = localStorage.getItem('userData');
             if (userJson) {
                 const user = JSON.parse(userJson);
-                const headerGreeting = document.getElementById('header-greeting');
-                headerGreeting.innerHTML = `Olá, ${user.nome}! <span class="wave-emoji">👋</span>`;
+                document.getElementById('header-greeting').innerHTML = `Olá, ${user.nome}! <span class="wave-emoji">👋</span>`;
             }
         }
 
-         // Função Auxiliar: Inscrever-se direto da Home
-        async function inscreverHome(id) {
+        /**
+         * Função de Inscrição com Feedback Visual
+         * @param {number} id - ID da oportunidade
+         * @param {HTMLElement} btnElement - O botão que foi clicado (para alterar estilo)
+         */
+        async function inscreverHome(id, btnElement) {
+            // Validação de Login
             const userJson = localStorage.getItem('userData');
             if (!userJson) { alert("Faça login para se inscrever!"); window.location.href = "login.html"; return; }
             const user = JSON.parse(userJson);
@@ -245,8 +254,19 @@
                         body: JSON.stringify({ usuario_cpf: user.cpf, oportunidade_id: id })
                     });
                     const res = await response.json();
-                    if (response.ok) { alert("Inscrição realizada com sucesso! 🎉"); } 
-                    else { alert(res.message); }
+                    
+                    if (response.ok) { 
+                        // SUCESSO: Altera o visual do botão para "Inscrito"
+                        btnElement.innerHTML = '<i class="fa-solid fa-check"></i> Inscrito';
+                        btnElement.className = 'btn-inscrito'; // Classe definida no CSS para estilo verde/slim
+                        btnElement.style.width = '100%';       
+                        btnElement.disabled = true;            // Bloqueia novos cliques
+                        
+                        // Atualiza os outros widgets da página em tempo real
+                        carregarMinhasAtividades(); 
+                        carregarEstatisticas();
+                    } 
+                    else { alert(res.message); } // Ex: "Já inscrito"
                 } catch (e) { console.error(e); alert("Erro de conexão."); }
             }
         }
@@ -258,7 +278,6 @@
     });
 
     async function carregarMinhasAtividades() {
-        // 1. Verifica Login
         const userJson = localStorage.getItem('userData');
         if (!userJson) return; 
         const user = JSON.parse(userJson);
@@ -267,23 +286,19 @@
         const emptyState = document.getElementById('empty-state-atividades');
 
         try {
-            // 2. Busca inscrições na API filtrando pelo CPF
             const response = await fetch(`/api/minhas-atividades/${user.cpf}`);
             const inscricoes = await response.json();
 
-            // Se vazio, mostra estado vazio
             if (inscricoes.length === 0) {
                 lista.style.display = 'none';
                 emptyState.style.display = 'block';
                 return;
             }
 
-            // Se tem dados, mostra lista
             emptyState.style.display = 'none';
             lista.style.display = 'block';
             lista.innerHTML = ''; 
 
-            // 3. Renderiza inscrições
             inscricoes.forEach(item => {
                 const op = item.oportunidade; 
                 const li = document.createElement('li');
@@ -317,7 +332,7 @@
         }
     }
 
-    // Função para Cancelar Inscrição (DELETE na API)
+    // Função para Cancelar Inscrição (DELETE)
     async function cancelarInscricao(idOportunidade) {
         const userJson = localStorage.getItem('userData');
         if (!userJson) return;
@@ -336,15 +351,12 @@
                 const resultado = await response.json();
                 if (response.ok) {
                     alert("Inscrição cancelada.");
-                    carregarMinhasAtividades(); // Recarrega a lista para atualizar a tela
-                    carregarEstatisticas();     // Recarrega estatísticas para atualizar contadores
+                    carregarMinhasAtividades(); // Recarrega lista
+                    carregarEstatisticas();     // Atualiza contadores
                 } else {
                     alert("Erro: " + resultado.message);
                 }
-            } catch (error) {
-                console.error(error);
-                alert("Erro de conexão.");
-            }
+            } catch (error) { console.error(error); alert("Erro de conexão."); }
         }
     }
     </script>
@@ -365,7 +377,7 @@
             const container = document.getElementById('lista-testemunhos-home');
             const emptyState = document.getElementById('empty-state-testemunhos');
 
-            const recentes = lista.slice(0, 2); // Pega apenas os 2 últimos
+            const recentes = lista.slice(0, 2); // Mostra apenas os 2 últimos
 
             if (recentes.length === 0) {
                 container.style.display = 'none';
@@ -387,8 +399,7 @@
                 const nomeUser = t.usuario ? t.usuario.nomeUsuario : 'Anônimo';
                 const inicial = nomeUser.charAt(0).toUpperCase();
                 
-                // Lógica de Segurança Visual:
-                // Só mostra o botão "Excluir" se o CPF do usuário logado for igual ao do autor.
+                // Validação de Dono: Só mostra botão Excluir se CPFs baterem
                 let btnExcluirHTML = '';
                 if (user && t.usuario_cpf === user.cpf) {
                     btnExcluirHTML = `
@@ -416,7 +427,6 @@
         }
     }
 
-    // Função para excluir testemunho (DELETE na API)
     async function excluirTestemunho(id, origem) {
         const userJson = localStorage.getItem('userData');
         if (!userJson) return;
@@ -427,22 +437,17 @@
                 const res = await fetch(`/api/testemunhos/${id}`, {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ usuario_cpf: user.cpf }) // O Back-end checa se é dono
+                    body: JSON.stringify({ usuario_cpf: user.cpf })
                 });
                 
                 if (res.ok) {
                     alert("Depoimento excluído.");
-                    // Recarrega a lista correta dependendo de onde veio o clique
                     if (origem === 'home') carregarTestemunhosHome();
-                    if (origem === 'pagina') carregarTestemunhos(); 
                 } else {
                     const json = await res.json();
                     alert("Erro: " + json.message);
                 }
-            } catch (e) {
-                console.error(e);
-                alert("Erro de conexão.");
-            }
+            } catch (e) { console.error(e); alert("Erro de conexão."); }
         }
     }
     </script>
@@ -461,7 +466,7 @@
             const response = await fetch(`/api/estatisticas/${user.cpf}`);
             const dados = await response.json();
 
-            // Atualiza Painel Superior
+            // Atualiza Painel Superior (IDs estáticos)
             document.getElementById('stat-oportunidades').textContent = dados.totalOportunidades;
             document.getElementById('stat-horas').textContent = dados.minhasHoras + 'h';
             document.getElementById('stat-proximas').textContent = dados.proximasAtividades;
