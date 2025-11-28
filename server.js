@@ -129,8 +129,12 @@ app.post('/api/oportunidades', upload.single('imagem'), async (req, res) => {
             },
         });
         res.json({ success: true });
-    } catch (error) { 
-        res.status(500).json({ success: false, message: error.message }); 
+    } catch (error) {
+        // Isso vai forçar o erro a aparecer em texto legível nos logs do render
+        console.error('ERRO DETALHADO:', JSON.stringify(error, null, 2));
+        console.error('MENSAGEM DE ERRO:', error.message);
+        
+        res.status(500).json({ success: false, message: 'Erro ao salvar no banco: ' + error.message });
     }
 });
 
