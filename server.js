@@ -34,7 +34,7 @@ app.use(express.static(path.join(__dirname, ''))); // Serve arquivos estáticos 
 app.use('/uploads', express.static('uploads')); // Torna a pasta de uploads acessível publicamente via URL
 
 app.get('/', (req, res) => {
-    res.redirect('/login.html');
+    res.redirect('/login.html'); // Faz o render logar com o dominio sem precisar digitar "login.html"
 });
 
 // ==================================================================

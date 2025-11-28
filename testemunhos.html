@@ -349,10 +349,20 @@
             btnCancelar.addEventListener('click', fechar);
 
             // Submit do Formulário (Gerencia Criação e Edição)
+            // Envio do Formulário
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const user = JSON.parse(localStorage.getItem('userData'));
+                const select = document.getElementById('select-oportunidade-modal');
                 
+                // --- CORREÇÃO DE SEGURANÇA AQUI ---
+                // Se o valor for vazio (usuário não selecionou ou não tem atividades), PARA TUDO.
+                if (!select.value || select.value === "") {
+                    alert("Você precisa selecionar uma atividade para avaliar.\nSe a lista está vazia, inscreva-se em uma oportunidade primeiro!");
+                    return; // Impede o envio para o servidor
+                }
+                // ----------------------------------
+
                 const dados = {
                     usuario_cpf: user.cpf,
                     oportunidade_id: select.value,
@@ -374,6 +384,12 @@
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify(dados)
                     });
+                    
+                    // Verifica se a resposta foi OK antes de tentar ler o JSON
+                    if (!res.ok) {
+                        throw new Error(`Erro do servidor: ${res.status}`);
+                    }
+
                     const json = await res.json();
                     
                     if (res.ok) {
@@ -384,7 +400,10 @@
                     } else {
                         alert(json.message);
                     }
-                } catch (err) { console.error(err); alert("Erro ao enviar."); }
+                } catch (err) { 
+                    console.error("Detalhes do erro:", err); 
+                    alert("Ocorreu um erro ao enviar. Verifique se você selecionou uma atividade válida."); 
+                }
             });
         }
     </script>
