@@ -2247,10 +2247,10 @@ padding: 15px 25px 0 25px;
 
 
 /* ============================================= */
-/* --- ESTILO DE CARD E SOMBREAMENTO --- */
+/* --- ESTILO DE CARD E SOMBREAMENTO (Global) --- */
 /* ============================================= */
 
-/*Esta regra aplica o novo visual de borda e sombra a TODAS as classes de card*/
+/* 1. Define a base (borda suave e transição) para todos os cards interativos */
 .stat-card,
 .opportunity-card,
 .widget-card,
@@ -2262,17 +2262,17 @@ padding: 15px 25px 0 25px;
 .testemunhos-filter-bar,
 .impact-tabs,
 .tabs,
-.impact-tabs,
-.user-info {
+.user-info,
+.filter-bar  /* <--- ADICIONEI AQUI: Barra de filtro do Explorar */
+{
     border: 1px solid #eaf0f6; 
-
-    /* SOMBRA MAIS ESCURA*/
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); 
-
     transition: all 0.2s ease-in-out; 
+    background-color: #fff; /* Garante fundo branco */
+    border-radius: 12px;    /* Garante borda arredondada */
 }
 
-/* --- Efeito de hover ao passar o mouse --- */
+/* 2. Define o Efeito Hover (Sombra Azul e Levantar) */
 .stat-card:hover,
 .opportunity-card:hover,
 .widget-card:hover,         
@@ -2285,21 +2285,16 @@ padding: 15px 25px 0 25px;
 .testemunhos-filter-bar:hover,
 .user-info:hover,
 .tabs:hover,
-.impact-tabs:hover,
-.recommendation-item:hover{
+.recommendation-item:hover,
+.filter-bar:hover /* <--- ADICIONEI AQUI: Efeito ao passar o mouse */
+{
     box-shadow: 0 6px 20px rgba(0, 120, 250, 1); 
     transform: translateY(-2px);
+    border-color: #dbeafe; /* Opcional: deixa a borda levemente azulada também */
 }
 
-
-/* --- desativa hover do card pai e "Recomendados para voce"*/ 
-
- /*Esta regra diz: "Quando o mouse passar sobre um .widget-card
-que CONTÉM um .recommendation-list, cancele o efeito
- de hover e volte para a sombra estática".
-*/
+/* 3. Exceção para card pai de recomendações (para não bugar o hover interno) */
 .widget-card:has(.recommendation-list):hover {
-    /* Retorna à sombra estática (preto 25%) */
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25); 
-    transform: none; /* Remove o "levantar" */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); 
+    transform: none; 
 }
