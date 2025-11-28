@@ -101,40 +101,43 @@ app.post('/api/oportunidades', upload.single('imagem'), async (req, res) => {
             });
         }
 
-        // 2. Verifica/Cria Tipo de Voluntariado (Categoria)
+        // 2. Verifica/Cria Tipo de Voluntariado
         let tipoVol = await prisma.tipo_voluntariado.findFirst({ where: { tipo: dados.tipoAtividade } });
         if (!tipoVol) {
             tipoVol = await prisma.tipo_voluntariado.create({ data: { tipo: dados.tipoAtividade } });
         }
 
-        // 3. Define Imagem (Upload ou Padrão)
-        // Se tiver arquivo, usa o path do Cloudinary. Se não, usa a padrão local.
-const imagemUrl = arquivo ? arquivo.path : null;
+        // 3. Define a URL da Imagem (CORREÇÃO AQUI)
+        // Se tiver arquivo do Cloudinary, usa 'arquivo.path'. Se não, salva como null.
+        const imagemUrl = arquivo ? arquivo.path : null;
 
-        // 4. Cria a Oportunidade final
+        // 4. Cria a Oportunidade
         await prisma.oportunidade.create({
             data: {
                 titulo: dados.titulo,
                 descricao: dados.descricao,
-                data_evento: new Date(dados.data), // Converte string para Data
+                data_evento: new Date(dados.data),
                 horario: dados.horario,
                 duracao_horas: parseInt(dados.duracao) || 0,
+                // Usa o local formatado pelo front ou monta um padrão
                 local_evento: dados.local_formatado || `${dados.cidade}, ${dados.pais} (${dados.formato})`,
                 num_vagas: parseInt(dados.numVoluntarios) || 0,
                 habilidades_desejadas: dados.habilidades,
-                imagem_url: imgPath,
+                
+                // AQUI ESTAVA O ERRO: Agora usamos a variável certa 'imagemUrl'
+                imagem_url: imagemUrl, 
+                
                 usuario_cpf_criador: parseInt(dados.usuario_cpf),
                 instituicao_idinstituicao: instituicao.idinstituicao,
                 tipo_voluntariado_idtipo_voluntariado: tipoVol.idtipo_voluntariado
             },
         });
+
         res.json({ success: true });
+
     } catch (error) {
-        // Isso vai forçar o erro a aparecer em texto legível nos logs do render
         console.error('ERRO DETALHADO:', JSON.stringify(error, null, 2));
-        console.error('MENSAGEM DE ERRO:', error.message);
-        
-        res.status(500).json({ success: false, message: 'Erro ao salvar no banco: ' + error.message });
+        res.status(500).json({ success: false, message: 'Erro ao salvar: ' + error.message });
     }
 });
 
