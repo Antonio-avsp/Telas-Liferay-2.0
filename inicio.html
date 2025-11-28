@@ -231,9 +231,8 @@
             }
         }
 
-        // Função Auxiliar: Inscrever-se direto da Home +
-        // Função Atualizada: Muda o botão visualmente
-        async function inscreverHome(id, btnElement) {
+         // Função Auxiliar: Inscrever-se direto da Home
+        async function inscreverHome(id) {
             const userJson = localStorage.getItem('userData');
             if (!userJson) { alert("Faça login para se inscrever!"); window.location.href = "login.html"; return; }
             const user = JSON.parse(userJson);
@@ -246,17 +245,7 @@
                         body: JSON.stringify({ usuario_cpf: user.cpf, oportunidade_id: id })
                     });
                     const res = await response.json();
-                    
-                    if (response.ok) { 
-                        // SUCESSO: Altera o botão visualmente
-                        btnElement.innerHTML = '<i class="fa-solid fa-check"></i> Inscrito';
-                        btnElement.className = 'btn-inscrito'; // Aplica o estilo slim/verde
-                        btnElement.disabled = true; // Impede clicar de novo
-                        
-                        // Atualiza os outros painéis
-                        carregarEstatisticas(); 
-                        carregarMinhasAtividades(); 
-                    } 
+                    if (response.ok) { alert("Inscrição realizada com sucesso! 🎉"); } 
                     else { alert(res.message); }
                 } catch (e) { console.error(e); alert("Erro de conexão."); }
             }
