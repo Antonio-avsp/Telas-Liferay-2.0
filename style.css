@@ -2298,3 +2298,32 @@ padding: 15px 25px 0 25px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); 
     transform: none; 
 }
+
+/* --- Botão de Estado "Inscrito" --- */
+.btn-inscrito {
+    background-color: transparent !important;
+    color: #28a745 !important; /* Verde Sucesso */
+    border: 1px solid #28a745 !important;
+    pointer-events: none; /* Impede clicar de novo */
+    font-size: 12px !important;
+    padding: 8px 12px !important;
+    opacity: 0.8;
+}
+
+.btn-inscrito i {
+    margin-right: 5px;
+}
+
+/* --- Tag "Novo" --- */
+.tag-novo {
+    background-color: #ffc107; /* Amarelo */
+    color: #333;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 5px;
+    vertical-align: middle;
+}

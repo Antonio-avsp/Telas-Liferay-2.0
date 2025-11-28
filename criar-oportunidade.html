@@ -91,6 +91,12 @@
 
                 <section class="form-section">
                     <h3>Local e data</h3>
+                    
+                    <div class="form-row">
+                        <label for="endereco">Endereço Completo</label>
+                        <input type="text" id="endereco" placeholder="Ex: Rua da Aurora, 123, Boa Vista">
+                    </div>
+
                     <div class="form-grid third">
                         <div class="form-row">
                             <label for="formato">Formato</label>
@@ -212,13 +218,31 @@
                     inputOutro.value = tipoNome;
                 }
 
-                // Local e Data (Parse manual do formato "Recife, Brasil (Presencial)")
-                if(dados.local_evento.includes('(')) {
-                    const partes = dados.local_evento.split('(');
-                    const local = partes[0].split(',');
-                    document.getElementById('cidade').value = local[0].trim();
-                    document.getElementById('pais').value = local[1] ? local[1].trim() : '';
-                    document.getElementById('formato').value = partes[1].replace(')', '');
+                // --- AQUI ESTÁ A LÓGICA DE PREENCHER O ENDEREÇO NA EDIÇÃO ---
+                // O banco salva algo como: "Rua X, Recife, Brasil (Presencial)"
+                // Tentei separar isso para preencher os inputs
+                let localStr = dados.local_evento; 
+                
+                // 1. Tira o formato "(Presencial)" do final
+                if(localStr.includes('(')) {
+                    const partesFormato = localStr.split('(');
+                    document.getElementById('formato').value = partesFormato[1].replace(')', '').trim();
+                    localStr = partesFormato[0]; // Resto: "Rua X, Recife, Brasil"
+                }
+
+                // 2. Tenta separar por vírgulas
+                const partesLocal = localStr.split(',');
+                
+                if (partesLocal.length >= 3) {
+                    // Se tiver 3 partes, assumimos: Endereço, Cidade, País
+                    // O pop() pega o último (País), o penúltimo (Cidade) e o resto é Endereço
+                    document.getElementById('pais').value = partesLocal.pop().trim();
+                    document.getElementById('cidade').value = partesLocal.pop().trim();
+                    document.getElementById('endereco').value = partesLocal.join(',').trim();
+                } else if (partesLocal.length === 2) {
+                    // Se só tiver 2: Cidade, País
+                    document.getElementById('pais').value = partesLocal[1].trim();
+                    document.getElementById('cidade').value = partesLocal[0].trim();
                 }
 
                 // Data (ISO string para YYYY-MM-DD)
@@ -268,9 +292,30 @@
                 formData.append('descricao', document.getElementById('descricao').value);
                 formData.append('ongNome', document.getElementById('ong').value);
                 formData.append('tipoAtividade', valorFinalTipo); 
-                formData.append('formato', document.getElementById('formato').value);
-                formData.append('cidade', document.getElementById('cidade').value);
-                formData.append('pais', document.getElementById('pais').value);
+                
+                // --- Aui nessa parte estava em duvida mas consegui fazer ---
+                // Captura os 4 campos de local
+                const endereco = document.getElementById('endereco').value;
+                const cidade = document.getElementById('cidade').value;
+                const pais = document.getElementById('pais').value;
+                const formato = document.getElementById('formato').value;
+
+                // Monta a string completa para o banco
+                // Exemplo: "Rua Aurora 123, Recife, Brasil (Presencial)"
+                let localCompleto = `${cidade}, ${pais} (${formato})`;
+                if (endereco && endereco.trim() !== "") {
+                    localCompleto = `${endereco}, ${cidade}, ${pais} (${formato})`;
+                }
+
+                // Envia para o servidor com o nome 'local_formatado'
+                formData.append('local_formatado', localCompleto);
+                
+                // Envia os outros campos individuais também caso precise
+                formData.append('formato', formato);
+                formData.append('cidade', cidade);
+                formData.append('pais', pais);
+                // ----------------------------------------------------
+
                 formData.append('data', document.getElementById('data').value);
                 formData.append('horario', document.getElementById('horario').value);
                 formData.append('duracao', document.getElementById('duracao').value);

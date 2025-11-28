@@ -111,7 +111,7 @@ app.post('/api/oportunidades', upload.single('imagem'), async (req, res) => {
                 data_evento: new Date(dados.data), // Converte string para Data
                 horario: dados.horario,
                 duracao_horas: parseInt(dados.duracao) || 0,
-                local_evento: `${dados.cidade}, ${dados.pais} (${dados.formato})`,
+                local_evento: dados.local_formatado || `${dados.cidade}, ${dados.pais} (${dados.formato})`,
                 num_vagas: parseInt(dados.numVoluntarios) || 0,
                 habilidades_desejadas: dados.habilidades,
                 imagem_url: imgPath,

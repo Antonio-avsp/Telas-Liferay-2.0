@@ -161,46 +161,38 @@
     
     <script src="app.js"></script>
 
-    <script>
+   <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            // Atualiza a saudação "Olá, [Nome]" no topo
             atualizarSaudacao();
 
             try {
-                // 1. Busca TODAS as oportunidades na API
                 const response = await fetch('/api/oportunidades');
                 const oportunidades = await response.json();
-
-                // 2. Filtra apenas as 3 primeiras (mais recentes)
                 const recentes = oportunidades.slice(0, 3); 
                 const lista = document.getElementById('lista-recomendados');
                 lista.innerHTML = ''; 
 
-                // Se não houver oportunidades, exibe mensagem
                 if (recentes.length === 0) {
                     lista.innerHTML = '<p style="padding: 20px; color: #666; text-align:center;">Nenhuma oportunidade recente.</p>';
                     return;
                 }
 
-                // 3. Renderiza cada card
                 recentes.forEach(op => {
                     const item = document.createElement('li');
                     item.className = 'recommendation-item';
 
-                    // Formatação de Data
                     const dataObj = new Date(op.data_evento);
                     const dataUser = new Date(dataObj.getTime() + dataObj.getTimezoneOffset() * 60000);
                     const dataFormatada = dataUser.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
 
-                    // Definição de cores das tags (Visual)
                     let tagClass = 'tag-blue';
                     const tipo = op.tipo_voluntariado ? op.tipo_voluntariado.tipo : 'Geral';
                     const mapTipos = { 'Meio Ambiente': 'tag-green', 'Educação': 'tag-purple', 'Saúde': 'tag-red', 'Cultura': 'tag-red', 'Assistência Social': 'tag-yellow' };
                     if(mapTipos[tipo]) tagClass = mapTipos[tipo];
 
-                    // HTML do Card
                     item.innerHTML = `
                         <div class="item-details">
+                            <span class="tag-novo">Novo</span>
                             <h3>${op.titulo}</h3>
                             <span class="tag ${tagClass}">${tipo}</span>
                             <p>${op.descricao ? op.descricao : ''}</p>
@@ -209,9 +201,14 @@
                                 <span><i class="fa-solid fa-location-dot"></i> ${op.local_evento.split(',')[0]}</span>
                             </div>
                         </div>
+                        
                         <div class="recommendation-actions">
-                            <a href="explorar-detalhe.html?id=${op.idoportunidade}" class="btn-detalhes-home">Ver detalhes</a>
-                            <button onclick="inscreverHome(${op.idoportunidade})" class="btn-inscrever-home"><i class="fa-regular fa-heart"></i> Inscreva-se</button>
+                            <a href="explorar-detalhe.html?id=${op.idoportunidade}" class="btn-detalhes-home">
+                                Ver detalhes
+                            </a>
+                            <button onclick="inscreverHome(${op.idoportunidade}, this)" class="btn-inscrever-home">
+                                <i class="fa-regular fa-heart"></i> Inscreva-se
+                            </button>
                         </div>
                     `;
                     lista.appendChild(item);
@@ -221,18 +218,8 @@
             }
         });
 
-        // Função Auxiliar: Atualiza o H1 com o nome do usuário
-        function atualizarSaudacao() {
-            const userJson = localStorage.getItem('userData');
-            if (userJson) {
-                const user = JSON.parse(userJson);
-                const headerGreeting = document.getElementById('header-greeting');
-                headerGreeting.innerHTML = `Olá, ${user.nome}! <span class="wave-emoji">👋</span>`;
-            }
-        }
-
-        // Função Auxiliar: Inscrever-se direto da Home
-        async function inscreverHome(id) {
+        // Função Atualizada: Muda o botão visualmente
+        async function inscreverHome(id, btnElement) {
             const userJson = localStorage.getItem('userData');
             if (!userJson) { alert("Faça login para se inscrever!"); window.location.href = "login.html"; return; }
             const user = JSON.parse(userJson);
@@ -245,13 +232,23 @@
                         body: JSON.stringify({ usuario_cpf: user.cpf, oportunidade_id: id })
                     });
                     const res = await response.json();
-                    if (response.ok) { alert("Inscrição realizada com sucesso! 🎉"); } 
+                    
+                    if (response.ok) { 
+                        // SUCESSO: Altera o botão visualmente
+                        btnElement.innerHTML = '<i class="fa-solid fa-check"></i> Inscrito';
+                        btnElement.className = 'btn-inscrito'; // Aplica o estilo slim/verde
+                        btnElement.disabled = true; // Impede clicar de novo
+                        
+                        // Atualiza os outros painéis
+                        carregarEstatisticas(); 
+                        carregarMinhasAtividades(); 
+                    } 
                     else { alert(res.message); }
                 } catch (e) { console.error(e); alert("Erro de conexão."); }
             }
         }
     </script>
-
+    
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         carregarMinhasAtividades();
