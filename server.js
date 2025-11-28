@@ -18,7 +18,6 @@ const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3000;
 
 // --- CONFIGURAÇÃO DO CLOUDINARY ---
-// Atenção: Copie os valores do Dashboard do Cloudinary e cole DENTRO das aspas
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Lê do Render
     api_key: process.env.CLOUDINARY_API_KEY,       // Lê do Render
@@ -109,7 +108,8 @@ app.post('/api/oportunidades', upload.single('imagem'), async (req, res) => {
         }
 
         // 3. Define Imagem (Upload ou Padrão)
-        const imgPath = arquivo ? `uploads/${arquivo.filename}` : 'images/explorar-pintura.jpeg';
+        // Se tiver arquivo, usa o path do Cloudinary. Se não, usa a padrão local.
+const imagemUrl = arquivo ? arquivo.path : null;
 
         // 4. Cria a Oportunidade final
         await prisma.oportunidade.create({
