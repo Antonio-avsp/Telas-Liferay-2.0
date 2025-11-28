@@ -13,7 +13,7 @@ const multer = require('multer'); // Middleware para upload de arquivos (imagens
 
 const app = express();
 const prisma = new PrismaClient(); // Cliente de conexão com o DB
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // --- CONFIGURAÇÃO DE UPLOAD (MULTER) ---
 // Define o local de armazenamento e a estratégia de nomeação dos arquivos
@@ -594,4 +594,4 @@ app.get('/api/perfil/:cpf', async (req, res) => {
 });
 
 // --- INICIALIZAÇÃO DO SERVIDOR ---
-app.listen(PORT, () => { console.log(`🚀 Servidor rodando em http://localhost:${PORT}`); });
+app.listen(PORT, () => { console.log(`🚀 Servidor rodando na porta ${PORT}`); });
