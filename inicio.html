@@ -162,54 +162,79 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            // Atualiza o H1 com o nome do usuário logado
             atualizarSaudacao();
 
             try {
                 // 1. Busca TODAS as oportunidades
-                const response = await fetch('/api/oportunidades');
-                const oportunidades = await response.json();
+                const responseOps = await fetch('/api/oportunidades');
+                const oportunidades = await responseOps.json();
 
-                // 2. Filtra: Pega apenas as 3 primeiras (Slice)
+                // 2. (NOVO) Busca os IDs das oportunidades que o usuário JÁ está inscrito
+                const userJson = localStorage.getItem('userData');
+                let idsInscritos = []; // Lista de IDs (ex: [1, 5, 8])
+
+                if (userJson) {
+                    const user = JSON.parse(userJson);
+                    try {
+                        const resInscricoes = await fetch(`/api/minhas-atividades/${user.cpf}`);
+                        const minhasInscricoes = await resInscricoes.json();
+                        // Cria um array só com os IDs das oportunidades inscritas
+                        idsInscritos = minhasInscricoes.map(i => i.oportunidade_idoportunidade);
+                    } catch (e) { console.error("Erro ao verificar inscrições", e); }
+                }
+
+                // 3. Filtra e Renderiza
                 const recentes = oportunidades.slice(0, 3); 
                 const lista = document.getElementById('lista-recomendados');
                 lista.innerHTML = ''; 
 
-                // Se lista vazia, mostra mensagem
                 if (recentes.length === 0) {
                     lista.innerHTML = '<p style="padding: 20px; color: #666; text-align:center;">Nenhuma oportunidade recente.</p>';
                     return;
                 }
 
-                // 3. Renderização dos Cards
                 recentes.forEach(op => {
                     const item = document.createElement('li');
                     item.className = 'recommendation-item';
 
-                    // Formatação de Data e Fuso Horário
                     const dataObj = new Date(op.data_evento);
                     const dataUser = new Date(dataObj.getTime() + dataObj.getTimezoneOffset() * 60000);
                     const dataFormatada = dataUser.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
 
-                    // Mapa de Cores para Tags
                     let tagClass = 'tag-blue';
                     const tipo = op.tipo_voluntariado ? op.tipo_voluntariado.tipo : 'Geral';
                     const mapTipos = { 'Meio Ambiente': 'tag-green', 'Educação': 'tag-purple', 'Saúde': 'tag-red', 'Cultura': 'tag-red', 'Assistência Social': 'tag-yellow' };
                     if(mapTipos[tipo]) tagClass = mapTipos[tipo];
 
-                    // Template String HTML
+                    // (NOVO) Define o estado inicial do botão
+                    const jaInscrito = idsInscritos.includes(op.idoportunidade);
+                    
+                    // Se já inscrito: Botão verde e desabilitado. Se não: Botão azul com onclick.
+                    let btnHTML = '';
+                    if (jaInscrito) {
+                        btnHTML = `
+                            <button class="btn-inscrito" style="width: 100%; margin-top: 10px;" disabled>
+                                <i class="fa-solid fa-check"></i> Inscrito
+                            </button>
+                        `;
+                    } else {
+                        btnHTML = `
+                            <button onclick="inscreverHome(${op.idoportunidade}, this)" class="btn-inscrever-home">
+                                <i class="fa-regular fa-heart"></i> Inscreva-se
+                            </button>
+                        `;
+                    }
+
                     item.innerHTML = `
                         <div class="item-details">
-                            <span class="tag-novo" background-color: #d3e6fa; /* azul padrao */
-                            color: #007bff;
-                            font-weight: 700;
-                            padding: 2px 8px;
-                            border-radius: 4px;
-                            font-size: 10px;
-                            text-transform: uppercase;
-                            margin-bottom: 5px;
-                            vertical-align: middle;
-                            float: right;">Novo</span>
+                            <span class="tag-novo" 
+                            style="background:#d3e6fa; 
+                            color:#007bff; font-size:10px; 
+                            padding:2px 6px; 
+                            border-radius:4px; 
+                            margin-right:5px; 
+                            font-weight:700;
+                            ">Novo</span>
                             <h3>${op.titulo}</h3>
                             <span class="tag ${tagClass}">${tipo}</span>
                             <p>${op.descricao ? op.descricao : ''}</p>
@@ -223,9 +248,7 @@
                             <a href="explorar-detalhe.html?id=${op.idoportunidade}" class="btn-detalhes-home">
                                 Ver detalhes
                             </a>
-                            <button onclick="inscreverHome(${op.idoportunidade}, this)" class="btn-inscrever-home">
-                                <i class="fa-regular fa-heart"></i> Inscreva-se
-                            </button>
+                            ${btnHTML}
                         </div>
                     `;
                     lista.appendChild(item);
@@ -235,7 +258,7 @@
             }
         });
 
-        // Função Auxiliar: Saudação do Header
+        // Função Auxiliar: Saudação
         function atualizarSaudacao() {
             const userJson = localStorage.getItem('userData');
             if (userJson) {
@@ -244,13 +267,8 @@
             }
         }
 
-        /**
-         * Função de Inscrição com Feedback Visual
-         * @param {number} id - ID da oportunidade
-         * @param {HTMLElement} btnElement - O botão que foi clicado (para alterar estilo)
-         */
+        // Função de Inscrição (Apenas executa se o botão não estiver 'Inscrito')
         async function inscreverHome(id, btnElement) {
-            // Validação de Login
             const userJson = localStorage.getItem('userData');
             if (!userJson) { alert("Faça login para se inscrever!"); window.location.href = "login.html"; return; }
             const user = JSON.parse(userJson);
@@ -265,109 +283,19 @@
                     const res = await response.json();
                     
                     if (response.ok) { 
-                        // SUCESSO: Altera o visual do botão para "Inscrito"
                         btnElement.innerHTML = '<i class="fa-solid fa-check"></i> Inscrito';
-                        btnElement.className = 'btn-inscrito'; // Classe definida no CSS para estilo verde/slim
-                        btnElement.style.width = '100%';       
-                        btnElement.disabled = true;            // Bloqueia novos cliques
+                        btnElement.className = 'btn-inscrito';
+                        btnElement.style.width = '100%';
+                        btnElement.disabled = true;
                         
-                        // Atualiza os outros widgets da página em tempo real
-                        carregarMinhasAtividades(); 
-                        carregarEstatisticas();
+                        // Atualiza os outros widgets
+                        if(typeof carregarMinhasAtividades === 'function') carregarMinhasAtividades();
+                        if(typeof carregarEstatisticas === 'function') carregarEstatisticas();
                     } 
-                    else { alert(res.message); } // Ex: "Já inscrito"
+                    else { alert(res.message); }
                 } catch (e) { console.error(e); alert("Erro de conexão."); }
             }
         }
-    </script>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        carregarMinhasAtividades();
-    });
-
-    async function carregarMinhasAtividades() {
-        const userJson = localStorage.getItem('userData');
-        if (!userJson) return; 
-        const user = JSON.parse(userJson);
-
-        const lista = document.getElementById('lista-minhas-atividades');
-        const emptyState = document.getElementById('empty-state-atividades');
-
-        try {
-            const response = await fetch(`/api/minhas-atividades/${user.cpf}`);
-            const inscricoes = await response.json();
-
-            if (inscricoes.length === 0) {
-                lista.style.display = 'none';
-                emptyState.style.display = 'block';
-                return;
-            }
-
-            emptyState.style.display = 'none';
-            lista.style.display = 'block';
-            lista.innerHTML = ''; 
-
-            inscricoes.forEach(item => {
-                const op = item.oportunidade; 
-                const li = document.createElement('li');
-                li.className = 'recommendation-item';
-
-                const dataObj = new Date(op.data_evento);
-                const dataUser = new Date(dataObj.getTime() + dataObj.getTimezoneOffset() * 60000);
-                const dataFormatada = dataUser.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' });
-
-                let tagClass = 'tag-blue';
-                const tipo = op.tipo_voluntariado ? op.tipo_voluntariado.tipo : 'Geral';
-
-                li.innerHTML = `
-                    <div class="item-details">
-                        <h3>${op.titulo}</h3>
-                        <span class="tag ${tagClass}" style="font-size: 11px;">${tipo}</span>
-                        <div class="item-info" style="margin-top: 8px;">
-                            <span><i class="fa-regular fa-calendar-days"></i> ${dataFormatada}</span>
-                            <span><i class="fa-regular fa-clock"></i> ${op.horario}</span>
-                        </div>
-                    </div>
-                    <div class="recommendation-actions" style="min-width: 120px;">
-                        <a href="explorar-detalhe.html?id=${op.idoportunidade}" class="btn-detalhes-home" style="font-size: 12px; padding: 6px;">Detalhes</a>
-                        <button onclick="cancelarInscricao(${op.idoportunidade})" style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #dc3545; background: #fff; color: #dc3545; cursor: pointer; font-weight: 600; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px;"><i class="fa-solid fa-xmark"></i> Cancelar</button>
-                    </div>
-                `;
-                lista.appendChild(li);
-            });
-        } catch (error) {
-            console.error("Erro ao carregar minhas atividades:", error);
-        }
-    }
-
-    // Função para Cancelar Inscrição (DELETE)
-    async function cancelarInscricao(idOportunidade) {
-        const userJson = localStorage.getItem('userData');
-        if (!userJson) return;
-        const user = JSON.parse(userJson);
-
-        if (confirm("Tem certeza que deseja cancelar sua inscrição nesta atividade?")) {
-            try {
-                const response = await fetch('/api/inscricao', {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        usuario_cpf: user.cpf, 
-                        oportunidade_id: idOportunidade 
-                    })
-                });
-                const resultado = await response.json();
-                if (response.ok) {
-                    alert("Inscrição cancelada.");
-                    carregarMinhasAtividades(); // Recarrega lista
-                    carregarEstatisticas();     // Atualiza contadores
-                } else {
-                    alert("Erro: " + resultado.message);
-                }
-            } catch (error) { console.error(error); alert("Erro de conexão."); }
-        }
-    }
     </script>
 
     <script>

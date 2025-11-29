@@ -78,32 +78,44 @@
     <script src="app.js"></script>
 
     <script>
-        // Variável global para armazenar dados
         let todasOportunidades = [];
+        let idsInscritosGlobal = []; // Variável para guardar onde o usuário está inscrito
 
-        document.addEventListener('DOMContentLoaded', carregarOportunidades);
+        document.addEventListener('DOMContentLoaded', carregarDadosIniciais);
 
-        // Filtro de Busca
         const searchInput = document.querySelector('.search-box input');
         searchInput.addEventListener('input', (e) => {
             const termo = e.target.value.toLowerCase();
             filtrarOportunidades(termo);
         });
 
-        // 1. BUSCAR DADOS
-        async function carregarOportunidades() {
+        // 1. CARREGAR DADOS (Oportunidades + Inscrições do Usuário)
+        async function carregarDadosIniciais() {
             try {
-                const response = await fetch('/api/oportunidades');
-                if (!response.ok) throw new Error("Falha ao buscar dados");
-                todasOportunidades = await response.json();
+                // A. Busca Oportunidades
+                const resOps = await fetch('/api/oportunidades');
+                if (!resOps.ok) throw new Error("Falha ao buscar dados");
+                todasOportunidades = await resOps.json();
+
+                // B. Busca Inscrições do Usuário (se logado)
+                const userJson = localStorage.getItem('userData');
+                if (userJson) {
+                    const user = JSON.parse(userJson);
+                    try {
+                        const resIns = await fetch(`/api/minhas-atividades/${user.cpf}`);
+                        const dadosIns = await resIns.json();
+                        idsInscritosGlobal = dadosIns.map(i => i.oportunidade_idoportunidade);
+                    } catch (e) { console.error("Erro ao buscar inscrições", e); }
+                }
+                
                 renderizarGrid(todasOportunidades);
+
             } catch (error) { 
                 console.error("Erro:", error); 
-                document.getElementById('grid-oportunidades').innerHTML = '<p style="text-align:center; width:100%;">Erro ao carregar.</p>';
+                document.getElementById('grid-oportunidades').innerHTML = '<p style="text-align:center;">Erro ao carregar.</p>';
             }
         }
 
-        // 2. FILTRAR
         function filtrarOportunidades(termo) {
             const filtradas = todasOportunidades.filter(op => {
                 const titulo = op.titulo.toLowerCase();
@@ -113,7 +125,7 @@
             renderizarGrid(filtradas);
         }
 
-        // 3. RENDERIZAR GRID (ATUALIZADO)
+        // 3. RENDERIZAR GRID (Com verificação de inscrito)
         function renderizarGrid(lista) {
             const grid = document.getElementById('grid-oportunidades');
             grid.innerHTML = ''; 
@@ -139,8 +151,26 @@
                 const mapTipos = { 'Meio Ambiente': 'tag-green', 'Educação': 'tag-purple', 'Saúde': 'tag-red', 'Cultura': 'tag-red', 'Assistência Social': 'tag-yellow' };
                 if(mapTipos[tipo]) tagClass = mapTipos[tipo];
 
-                const htmlNovo = isNovo(index) ? '<span class="tag-novo" style="margin-right:5px; background: #d3e6fa; color:#007bff; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:700;">NOVO</span>' : '';
+                const htmlNovo = isNovo(index) ? '<span class="tag-novo" style="margin-right:5px; background: #d3e6fa; color:#007bff; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:700;">Novo</span>' : '';
                 const imagemFinal = op.imagem_url ? op.imagem_url : 'https://placehold.co/600x400?text=Sem+Imagem';
+
+                // VERIFICAÇÃO: O usuário já está inscrito nesta oportunidade?
+                const jaInscrito = idsInscritosGlobal.includes(op.idoportunidade);
+                
+                let btnHTML = '';
+                if (jaInscrito) {
+                    btnHTML = `
+                        <button class="btn-inscrito" style="width: 100%; margin-top: 10px;" disabled>
+                            <i class="fa-solid fa-check"></i> Inscrito
+                        </button>
+                    `;
+                } else {
+                    btnHTML = `
+                        <button onclick="inscreverDinamicamente(${op.idoportunidade}, this)" class="inscricao-btn-explorar">
+                            <i class="fa-regular fa-heart"></i> Inscreva-se
+                        </button>
+                    `;
+                }
 
                 card.innerHTML = `
                     <img src="${imagemFinal}" alt="${op.titulo}" onerror="this.src='https://placehold.co/600x400?text=Erro+Imagem'">
@@ -160,17 +190,13 @@
                         </div>
 
                         <a href="explorar-detalhe.html?id=${op.idoportunidade}" class="details-button">Ver detalhes</a>
-                        
-                        <button onclick="inscreverDinamicamente(${op.idoportunidade}, this)" class="inscricao-btn-explorar">
-                            <i class="fa-regular fa-heart"></i> Inscreva-se
-                        </button>
+                        ${btnHTML}
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        // 4. FUNÇÃO DE INSCRIÇÃO (ATUALIZADA COM VISUAL)
         async function inscreverDinamicamente(id, btnElement) {
              const userJson = localStorage.getItem('userData');
              if(!userJson) { alert('Faça login!'); window.location.href = 'login.html'; return; }
@@ -186,12 +212,15 @@
                     const res = await response.json();
                     
                     if(response.ok) {
-                        // TRANSFORMA O BOTÃO
+                        // Atualiza visualmente
                         btnElement.innerHTML = '<i class="fa-solid fa-check"></i> Inscrito';
-                        btnElement.className = 'btn-inscrito'; // Usa a classe CSS global (verde/slim)
-                        btnElement.style.width = '100%';       // Garante largura
-                        btnElement.style.marginTop = '10px';   // Mantém espaçamento
-                        btnElement.disabled = true;            // Bloqueia
+                        btnElement.className = 'btn-inscrito'; 
+                        btnElement.style.marginTop = '10px';
+                        btnElement.style.width = '100%';
+                        btnElement.disabled = true;
+                        
+                        // Adiciona à lista global para não perder o status se filtrar
+                        idsInscritosGlobal.push(id);
                     } else {
                         alert(res.message);
                     }
