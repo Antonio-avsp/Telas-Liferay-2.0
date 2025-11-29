@@ -139,7 +139,7 @@
                 const mapTipos = { 'Meio Ambiente': 'tag-green', 'Educação': 'tag-purple', 'Saúde': 'tag-red', 'Cultura': 'tag-red', 'Assistência Social': 'tag-yellow' };
                 if(mapTipos[tipo]) tagClass = mapTipos[tipo];
 
-                const htmlNovo = isNovo(index) ? '<span class="tag-novo" style="margin-right:5px; background:#ffc107; color:#333; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:700;">NOVO</span>' : '';
+                const htmlNovo = isNovo(index) ? '<span class="tag-novo" style="margin-right:5px; background: #d3e6fa; color:#007bff; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:700;">NOVO</span>' : '';
                 const imagemFinal = op.imagem_url ? op.imagem_url : 'https://placehold.co/600x400?text=Sem+Imagem';
 
                 card.innerHTML = `
