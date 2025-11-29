@@ -154,8 +154,8 @@
                 return;
             }
 
-            // Lógica para Tag "Novo" (5 primeiros)
-            const isNovo = (index) => index < 5; 
+            // Lógica para Tag "Novo" (3 primeiros)
+            const isNovo = (index) => index < 3; 
 
             lista.forEach((op, index) => {
                 const card = document.createElement('div');
@@ -171,7 +171,8 @@
                 const mapTipos = { 'Meio Ambiente': 'tag-green', 'Educação': 'tag-purple', 'Saúde': 'tag-red', 'Cultura': 'tag-red', 'Assistência Social': 'tag-yellow' };
                 if(mapTipos[tipo]) tagClass = mapTipos[tipo];
 
-                const htmlNovo = isNovo(index) ? '<span class="tag-novo" style="background:#ffc107; color:#333; font-size:10px; padding:2px 6px; border-radius:4px; margin-right:5px; font-weight:700;">NOVO</span>' : '';
+                const htmlNovo = isNovo(index) ? 
+                '<span class="tag-novo" style="background:#d3e6fa; color:#007bff; font-size:10px; padding:2px 6px; border-radius:4px; margin-right:5px; font-weight:700;">Novo</span>' : '';
 
                 // Se op.imagem_url existir, usa ela. Se não, usa placeholder.
                 const imagemFinal = op.imagem_url ? op.imagem_url : 'https://placehold.co/600x400?text=Sem+Imagem';
