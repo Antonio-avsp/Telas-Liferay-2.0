@@ -125,7 +125,7 @@ Voluntariado-Liferay/
 └── testemunhos.html           # Depoimentos/feedback da comunidade
 ```
 
-### Arquitetura de Camadas
+#### Arquitetura de Camadas
 
 ```
 ┌─────────────────────────────────────────────────────────┐
