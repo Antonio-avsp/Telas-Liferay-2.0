@@ -599,7 +599,7 @@ mkdir uploads
 
 - [ ] Sistema de notificações por email
 - [ ] Integração com calendário (Google Calendar / Outlook)
-- [ ] Gamificação com conquistas e badges
+- [ ] Gamificação com conquistas e badges (Com base nas horas de volontariado concluido)
 - [ ] App mobile (React Native)
 - [ ] Sistema de avaliação de atividades (estrelas)
 - [ ] Fórum de discussão entre voluntários
