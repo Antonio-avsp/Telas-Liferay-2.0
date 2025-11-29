@@ -143,6 +143,8 @@
     <script>
     document.addEventListener('DOMContentLoaded', async () => {
 
+        const btnExcluir = document.querySelector('.create-opportunity-btn-header');
+        const btnInscrever = document.getElementById('btn-inscrever-detalhe');
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
         let dadosFinais = null;
@@ -153,11 +155,9 @@
             const userJson = localStorage.getItem('userData');
             const user = userJson ? JSON.parse(userJson) : null;
 
-            // --- 1. BUSCA DADOS REAIS NA API ---
+            // 1. BUSCA DADOS REAIS NA API
             const response = await fetch(`/api/oportunidades/${id}`);
-            
             if (!response.ok) throw new Error('Oportunidade não encontrada no banco de dados');
-            
             const dbData = await response.json();
             
             dadosFinais = {
@@ -175,64 +175,15 @@
                 habilidades: dbData.habilidades_desejadas ? dbData.habilidades_desejadas.split(',') : [],
                 orgNome: dbData.instituicao ? dbData.instituicao.nomeInstituicao : 'Organização',
                 orgEmail: dbData.instituicao ? dbData.instituicao.email_contato : '---',
-                isStatic: false 
+                // --- NOVO: Lista de Testemunhos ---
+                testemunhos: dbData.testemunhos || [] 
             };
 
-            // --- 2. LÓGICA DE BOTÕES DE DONO (EDITAR E EXCLUIR) ---
-            if (user && dadosFinais.usuario_cpf_criador == user.cpf) {
-                const containerBtns = document.getElementById('header-actions');
-                
-                // A. Botão EDITAR
-                const btnEditar = document.createElement('button');
-                btnEditar.innerHTML = '<i class="fa-solid fa-pen"></i> Editar';
-                btnEditar.style.cssText = "background-color: #007bff; color: white; border: none; border-radius: 6px; padding: 10px 16px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 14px;";
-                
-                btnEditar.onclick = () => {
-                    // Redireciona para a página de criação em MODO EDIÇÃO
-                    window.location.href = `criar-oportunidade.html?mode=edit&id=${dadosFinais.id}`;
-                };
-
-                // B. Botão EXCLUIR
-                const btnExcluir = document.createElement('button');
-                btnExcluir.innerHTML = '<i class="fa-solid fa-trash"></i> Excluir';
-                btnExcluir.style.cssText = "background-color: #d9534f; color: white; border: none; border-radius: 6px; padding: 10px 16px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 14px;";
-                
-                btnExcluir.onclick = async () => {
-                    if (confirm("Tem certeza que deseja EXCLUIR esta oportunidade? Essa ação não pode ser desfeita.")) {
-                        try {
-                            const resDel = await fetch(`/api/oportunidades/${dadosFinais.id}`, {
-                                method: 'DELETE',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ usuario_cpf: user.cpf }) 
-                            });
-                            
-                            const jsonDel = await resDel.json();
-                            
-                            if (resDel.ok) {
-                                alert("Oportunidade excluída!");
-                                window.location.href = 'explorar.html'; 
-                            } else {
-                                alert("Erro: " + jsonDel.message);
-                            }
-                        } catch (err) {
-                            console.error(err);
-                            alert("Erro de conexão ao tentar excluir.");
-                        }
-                    }
-                };
-
-                // Adiciona os botões na tela
-                containerBtns.innerHTML = ''; // Limpa se tiver algo
-                containerBtns.appendChild(btnEditar);
-                containerBtns.appendChild(btnExcluir);
-            }
-
-            // --- 3. RENDERIZAR DADOS NA TELA ---
+            // --- 2. RENDERIZAR DADOS PRINCIPAIS ---
             document.getElementById('detalhe-titulo-pagina').textContent = dadosFinais.titulo;
             
             const imgElement = document.getElementById('detalhe-imagem');
-            // Se não tiver imagem ou for nula, usa placeholder
-            imgElement.src = dadosFinais.imagem ? dadosFinais.imagem : 'https://placehold.co/800x400?text=Sem+Imagem';
+            imgElement.src = dadosFinais.imagem;
             imgElement.alt = dadosFinais.titulo;
             imgElement.style.display = 'block'; 
 
@@ -245,7 +196,6 @@
             const dataObj = new Date(dadosFinais.data);
             const dataUser = new Date(dataObj.getTime() + dataObj.getTimezoneOffset() * 60000);
             document.getElementById('detalhe-data').textContent = dataUser.toLocaleDateString('pt-BR');
-
             document.getElementById('detalhe-horario').textContent = dadosFinais.horario;
             document.getElementById('detalhe-local').textContent = dadosFinais.local;
             document.getElementById('detalhe-inscritos').textContent = `${dadosFinais.vagas}`;
@@ -263,43 +213,122 @@
             document.getElementById('detalhe-org-nome').textContent = dadosFinais.orgNome;
             document.getElementById('detalhe-org-email').textContent = dadosFinais.orgEmail;
 
-        } catch (error) {
-            console.error(error);
-            alert("Erro: " + error.message);
-            window.location.href = 'explorar.html';
-        }
-
-        // --- 4. LÓGICA DO BOTÃO DE INSCRIÇÃO ---
-        const btnInscrever = document.getElementById('btn-inscrever-detalhe');
-        if (btnInscrever) {
+            // --- 3. RENDERIZAR TESTEMUNHOS (NOVO) ---
+            const containerTestemunhos = document.querySelector('.detail-testimonials');
             
-            // A. Verifica se já está inscrito para mudar o estado inicial do botão
-            const userJson = localStorage.getItem('userData');
-            if (userJson) {
-                const user = JSON.parse(userJson);
+            // Se houver testemunhos, removemos o estado vazio e mostramos a lista
+            if (dadosFinais.testemunhos.length > 0) {
+                // Remove msg "Vazio"
+                const emptyState = containerTestemunhos.querySelector('.empty-testimonial');
+                if(emptyState) emptyState.style.display = 'none';
+
+                // Cria container para a lista se não existir
+                let listaDiv = document.getElementById('lista-comentarios-detalhe');
+                if (!listaDiv) {
+                    listaDiv = document.createElement('div');
+                    listaDiv.id = 'lista-comentarios-detalhe';
+                    listaDiv.style.cssText = "display: flex; flex-direction: column; gap: 15px; margin-top: 20px;";
+                    containerTestemunhos.appendChild(listaDiv);
+                }
+                listaDiv.innerHTML = '';
+
+                // Cria os cards de comentário
+                dadosFinais.testemunhos.forEach(t => {
+                    const card = document.createElement('div');
+                    card.className = 'testimonial-card';
+                    // Ajuste de estilo para ficar bom na lateral/dentro do detalhe
+                    card.style.padding = '20px';
+                    card.style.border = '1px solid #eee';
+                    card.style.boxShadow = 'none'; 
+                    
+                    const nomeUser = t.usuario ? t.usuario.nomeUsuario : 'Anônimo';
+                    const inicial = nomeUser.charAt(0).toUpperCase();
+
+                    card.innerHTML = `
+                        <div class="testimonial-header-content">
+                            <div class="testimonial-avatar" style="width:35px; height:35px; font-size:14px;">${inicial}</div>
+                            <div class="testimonial-info">
+                                <h4 style="font-size:14px;">${nomeUser}</h4>
+                            </div>
+                        </div>
+                        <div class="testimonial-body" style="font-size:13px; padding:10px; margin-top:10px;">
+                            ${t.texto}
+                        </div>
+                    `;
+                    listaDiv.appendChild(card);
+                });
+            } else {
+                // Mantém o estado vazio original se não tiver nada
+                 const emptyState = containerTestemunhos.querySelector('.empty-testimonial');
+                 if(emptyState) emptyState.style.display = 'flex';
+            }
+
+            // --- 4. LÓGICA DO BOTÃO EXCLUIR (Se for dono) ---
+            if (user && dadosFinais.usuario_cpf_criador == user.cpf) {
+                const containerBtns = document.getElementById('header-actions');
+                if (!containerBtns) return; // Segurança
+
+                // Botão Editar
+                const btnEditar = document.createElement('button');
+                btnEditar.innerHTML = '<i class="fa-solid fa-pen"></i> Editar';
+                btnEditar.style.cssText = "background-color: #007bff; color: white; border: none; border-radius: 6px; padding: 10px 16px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 14px;";
+                btnEditar.onclick = () => {
+                    window.location.href = `criar-oportunidade.html?mode=edit&id=${dadosFinais.id}`;
+                };
+
+                // Botão Excluir
+                const btnExcluirDinamico = document.createElement('button');
+                btnExcluirDinamico.innerHTML = '<i class="fa-solid fa-trash"></i> Excluir';
+                btnExcluirDinamico.style.cssText = "background-color: #d9534f; color: white; border: none; border-radius: 6px; padding: 10px 16px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 14px;";
+                btnExcluirDinamico.onclick = async () => {
+                    if (confirm("Tem certeza que deseja EXCLUIR esta oportunidade?")) {
+                        try {
+                            const resDel = await fetch(`/api/oportunidades/${dadosFinais.id}`, {
+                                method: 'DELETE',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ usuario_cpf: user.cpf }) 
+                            });
+                            const jsonDel = await resDel.json();
+                            if (resDel.ok) { alert("Excluída!"); window.location.href = 'explorar.html'; } 
+                            else { alert("Erro: " + jsonDel.message); }
+                        } catch (err) { console.error(err); alert("Erro conexão."); }
+                    }
+                };
+
+                containerBtns.innerHTML = '';
+                containerBtns.appendChild(btnEditar);
+                containerBtns.appendChild(btnExcluirDinamico);
+            }
+
+            // --- 5. LÓGICA DE INSCRIÇÃO (Status Visual) ---
+            if (user && btnInscrever) {
                 try {
                     const resIns = await fetch(`/api/minhas-atividades/${user.cpf}`);
                     const minhasInscricoes = await resIns.json();
                     const jaInscrito = minhasInscricoes.some(i => i.oportunidade_idoportunidade == id);
-                    
+
                     if (jaInscrito) {
                         btnInscrever.innerHTML = '<i class="fa-solid fa-check"></i> Inscrito';
-                        // Aplica estilo de inscrito (semelhante ao CSS .btn-inscrito)
+                        btnInscrever.className = 'btn-inscrito'; 
                         btnInscrever.style.backgroundColor = 'transparent';
                         btnInscrever.style.color = '#28a745';
-                        btnInscrever.style.border = '1px solid #28a745';
+                        btnInscrever.style.width = '100%';
                         btnInscrever.disabled = true;
                     }
-                } catch (e) { console.error("Erro ao verificar inscrição", e); }
+                } catch (e) { console.error("Erro ao checar inscrição", e); }
             }
 
-            // B. Evento de Clique
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao carregar detalhes: " + error.message);
+            window.location.href = 'explorar.html';
+        }
+
+        // --- EVENTO DE CLIQUE (INSCREVER) ---
+        if (btnInscrever) {
             btnInscrever.addEventListener('click', async () => {
-                if (!userJson) {
-                    alert("Faça login para se inscrever!");
-                    window.location.href = "login.html";
-                    return;
-                }
+                const userJson = localStorage.getItem('userData');
+                if (!userJson) { alert("Faça login!"); window.location.href = "login.html"; return; }
                 const user = JSON.parse(userJson);
 
                 if(confirm("Deseja confirmar sua inscrição?")) {
@@ -311,16 +340,13 @@
                         });
                         const res = await resp.json();
                         if (resp.ok) {
-                            // Sucesso: Muda o botão na hora
                             btnInscrever.innerHTML = '<i class="fa-solid fa-check"></i> Inscrito';
+                            btnInscrever.className = 'btn-inscrito'; 
                             btnInscrever.style.backgroundColor = 'transparent';
                             btnInscrever.style.color = '#28a745';
-                            btnInscrever.style.border = '1px solid #28a745';
                             btnInscrever.disabled = true;
                             alert("Inscrito com sucesso!");
-                        } else {
-                            alert(res.message);
-                        }
+                        } else { alert(res.message); }
                     } catch (e) { console.error(e); alert("Erro de conexão"); }
                 }
             });

@@ -141,6 +141,37 @@ app.post('/api/oportunidades', upload.single('imagem'), async (req, res) => {
     }
 });
 
+
+// Avisa ao banco de dados para, quando buscar uma oportunidade, trazer junto os testemunhos dela.
+// e fazer aparecer os testemunhos reais nos detalhes da oportunidade
+app.get('/api/oportunidades/:id', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        
+        const oportunidade = await prisma.oportunidade.findUnique({
+            where: { idoportunidade: id },
+            include: { 
+                instituicao: true, 
+                tipo_voluntariado: true,
+                // --- NOVO: Traz os testemunhos e quem escreveu ---
+                testemunhos: {
+                    include: { usuario: true },
+                    orderBy: { idtestemunhos: 'desc' } // Mais recentes no topo
+                }
+            }
+        });
+
+        if (oportunidade) {
+            res.json(oportunidade);
+        } else {
+            res.status(404).json({ error: "Oportunidade não encontrada" });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro ao buscar detalhes" });
+    }
+});
+
 /**
  * ROTA: LISTAR OPORTUNIDADES
  * Método: GET
@@ -491,24 +522,65 @@ app.get('/api/impacto-global', async (req, res) => {
             return { nome: u ? u.nomeUsuario : 'Anônimo', qtd: r._count.usuario_cpf };
         }));
 
-        // D. GEOGRAFIA
+        // D. GEOGRAFIA (Lógica Inteligente)
         const geoRaw = await prisma.oportunidade.findMany({ select: { local_evento: true, duracao_horas: true } });
         const cidadesMap = {};
         let onlineCount = 0;
 
         geoRaw.forEach(op => {
-            if (op.local_evento.toLowerCase().includes('online')) {
+            if (!op.local_evento) return;
+
+            const localLower = op.local_evento.toLowerCase();
+            if (localLower.includes('online') || localLower.includes('remoto')) {
                 onlineCount++;
             } else {
-                const cidade = op.local_evento.split(',')[0].trim();
-                if (!cidadesMap[cidade]) cidadesMap[cidade] = { count: 0 };
+                // Algoritmo para descobrir qual parte é a Cidade
+                let cidade = "Desconhecida";
+                
+                // 1. Remove o formato final "(Presencial)"
+                const localBase = op.local_evento.split('(')[0].trim();
+
+                // 2. Verifica se tem o separador novo " - " (que colocamos no passo anterior)
+                if (localBase.includes(' - ')) {
+                    // Ex: "Rua da Aurora - Recife, PE, Brasil"
+                    // Pega a parte DEPOIS do hífen: "Recife, PE, Brasil"
+                    const parteGeografica = localBase.split(' - ')[1];
+                    if (parteGeografica) {
+                        cidade = parteGeografica.split(',')[0].trim(); // Pega "Recife"
+                    }
+                } else {
+                    // 3. Lógica para formato antigo (separado só por vírgulas)
+                    // Ex1: "Rua X, Recife, Brasil" (3 partes) -> Cidade é a do meio
+                    // Ex2: "Recife, Brasil" (2 partes) -> Cidade é a primeira
+                    const parts = localBase.split(',');
+                    
+                    if (parts.length >= 3) {
+                        // Heurística: Se a parte do meio tem 2 letras (ex: PE), a cidade é a primeira.
+                        // Se não, é provável que a primeira seja endereço e a cidade seja a segunda.
+                        const part1 = parts[1].trim();
+                        if (part1.length === 2 && part1 === part1.toUpperCase()) {
+                             cidade = parts[0].trim(); // Ex: "Recife, PE, Brasil"
+                        } else {
+                             cidade = parts[1].trim(); // Ex: "Rua X, Recife, Brasil"
+                        }
+                    } else if (parts.length > 0) {
+                        cidade = parts[0].trim();
+                    }
+                }
+
+                // Normaliza (Primeira letra maiúscula)
+                cidade = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+
+                if (!cidadesMap[cidade]) cidadesMap[cidade] = { count: 0, horas: 0 };
                 cidadesMap[cidade].count++;
+                cidadesMap[cidade].horas += (op.duracao_horas || 0);
             }
         });
 
         const listaGeografia = Object.keys(cidadesMap).map(cidade => ({
             cidade, 
-            count: cidadesMap[cidade].count
+            count: cidadesMap[cidade].count,
+            horas: cidadesMap[cidade].horas
         }));
 
         // E. CATEGORIAS (PIZZA)

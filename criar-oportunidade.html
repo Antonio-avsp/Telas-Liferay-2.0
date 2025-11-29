@@ -60,7 +60,7 @@
                     <h3>Informações Básicas</h3>
                     <div class="form-row">
                         <label for="titulo">Título da oportunidade *</label>
-                        <input type="text" id="titulo" placeholder="Ex: Mutirão de Pintura - Escola Municipal" required>
+                        <input type="text" id="titulo" placeholder="Ex: Digite o nome do seu voluntariado" required>
                     </div>
                     <div class="form-row">
                         <label for="descricao">Descrição *</label>
@@ -89,15 +89,43 @@
                     </div>
                 </section>
 
-                <section class="form-section">
+               <section class="form-section">
                     <h3>Local e data</h3>
                     
                     <div class="form-row">
-                        <label for="endereco">Endereço Completo</label>
+                        <label for="endereco">Endereço (Rua, Número, Bairro)</label>
                         <input type="text" id="endereco" placeholder="Ex: Rua da Aurora, 123, Boa Vista">
                     </div>
 
                     <div class="form-grid third">
+                        <div class="form-row">
+                            <label for="cidade">Cidade</label>
+                            <input type="text" id="cidade" placeholder="Recife" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <label for="estado">Estado</label>
+                            <select id="estado" required>
+                                <option value="" disabled selected>UF</option>
+                                <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option>
+                                <option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option>
+                                <option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option>
+                                <option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option>
+                                <option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option>
+                                <option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option>
+                                <option value="RJ">RJ</option><option value="RN">RN</option><option value="RS">RS</option>
+                                <option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option>
+                                <option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <label for="pais">País</label>
+                            <input type="text" id="pais" value="Brasil">
+                        </div>
+                    </div>
+
+                    <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px;">
                         <div class="form-row">
                             <label for="formato">Formato</label>
                             <select id="formato" name="formato">
@@ -106,25 +134,15 @@
                             </select>
                         </div>
                         <div class="form-row">
-                            <label for="cidade">Cidade</label>
-                            <input type="text" id="cidade" placeholder="Recife">
-                        </div>
-                        <div class="form-row">
-                            <label for="pais">País</label>
-                            <input type="text" id="pais" placeholder="Brasil">
-                        </div>
-                    </div>
-                    <div class="form-grid third">
-                        <div class="form-row">
                             <label for="data">Data</label>
-                            <input type="date" id="data">
+                            <input type="date" id="data" required>
                         </div>
                         <div class="form-row">
                             <label for="horario">Horário</label>
-                            <input type="time" id="horario">
+                            <input type="time" id="horario" required>
                         </div>
                         <div class="form-row">
-                            <label for="duracao">Duração (horas)</label>
+                            <label for="duracao">Duração (h)</label>
                             <input type="number" id="duracao" placeholder="0">
                         </div>
                     </div>
@@ -146,7 +164,7 @@
                     <div class="form-grid half">
                         <div class="form-row">
                             <label for="email_contato">Email de contato</label>
-                            <input type="email" id="email_contato" placeholder="rafael126@gmail.com">
+                            <input type="email" id="email_contato" placeholder="contato@email.com">
                         </div>
                         <div class="form-row">
                             <label for="telefone_contato">Telefone de contato</label>
@@ -294,26 +312,31 @@
                 formData.append('tipoAtividade', valorFinalTipo); 
                 
                 // --- Aui nessa parte estava em duvida mas consegui fazer ---
-                // Captura os 4 campos de local
+               // 1. Captura os valores
                 const endereco = document.getElementById('endereco').value;
                 const cidade = document.getElementById('cidade').value;
+                const estado = document.getElementById('estado').value; // Novo
                 const pais = document.getElementById('pais').value;
                 const formato = document.getElementById('formato').value;
 
-                // Monta a string completa para o banco
-                // Exemplo: "Rua Aurora 123, Recife, Brasil (Presencial)"
-                let localCompleto = `${cidade}, ${pais} (${formato})`;
+                // 2. Monta a string "local_formatado" de jeito inteligente
+                // Formato Final: "Rua X - Recife, PE, Brasil (Presencial)"
+                // O " - " ajuda o servidor a separar o endereço da cidade
+                let localCompleto = "";
+                
                 if (endereco && endereco.trim() !== "") {
-                    localCompleto = `${endereco}, ${cidade}, ${pais} (${formato})`;
+                    localCompleto += `${endereco} - `;
                 }
+                
+                localCompleto += `${cidade}, ${estado}, ${pais} (${formato})`;
 
-                // Envia para o servidor com o nome 'local_formatado'
+                // 3. Adiciona ao FormData
                 formData.append('local_formatado', localCompleto);
                 
-                // Envia os outros campos individuais também caso precise
-                formData.append('formato', formato);
+                // Envia os individuais também (caso queira usar no futuro)
                 formData.append('cidade', cidade);
                 formData.append('pais', pais);
+                formData.append('formato', formato);
                 // ----------------------------------------------------
 
                 formData.append('data', document.getElementById('data').value);
