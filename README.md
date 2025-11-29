@@ -1,4 +1,4 @@
-# Portal do Voluntariado Liferay
+# Voluntariado Liferay
 
 ## 📖 Sobre o Projeto
 
