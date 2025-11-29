@@ -111,6 +111,7 @@
                                 <i class="fa-regular fa-calendar-xmark"></i>
                                 <p>Você ainda não está inscrito em nenhuma atividade futura.</p>
                             </div>
+
                             <ul class="recommendation-list" id="lista-minhas-atividades" style="display: none;">
                             </ul>
                         </div>
@@ -169,16 +170,15 @@
                 const responseOps = await fetch('/api/oportunidades');
                 const oportunidades = await responseOps.json();
 
-                // 2. (NOVO) Busca os IDs das oportunidades que o usuário JÁ está inscrito
+                // 2. Busca INSCRIÇÕES DO USUÁRIO (Para saber quais botões pintar de verde)
                 const userJson = localStorage.getItem('userData');
-                let idsInscritos = []; // Lista de IDs (ex: [1, 5, 8])
+                let idsInscritos = []; 
 
                 if (userJson) {
                     const user = JSON.parse(userJson);
                     try {
                         const resInscricoes = await fetch(`/api/minhas-atividades/${user.cpf}`);
                         const minhasInscricoes = await resInscricoes.json();
-                        // Cria um array só com os IDs das oportunidades inscritas
                         idsInscritos = minhasInscricoes.map(i => i.oportunidade_idoportunidade);
                     } catch (e) { console.error("Erro ao verificar inscrições", e); }
                 }
@@ -206,11 +206,10 @@
                     const mapTipos = { 'Meio Ambiente': 'tag-green', 'Educação': 'tag-purple', 'Saúde': 'tag-red', 'Cultura': 'tag-red', 'Assistência Social': 'tag-yellow' };
                     if(mapTipos[tipo]) tagClass = mapTipos[tipo];
 
-                    // (NOVO) Define o estado inicial do botão
+                    // LÓGICA DO BOTÃO VERDE (JÁ INSCRITO)
                     const jaInscrito = idsInscritos.includes(op.idoportunidade);
-                    
-                    // Se já inscrito: Botão verde e desabilitado. Se não: Botão azul com onclick.
                     let btnHTML = '';
+                    
                     if (jaInscrito) {
                         btnHTML = `
                             <button class="btn-inscrito" style="width: 100%; margin-top: 10px;" disabled>
@@ -227,14 +226,7 @@
 
                     item.innerHTML = `
                         <div class="item-details">
-                            <span class="tag-novo" 
-                            style="background:#d3e6fa; 
-                            color:#007bff; font-size:10px; 
-                            padding:2px 6px; 
-                            border-radius:4px; 
-                            margin-right:5px; 
-                            font-weight:700;
-                            ">Novo</span>
+                            <span class="tag-novo" style="background: #d3e6fa; color:#007bff; font-size:10px; padding:2px 6px; border-radius:4px; margin-right:5px; font-weight:700;">Novo</span>
                             <h3>${op.titulo}</h3>
                             <span class="tag ${tagClass}">${tipo}</span>
                             <p>${op.descricao ? op.descricao : ''}</p>
@@ -243,7 +235,6 @@
                                 <span><i class="fa-solid fa-location-dot"></i> ${op.local_evento.split(',')[0]}</span>
                             </div>
                         </div>
-                        
                         <div class="recommendation-actions">
                             <a href="explorar-detalhe.html?id=${op.idoportunidade}" class="btn-detalhes-home">
                                 Ver detalhes
@@ -258,7 +249,6 @@
             }
         });
 
-        // Função Auxiliar: Saudação
         function atualizarSaudacao() {
             const userJson = localStorage.getItem('userData');
             if (userJson) {
@@ -267,7 +257,6 @@
             }
         }
 
-        // Função de Inscrição (Apenas executa se o botão não estiver 'Inscrito')
         async function inscreverHome(id, btnElement) {
             const userJson = localStorage.getItem('userData');
             if (!userJson) { alert("Faça login para se inscrever!"); window.location.href = "login.html"; return; }
@@ -288,14 +277,114 @@
                         btnElement.style.width = '100%';
                         btnElement.disabled = true;
                         
-                        // Atualiza os outros widgets
-                        if(typeof carregarMinhasAtividades === 'function') carregarMinhasAtividades();
-                        if(typeof carregarEstatisticas === 'function') carregarEstatisticas();
-                    } 
-                    else { alert(res.message); }
+                        // Atualiza as listas em tempo real
+                        carregarMinhasAtividades(); 
+                        carregarEstatisticas();
+                    } else { alert(res.message); }
                 } catch (e) { console.error(e); alert("Erro de conexão."); }
             }
         }
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        carregarMinhasAtividades();
+    });
+
+    async function carregarMinhasAtividades() {
+        // 1. Verifica Login
+        const userJson = localStorage.getItem('userData');
+        if (!userJson) return; 
+        const user = JSON.parse(userJson);
+
+        const lista = document.getElementById('lista-minhas-atividades');
+        const emptyState = document.getElementById('empty-state-atividades');
+
+        try {
+            // 2. Busca inscrições na API
+            const response = await fetch(`/api/minhas-atividades/${user.cpf}`);
+            const inscricoes = await response.json();
+
+            if (inscricoes.length === 0) {
+                lista.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            lista.style.display = 'block';
+            lista.innerHTML = ''; 
+
+            // 3. Renderiza inscrições
+            inscricoes.forEach(item => {
+                const op = item.oportunidade; 
+                const li = document.createElement('li');
+                li.className = 'recommendation-item';
+
+                const dataObj = new Date(op.data_evento);
+                const dataUser = new Date(dataObj.getTime() + dataObj.getTimezoneOffset() * 60000);
+                const dataFormatada = dataUser.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' });
+
+                let tagClass = 'tag-blue';
+                const tipo = op.tipo_voluntariado ? op.tipo_voluntariado.tipo : 'Geral';
+
+                li.innerHTML = `
+                    <div class="item-details">
+                        <h3>${op.titulo}</h3>
+                        <span class="tag ${tagClass}" style="font-size: 11px;">${tipo}</span>
+                        <div class="item-info" style="margin-top: 8px;">
+                            <span><i class="fa-regular fa-calendar-days"></i> ${dataFormatada}</span>
+                            <span><i class="fa-regular fa-clock"></i> ${op.horario}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="recommendation-actions" style="min-width: 120px;">
+                        <a href="explorar-detalhe.html?id=${op.idoportunidade}" class="btn-detalhes-home" style="font-size: 12px; padding: 6px;">
+                            Detalhes
+                        </a>
+                        <button onclick="cancelarInscricao(${op.idoportunidade})" style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #dc3545; background: #fff; color: #dc3545; cursor: pointer; font-weight: 600; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                            <i class="fa-solid fa-xmark"></i> Cancelar
+                        </button>
+                    </div>
+                `;
+                lista.appendChild(li);
+            });
+        } catch (error) {
+            console.error("Erro ao carregar minhas atividades:", error);
+        }
+    }
+
+    // Função Cancelar Inscrição
+    async function cancelarInscricao(idOportunidade) {
+        const userJson = localStorage.getItem('userData');
+        if (!userJson) return;
+        const user = JSON.parse(userJson);
+
+        if (confirm("Tem certeza que deseja cancelar sua inscrição nesta atividade?")) {
+            try {
+                const response = await fetch('/api/inscricao', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        usuario_cpf: user.cpf, 
+                        oportunidade_id: idOportunidade 
+                    })
+                });
+                const resultado = await response.json();
+                if (response.ok) {
+                    alert("Inscrição cancelada.");
+                    // Recarrega as listas e estatísticas
+                    carregarMinhasAtividades();
+                    carregarEstatisticas(); 
+                    
+                    // Recarrega a página para atualizar os botões "Inscrito" nos recomendados
+                    location.reload(); 
+                } else {
+                    alert("Erro: " + resultado.message);
+                }
+            } catch (error) { console.error(error); alert("Erro de conexão."); }
+        }
+    }
     </script>
 
     <script>
@@ -314,7 +403,7 @@
             const container = document.getElementById('lista-testemunhos-home');
             const emptyState = document.getElementById('empty-state-testemunhos');
 
-            const recentes = lista.slice(0, 2); // Mostra apenas os 2 últimos
+            const recentes = lista.slice(0, 2);
 
             if (recentes.length === 0) {
                 container.style.display = 'none';
@@ -336,7 +425,6 @@
                 const nomeUser = t.usuario ? t.usuario.nomeUsuario : 'Anônimo';
                 const inicial = nomeUser.charAt(0).toUpperCase();
                 
-                // Validação de Dono: Só mostra botão Excluir se CPFs baterem
                 let btnExcluirHTML = '';
                 if (user && t.usuario_cpf === user.cpf) {
                     btnExcluirHTML = `
@@ -403,13 +491,11 @@
             const response = await fetch(`/api/estatisticas/${user.cpf}`);
             const dados = await response.json();
 
-            // Atualiza Painel Superior (IDs estáticos)
             document.getElementById('stat-oportunidades').textContent = dados.totalOportunidades;
             document.getElementById('stat-horas').textContent = dados.minhasHoras + 'h';
             document.getElementById('stat-proximas').textContent = dados.proximasAtividades;
             document.getElementById('stat-total-geral').textContent = dados.totalVoluntariados;
 
-            // Atualiza Card Lateral (Seu Impacto)
             document.getElementById('impact-horas-valor').textContent = dados.minhasHoras;
             document.getElementById('impact-concluidas').textContent = dados.atividadesConcluidas;
             document.getElementById('impact-proximas').textContent = dados.proximasAtividades;

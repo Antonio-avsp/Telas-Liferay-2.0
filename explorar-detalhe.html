@@ -53,9 +53,7 @@
                     <i class="fa-solid fa-arrow-left"></i> Voltar
                 </a>
                 
-                <button class="create-opportunity-btn-header" style="background-color: #d9534f; display: none;">
-                    <i class="fa-solid fa-trash"></i> Excluir Oportunidade
-                </button>
+                <div id="header-actions" style="margin-left: auto; display: flex; gap: 10px;"></div>
             </header>
 
             <div class="detail-banner-image">
@@ -106,7 +104,7 @@
                     <section class="detail-section">
                         <h3>Habilidades Desejadas</h3>
                         <div class="tag-list" id="detalhe-habilidades">
-                            </div>
+                        </div>
                     </section>
 
                     <section class="detail-section detail-testimonials">
@@ -142,11 +140,8 @@
     
     <script src="app.js"></script>
 
-   <script>
+    <script>
     document.addEventListener('DOMContentLoaded', async () => {
-
-        const btnExcluir = document.querySelector('.create-opportunity-btn-header');
-        const btnInscrever = document.getElementById('btn-inscrever-detalhe'); // Referência ao botão
 
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
@@ -158,12 +153,13 @@
             const userJson = localStorage.getItem('userData');
             const user = userJson ? JSON.parse(userJson) : null;
 
-            // 1. BUSCA DETALHES DA OPORTUNIDADE
+            // --- 1. BUSCA DADOS REAIS NA API ---
             const response = await fetch(`/api/oportunidades/${id}`);
-            if (!response.ok) throw new Error('Oportunidade não encontrada');
+            
+            if (!response.ok) throw new Error('Oportunidade não encontrada no banco de dados');
+            
             const dbData = await response.json();
             
-            // (Preenchimento dos dados na tela igual ao anterior...)
             dadosFinais = {
                 id: dbData.idoportunidade, 
                 usuario_cpf_criador: dbData.usuario_cpf_criador, 
@@ -182,50 +178,62 @@
                 isStatic: false 
             };
 
-            // --- 2. VERIFICA SE JÁ ESTÁ INSCRITO ---
-            if (user) {
-                try {
-                    const resIns = await fetch(`/api/minhas-atividades/${user.cpf}`);
-                    const minhasInscricoes = await resIns.json();
-                    // Verifica se este ID está na lista
-                    const jaInscrito = minhasInscricoes.some(i => i.oportunidade_idoportunidade == id);
-
-                    if (jaInscrito && btnInscrever) {
-                        btnInscrever.innerHTML = '<i class="fa-solid fa-check"></i> Inscrito';
-                        btnInscrever.className = 'btn-inscrito'; 
-                        btnInscrever.style.backgroundColor = 'transparent'; // Remove fundo azul
-                        btnInscrever.style.color = '#28a745';
-                        btnInscrever.style.width = '100%';
-                        btnInscrever.disabled = true;
-                    }
-                } catch (e) { console.error("Erro ao checar inscrição", e); }
-            }
-
-            // --- 3. LÓGICA DE EXIBIR BOTÃO EXCLUIR ---
+            // --- 2. LÓGICA DE BOTÕES DE DONO (EDITAR E EXCLUIR) ---
             if (user && dadosFinais.usuario_cpf_criador == user.cpf) {
-                if (btnExcluir) {
-                    btnExcluir.style.display = 'flex';
-                    btnExcluir.onclick = async () => {
-                        if (confirm("Tem certeza que deseja EXCLUIR esta oportunidade?")) {
-                            try {
-                                const resDel = await fetch(`/api/oportunidades/${dadosFinais.id}`, {
-                                    method: 'DELETE',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ usuario_cpf: user.cpf }) 
-                                });
-                                if (resDel.ok) { alert("Excluída!"); window.location.href = 'explorar.html'; }
-                                else { const j = await resDel.json(); alert(j.message); }
-                            } catch (err) { console.error(err); alert("Erro conexão."); }
+                const containerBtns = document.getElementById('header-actions');
+                
+                // A. Botão EDITAR
+                const btnEditar = document.createElement('button');
+                btnEditar.innerHTML = '<i class="fa-solid fa-pen"></i> Editar';
+                btnEditar.style.cssText = "background-color: #007bff; color: white; border: none; border-radius: 6px; padding: 10px 16px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 14px;";
+                
+                btnEditar.onclick = () => {
+                    // Redireciona para a página de criação em MODO EDIÇÃO
+                    window.location.href = `criar-oportunidade.html?mode=edit&id=${dadosFinais.id}`;
+                };
+
+                // B. Botão EXCLUIR
+                const btnExcluir = document.createElement('button');
+                btnExcluir.innerHTML = '<i class="fa-solid fa-trash"></i> Excluir';
+                btnExcluir.style.cssText = "background-color: #d9534f; color: white; border: none; border-radius: 6px; padding: 10px 16px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 14px;";
+                
+                btnExcluir.onclick = async () => {
+                    if (confirm("Tem certeza que deseja EXCLUIR esta oportunidade? Essa ação não pode ser desfeita.")) {
+                        try {
+                            const resDel = await fetch(`/api/oportunidades/${dadosFinais.id}`, {
+                                method: 'DELETE',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ usuario_cpf: user.cpf }) 
+                            });
+                            
+                            const jsonDel = await resDel.json();
+                            
+                            if (resDel.ok) {
+                                alert("Oportunidade excluída!");
+                                window.location.href = 'explorar.html'; 
+                            } else {
+                                alert("Erro: " + jsonDel.message);
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            alert("Erro de conexão ao tentar excluir.");
                         }
-                    };
-                }
+                    }
+                };
+
+                // Adiciona os botões na tela
+                containerBtns.innerHTML = ''; // Limpa se tiver algo
+                containerBtns.appendChild(btnEditar);
+                containerBtns.appendChild(btnExcluir);
             }
 
-            // --- RENDERIZAÇÃO (TEXTOS E IMAGEM) ---
+            // --- 3. RENDERIZAR DADOS NA TELA ---
             document.getElementById('detalhe-titulo-pagina').textContent = dadosFinais.titulo;
             
             const imgElement = document.getElementById('detalhe-imagem');
-            imgElement.src = dadosFinais.imagem;
+            // Se não tiver imagem ou for nula, usa placeholder
+            imgElement.src = dadosFinais.imagem ? dadosFinais.imagem : 'https://placehold.co/800x400?text=Sem+Imagem';
+            imgElement.alt = dadosFinais.titulo;
             imgElement.style.display = 'block'; 
 
             const tagElement = document.getElementById('detalhe-tag');
@@ -237,6 +245,7 @@
             const dataObj = new Date(dadosFinais.data);
             const dataUser = new Date(dataObj.getTime() + dataObj.getTimezoneOffset() * 60000);
             document.getElementById('detalhe-data').textContent = dataUser.toLocaleDateString('pt-BR');
+
             document.getElementById('detalhe-horario').textContent = dadosFinais.horario;
             document.getElementById('detalhe-local').textContent = dadosFinais.local;
             document.getElementById('detalhe-inscritos').textContent = `${dadosFinais.vagas}`;
@@ -260,11 +269,37 @@
             window.location.href = 'explorar.html';
         }
 
-        // --- EVENTO DE CLIQUE DO BOTÃO INSCREVER ---
+        // --- 4. LÓGICA DO BOTÃO DE INSCRIÇÃO ---
+        const btnInscrever = document.getElementById('btn-inscrever-detalhe');
         if (btnInscrever) {
+            
+            // A. Verifica se já está inscrito para mudar o estado inicial do botão
+            const userJson = localStorage.getItem('userData');
+            if (userJson) {
+                const user = JSON.parse(userJson);
+                try {
+                    const resIns = await fetch(`/api/minhas-atividades/${user.cpf}`);
+                    const minhasInscricoes = await resIns.json();
+                    const jaInscrito = minhasInscricoes.some(i => i.oportunidade_idoportunidade == id);
+                    
+                    if (jaInscrito) {
+                        btnInscrever.innerHTML = '<i class="fa-solid fa-check"></i> Inscrito';
+                        // Aplica estilo de inscrito (semelhante ao CSS .btn-inscrito)
+                        btnInscrever.style.backgroundColor = 'transparent';
+                        btnInscrever.style.color = '#28a745';
+                        btnInscrever.style.border = '1px solid #28a745';
+                        btnInscrever.disabled = true;
+                    }
+                } catch (e) { console.error("Erro ao verificar inscrição", e); }
+            }
+
+            // B. Evento de Clique
             btnInscrever.addEventListener('click', async () => {
-                const userJson = localStorage.getItem('userData');
-                if (!userJson) { alert("Faça login!"); window.location.href = "login.html"; return; }
+                if (!userJson) {
+                    alert("Faça login para se inscrever!");
+                    window.location.href = "login.html";
+                    return;
+                }
                 const user = JSON.parse(userJson);
 
                 if(confirm("Deseja confirmar sua inscrição?")) {
@@ -276,11 +311,11 @@
                         });
                         const res = await resp.json();
                         if (resp.ok) {
-                            // ATUALIZA O BOTÃO IMEDIATAMENTE
+                            // Sucesso: Muda o botão na hora
                             btnInscrever.innerHTML = '<i class="fa-solid fa-check"></i> Inscrito';
-                            btnInscrever.className = 'btn-inscrito'; 
                             btnInscrever.style.backgroundColor = 'transparent';
                             btnInscrever.style.color = '#28a745';
+                            btnInscrever.style.border = '1px solid #28a745';
                             btnInscrever.disabled = true;
                             alert("Inscrito com sucesso!");
                         } else {
