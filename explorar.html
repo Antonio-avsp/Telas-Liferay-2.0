@@ -78,73 +78,42 @@
     <script src="app.js"></script>
 
     <script>
-        // =====================================================================
-        // LÓGICA ESPECÍFICA DA PÁGINA EXPLORAR
-        // =====================================================================
-
-        // Variável global para armazenar TODOS os dados vindos do banco.
-        // Isso permite filtrar localmente sem precisar chamar a API a cada letra digitada.
+        // Variável global para armazenar dados
         let todasOportunidades = [];
 
-        // Inicialização: Carrega dados assim que o DOM estiver pronto
         document.addEventListener('DOMContentLoaded', carregarOportunidades);
 
-        // Configuração da Busca em Tempo Real
+        // Filtro de Busca
         const searchInput = document.querySelector('.search-box input');
         searchInput.addEventListener('input', (e) => {
             const termo = e.target.value.toLowerCase();
             filtrarOportunidades(termo);
         });
 
-        /**
-         * 1. BUSCAR DADOS (FETCH)
-         * Busca todas as oportunidades na API e salva na variável global.
-         */
+        // 1. BUSCAR DADOS
         async function carregarOportunidades() {
             try {
                 const response = await fetch('/api/oportunidades');
-                
                 if (!response.ok) throw new Error("Falha ao buscar dados");
-
                 todasOportunidades = await response.json();
-                
-                // Renderiza a lista completa inicialmente
                 renderizarGrid(todasOportunidades);
-
             } catch (error) { 
-                console.error("Erro ao carregar oportunidades:", error); 
-                // Mostra erro visual para o usuário
-                const grid = document.getElementById('grid-oportunidades');
-                grid.innerHTML = `
-                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #dc3545;">
-                        <i class="fa-solid fa-triangle-exclamation" style="font-size: 30px; margin-bottom: 10px;"></i>
-                        <p>Não foi possível carregar as oportunidades. Verifique se o servidor está rodando.</p>
-                    </div>`;
+                console.error("Erro:", error); 
+                document.getElementById('grid-oportunidades').innerHTML = '<p style="text-align:center; width:100%;">Erro ao carregar.</p>';
             }
         }
 
-        /**
-         * 2. FILTRAR LISTA (Lógica Local)
-         * Filtra o array global baseado no texto digitado (Título ou ONG).
-         */
+        // 2. FILTRAR
         function filtrarOportunidades(termo) {
             const filtradas = todasOportunidades.filter(op => {
                 const titulo = op.titulo.toLowerCase();
-                // Verifica se existe instituição, senão usa string vazia para não quebrar
                 const ong = op.instituicao ? op.instituicao.nomeInstituicao.toLowerCase() : '';
-                
-                // Retorna true se o termo estiver no título OU na ONG
                 return titulo.includes(termo) || ong.includes(termo);
             });
-            // Redesenha a tela apenas com os itens filtrados
             renderizarGrid(filtradas);
         }
 
-        /**
-         * 3. RENDERIZAR GRID (Visual)
-         * Recebe uma lista (completa ou filtrada) e cria o HTML dos cards.
-         */
-        // --- 3. DESENHAR CARDS NA TELA (ATUALIZADO) ---
+        // 3. RENDERIZAR GRID (ATUALIZADO)
         function renderizarGrid(lista) {
             const grid = document.getElementById('grid-oportunidades');
             grid.innerHTML = ''; 
@@ -154,8 +123,7 @@
                 return;
             }
 
-            // Lógica para Tag "Novo" (3 primeiros)
-            const isNovo = (index) => index < 3; 
+            const isNovo = (index) => index < 5; 
 
             lista.forEach((op, index) => {
                 const card = document.createElement('div');
@@ -171,10 +139,7 @@
                 const mapTipos = { 'Meio Ambiente': 'tag-green', 'Educação': 'tag-purple', 'Saúde': 'tag-red', 'Cultura': 'tag-red', 'Assistência Social': 'tag-yellow' };
                 if(mapTipos[tipo]) tagClass = mapTipos[tipo];
 
-                const htmlNovo = isNovo(index) ? 
-                '<span class="tag-novo" style="background:#d3e6fa; color:#007bff; font-size:10px; padding:2px 6px; border-radius:4px; margin-right:5px; font-weight:700;">Novo</span>' : '';
-
-                // Se op.imagem_url existir, usa ela. Se não, usa placeholder.
+                const htmlNovo = isNovo(index) ? '<span class="tag-novo" style="margin-right:5px; background:#ffc107; color:#333; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:700;">NOVO</span>' : '';
                 const imagemFinal = op.imagem_url ? op.imagem_url : 'https://placehold.co/600x400?text=Sem+Imagem';
 
                 card.innerHTML = `
@@ -189,7 +154,7 @@
                         
                         <div class="card-info">
                             <span><i class="fa-solid fa-building"></i> ${nomeOng}</span>
-                            <span><i class="fa-solid fa-location-dot"></i> ${op.local_evento}</span>
+                            <span><i class="fa-solid fa-location-dot"></i> ${op.local_evento.split(',')[0]}</span>
                             <span><i class="fa-solid fa-calendar-days"></i> ${dataFormatada}</span>
                             <span><i class="fa-regular fa-clock"></i> ${op.horario}</span>
                         </div>
@@ -205,7 +170,7 @@
             });
         }
 
-        // --- 4. FUNÇÃO DE INSCRIÇÃO (ATUALIZADA COM FEEDBACK VISUAL) ---
+        // 4. FUNÇÃO DE INSCRIÇÃO (ATUALIZADA COM VISUAL)
         async function inscreverDinamicamente(id, btnElement) {
              const userJson = localStorage.getItem('userData');
              if(!userJson) { alert('Faça login!'); window.location.href = 'login.html'; return; }
@@ -221,12 +186,12 @@
                     const res = await response.json();
                     
                     if(response.ok) {
-                        // MUDANÇA VISUAL DO BOTÃO
+                        // TRANSFORMA O BOTÃO
                         btnElement.innerHTML = '<i class="fa-solid fa-check"></i> Inscrito';
-                        btnElement.className = 'btn-inscrito'; // Aplica a classe CSS que foi criado
+                        btnElement.className = 'btn-inscrito'; // Usa a classe CSS global (verde/slim)
+                        btnElement.style.width = '100%';       // Garante largura
                         btnElement.style.marginTop = '10px';   // Mantém espaçamento
-                        btnElement.style.width = '100%';       // Garante largura total
-                        btnElement.disabled = true;            // Desabilita
+                        btnElement.disabled = true;            // Bloqueia
                     } else {
                         alert(res.message);
                     }

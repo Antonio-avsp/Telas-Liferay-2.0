@@ -286,10 +286,10 @@ if (user && dadosFinais.usuario_cpf_criador == user.cpf) {
         }
 
         // --- 4. LÓGICA DO BOTÃO DE INSCRIÇÃO ---
+        // --- 4. LÓGICA DO BOTÃO DE INSCRIÇÃO (ATUALIZADO) ---
         const btnInscrever = document.getElementById('btn-inscrever-detalhe');
         if (btnInscrever) {
             btnInscrever.addEventListener('click', async () => {
-                // Validação de Login antes de qualquer coisa
                 const userJson = localStorage.getItem('userData');
                 if (!userJson) {
                     alert("Faça login para se inscrever!");
@@ -306,10 +306,16 @@ if (user && dadosFinais.usuario_cpf_criador == user.cpf) {
                             body: JSON.stringify({ usuario_cpf: user.cpf, oportunidade_id: id })
                         });
                         const res = await resp.json();
+                        
                         if (resp.ok) {
-                            alert("Inscrito com sucesso!");
-                            btnInscrever.disabled = true;
+                            // TRANSFORMA O BOTÃO
                             btnInscrever.innerHTML = '<i class="fa-solid fa-check"></i> Inscrito';
+                            btnInscrever.className = 'btn-inscrito'; // Classe CSS global
+                            // Removemos estilos antigos que possam conflitar
+                            btnInscrever.style.backgroundColor = 'transparent';
+                            btnInscrever.style.color = '#28a745';
+                            btnInscrever.style.width = '100%'; // Mantém largura cheia na sidebar
+                            btnInscrever.disabled = true;
                         } else {
                             alert(res.message); // Ex: "Já inscrito"
                         }
