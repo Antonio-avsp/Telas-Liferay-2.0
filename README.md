@@ -56,7 +56,7 @@ O Voluntariado Liferay é uma aplicação web completa desenvolvida para conecta
 - [Páginas do Sistema](#️-páginas-do-sistema)
 - [Personalização](#-personalização)
 - [Troubleshooting](#-troubleshooting)
-- [Roadmap (Próximas Funcionalidades)](#️-(próximas-funcionalidades))
+- [Roadmap (Próximas Funcionalidades)](#-roadmap-próximas-funcionalidades)
 - [Licença](#-licença)
 - [Agradecimentos](#-agradecimentos)
 
